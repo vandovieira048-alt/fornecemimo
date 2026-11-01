@@ -508,7 +508,7 @@ footer.foot{text-align:center;color:var(--soft);font-size:13px;padding-block:24p
 
     <!-- admin: produtos -->
     <section class="view" id="v-aprods" hidden>
-      <div class="vhead"><div><span class="kick">catálogo</span><h1>produtos dos parceiros</h1><p class="sub">Crie o produto na Mimovalle e cole o link dele para ligar.</p></div></div>
+      <div class="vhead"><div><span class="kick">catálogo</span><h1>produtos dos parceiros</h1><p class="sub">Toque em um produto para publicar na Mimovalle com um toque.</p></div></div>
       <div class="chips" role="group" aria-label="Filtrar produtos" id="aPrFilters"></div>
       <div class="grid-p" id="aProds"></div>
     </section>
@@ -637,7 +637,7 @@ setInterval(()=>{if(me&&!document.hidden)sched()},45000);
 document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g)go(g.dataset.go)});
 
 /* ---------- utilitários de pedido ---------- */
-const PCOLS='id,parceiro_id,produto_id,shopify_order_id,numero,produto_nome,qtd,valor,cliente,status,pix_pago_em,rastreio,enviado_em,created_at';
+const PCOLS='id,parceiro_id,produto_id,shopify_order_id,numero,produto_nome,qtd,valor,cliente,status,pix_pago_em,rastreio,enviado_em,created_at,rastreio_na_shopify';
 const left=o=>new Date(o.pix_pago_em).getTime()+24*H-Date.now();
 const fmt=ms=>{if(ms<=0)return 'prazo vencido';const h=Math.floor(ms/H),m=Math.floor(ms%H/60000);return `${h}h ${String(m).padStart(2,'0')}min`};
 function pillFor(o){if(o.status==='enviado')return `<span class="pill p-ok">${svg('check','width="12" height="12"')}Enviado</span>`;if(o.status==='cancelado')return '<span class="pill p-off">Cancelado</span>';
@@ -699,7 +699,7 @@ const prodFilter=(f,p)=>f==='todos'||(f==='ativos'&&p.ativo)||(f==='pendentes'&&
 function pcard(p,admin){const pa=admin?parc(p.parceiro_id):null;
   return `<article class="pcard"><div class="img cat-${p.categoria||'outros'}">${thumb(p)}${prodStatus(p)}</div><div class="tx"><b>${esc(p.nome)}</b>
     ${admin?`<span class="st">${esc(pa.nome_loja||'')}</span>`:''}<span class="pr">${brl(p.preco_parceiro)}</span><span class="st">${p.estoque} em estoque${p.categoria?' · '+CATS[p.categoria]:''}</span>
-    <button class="btn ${admin&&!p.shopify_product_id?'':'ghost'} sm block" data-editprod="${p.id}">${admin?(p.shopify_product_id?'Ver e editar':'Ligar à loja'):'Editar'}</button></div></article>`}
+    <button class="btn ${admin&&!p.shopify_product_id?'':'ghost'} sm block" data-editprod="${p.id}">${admin?(p.shopify_product_id?'Ver e editar':'Publicar na loja'):'Editar'}</button></div></article>`}
 function renderProds(){chips('#prFilters',prodFilterList(prods),F.pr,'pr');const list=prods.filter(p=>prodFilter(F.pr,p));
   $('#prods').innerHTML=list.length?list.map(p=>pcard(p,false)).join(''):`<div class="empty" style="grid-column:1/-1">${svg('grid')}${prods.length?'Nenhum produto nesse filtro.':'Nenhum produto ainda. Comece pelos 3 que mais vendem na sua loja.'}${prods.length?'':'<button class="btn" data-newprod>Cadastrar primeiro produto</button>'}</div>`}
 function renderFin(){
@@ -718,6 +718,9 @@ $('#aSearch').oninput=e=>{F.aq=e.target.value.trim();renderAOrders()};
 
 /* ---------- gaveta de produto ---------- */
 const num=s=>parseFloat(String(s).trim().replace(/\./g,'').replace(',','.'));
+const sugerePreco=c=>{const v=Number(c)*1.65;return Math.max(Math.ceil(v)-0.1,Number(c)+5).toFixed(2)};
+async function loja(acao,dados){const {data,error}=await sb.functions.invoke('fm-loja',{body:{acao,...dados}});
+  if(error){let m='Não foi possível falar com a loja agora.';try{const j=await error.context.json();if(j&&j.erro)m=j.erro}catch(_){}throw new Error(m)}return data}
 let sheetFile=null,lastFocus=null;
 function closeSheet(){$('#sheetRoot').innerHTML='';sheetFile=null;document.body.style.overflow='';lastFocus&&lastFocus.focus()}
 function openProd(p){lastFocus=document.activeElement;sheetFile=null;const admin=isAdmin;p=p||{};
@@ -736,15 +739,24 @@ function openProd(p){lastFocus=document.activeElement;sheetFile=null;const admin
     ${p.id&&!admin?'<p class="hint">Mudar o preço pausa o produto até a Mimovalle atualizar o anúncio.</p>':''}
     <button class="btn block" type="submit">${p.id?'Salvar alterações':'Enviar para a Mimovalle'}</button>
    </form>
-   ${admin&&p.id?`<div class="card" style="background:var(--bg2);border:0">
-     <h3>Ligar à loja Mimovalle</h3>
-     <p class="meta">${p.shopify_handle?`Ligado a /products/${esc(p.shopify_handle)}`:'1) Crie o produto na Shopify com a foto e a descrição acima. 2) Cole aqui o link dele.'}</p>
-     ${p.shopify_handle?'':`<a class="btn ghost sm" href="${LOJA_NOVO}" target="_blank" rel="noopener">${svg('ext')}Criar produto na Shopify</a>`}
-     <form class="form" id="fVinc" data-id="${p.id}"><div class="field"><label for="vLink">Link do produto na Mimovalle</label><input id="vLink" placeholder="https://…/products/nome-do-produto" autocomplete="off"></div><button class="btn navy" type="submit">${p.shopify_handle?'Trocar ligação':'Ligar produto'}</button></form>
-     ${p.shopify_product_id?`<button class="btn line" type="button" data-toggle="${p.id}">${p.ativo?'Pausar produto':'Ativar produto'}</button>`:''}
+   ${admin&&p.id&&!p.shopify_product_id?`<form class="card form" id="fPub" data-id="${p.id}" style="background:var(--bg2);border:0">
+     <div><span class="kick">publicar na mimovalle</span><h3>Criar o anúncio com um toque</h3><p class="meta">Cria o produto na loja com a foto, a descrição e a categoria do parceiro, já publicado.</p></div>
+     <div class="field"><label for="pbTit">Título do anúncio</label><input id="pbTit" maxlength="140" value="${esc(p.nome)}"></div>
+     <div class="g2"><div class="field"><label for="pbPreco">Preço de venda (R$)</label><input id="pbPreco" inputmode="decimal" required value="${String(sugerePreco(p.preco_parceiro)).replace('.',',')}"></div>
+     <div class="field"><label for="pbDe">Preço "de" (opcional)</label><input id="pbDe" inputmode="decimal" placeholder="riscado no anúncio"></div></div>
+     <p class="meta" id="pbMargem"></p>
+     <button class="btn" type="submit">${svg('spark')}Publicar na Mimovalle</button>
+     <details><summary class="meta" style="cursor:pointer">Já criei o produto na loja? Ligar pelo link</summary>
+       <div class="form" style="margin-top:10px"><div class="field"><label for="vLink">Link do produto na Mimovalle</label><input id="vLink" placeholder="https://…/products/nome-do-produto" autocomplete="off"></div><button class="btn navy" type="button" data-vinc="${p.id}">Ligar produto</button></div></details>
+   </form>`:''}
+   ${admin&&p.id&&p.shopify_product_id?`<div class="card" style="background:var(--bg2);border:0">
+     <h3>Na loja Mimovalle</h3><p class="meta">Ligado a /products/${esc(p.shopify_handle||'')}. Estoque zerado tira o produto do ar sozinho.</p>
+     <button class="btn line" type="button" data-toggle="${p.id}">${p.ativo?'Pausar produto na loja':'Ativar produto na loja'}</button>
    </div>`:''}
   </div></div>`;
   document.body.style.overflow='hidden';setTimeout(()=>$('#pNome').focus(),60);
+  const mg=()=>{const v=num($('#pbPreco').value),c=Number(p.preco_parceiro);$('#pbMargem').innerHTML=v>0?`Sua margem: <b style="color:${v>c?'var(--ok)':'var(--late)'}">${brl(v-c)}</b> por unidade (${c?Math.round((v-c)/v*100):0}% do preço)`:''};
+  if($('#pbPreco')){$('#pbPreco').oninput=mg;mg()}
   $('#phFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{sheetFile=await shrink(f);$('#drop').querySelector('img')?$('#drop img').src=URL.createObjectURL(sheetFile):$('#drop').insertAdjacentHTML('afterbegin',`<img src="${URL.createObjectURL(sheetFile)}" alt="Nova foto">`);$('#drop span')&&$('#drop span').remove()}catch(_){toast('Não consegui ler essa imagem. Tente outra foto.')}}}
 function shrink(file){return new Promise((res,rej)=>{const img=new Image();img.onload=()=>{const m=1400,s=Math.min(1,m/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.round(img.width*s);c.height=Math.round(img.height*s);
   c.getContext('2d').drawImage(img,0,0,c.width,c.height);c.toBlob(b=>b?res(b):rej(),'image/jpeg',.86)};img.onerror=rej;img.src=URL.createObjectURL(file)})}
@@ -765,8 +777,12 @@ document.addEventListener('click',async e=>{const t=e.target;
     if(error){px.disabled=false;toast(errMsg(error));return}toast('Pix registrado. O parceiro já foi avisado para enviar.');notify('pix_pago',px.dataset.pix);loadAdmin();return}
   const ap=t.closest('[data-status]');if(ap){ap.disabled=true;const {error}=await sb.from('fm_parceiros').update({status:ap.dataset.status}).eq('id',ap.dataset.id);
     if(error){ap.disabled=false;toast(errMsg(error));return}toast(ap.dataset.status==='ativo'?'Parceiro liberado e avisado.':'Parceiro pausado.');if(ap.dataset.status==='ativo')notify('parceiro_liberado',ap.dataset.id);loadAdmin();return}
+  const vb=t.closest('[data-vinc]');if(vb){vb.disabled=true;const {data,error}=await sb.functions.invoke('fm-vincular',{body:{produto_id:vb.dataset.vinc,link:$('#vLink').value.trim()}});vb.disabled=false;
+    if(error){let m='Não foi possível ligar o produto.';try{const j=await error.context.json();if(j&&j.erro)m=j.erro}catch(_){}toast(m);return}
+    toast('Ligado a: '+((data&&data.titulo)||'produto da Mimovalle'));notify('produto_ativo',vb.dataset.vinc);closeSheet();loadAdmin();return}
+  const rs=t.closest('[data-rastreio]');if(rs){rs.disabled=true;try{await loja('rastreio',{pedido_id:rs.dataset.rastreio});toast('Rastreio enviado à Shopify. O cliente recebeu por e-mail.');loadAdmin()}catch(err){rs.disabled=false;toast(err.message)}return}
   const tg=t.closest('[data-toggle]');if(tg){tg.disabled=true;const p=prods.find(x=>x.id===tg.dataset.toggle);const {error}=await sb.from('fm_produtos').update({ativo:!p.ativo}).eq('id',p.id);
-    if(error){tg.disabled=false;toast(errMsg(error));return}toast(p.ativo?'Produto pausado.':'Produto ativo.');if(!p.ativo)notify('produto_ativo',p.id);closeSheet();loadAdmin();return}
+    if(error){tg.disabled=false;toast(errMsg(error));return}loja('sincronizar',{produto_id:p.id}).catch(e=>toast(e.message));toast(p.ativo?'Produto pausado na loja.':'Produto ativo na loja.');if(!p.ativo)notify('produto_ativo',p.id);closeSheet();loadAdmin();return}
 });
 document.addEventListener('submit',async e=>{const f=e.target;
   if(f.matches('.ship')){e.preventDefault();const v=f.querySelector('input').value.trim().toUpperCase();if(v.length<5){toast('Digite o código de rastreio completo.');return}busy(f,true);
@@ -784,7 +800,11 @@ document.addEventListener('submit',async e=>{const f=e.target;
       const up=await sb.storage.from('fm-fotos').upload(path,sheetFile,{contentType:'image/jpeg',upsert:false});
       if(up.error)error=up.error;else{const r2=await sb.from('fm_produtos').update({foto_path:path}).eq('id',row.id);error=r2.error}}
     busy(f,false);confirmNoPhoto=false;if(error){toast(errMsg(error));return}
-    toast(id?'Produto atualizado.':'Produto enviado. A Mimovalle prepara o anúncio.');if(!id&&row)notify('novo_produto',row.id);closeSheet();isAdmin?loadAdmin():loadPartner();return}
+    if(id&&row&&row.shopify_product_id)loja('sincronizar',{produto_id:id}).catch(()=>{});toast(id?'Produto atualizado.':'Produto enviado. A Mimovalle prepara o anúncio.');if(!id&&row)notify('novo_produto',row.id);closeSheet();isAdmin?loadAdmin():loadPartner();return}
+  if(f.id==='fPub'){e.preventDefault();const preco=num($('#pbPreco').value),de=num($('#pbDe').value);busy(f,true);
+    try{const r=await loja('criar_produto',{produto_id:f.dataset.id,titulo:$('#pbTit').value.trim(),preco,preco_de:de>0?de:null});
+      toast(r.publicado?'Publicado na Mimovalle! O parceiro foi avisado.':'Produto criado. Confira se ele aparece na loja virtual.');closeSheet();loadAdmin()}
+    catch(err){toast(err.message)}finally{busy(f,false)}return}
   if(f.id==='fVinc'){e.preventDefault();busy(f,true);
     const {data,error}=await sb.functions.invoke('fm-vincular',{body:{produto_id:f.dataset.id,link:$('#vLink').value.trim()}});busy(f,false);
     if(error){let m='Não foi possível ligar o produto.';try{const j=await error.context.json();if(j&&j.erro)m=j.erro}catch(_){}toast(m);return}
@@ -829,7 +849,8 @@ function renderAOrders(){const n=s=>orders.filter(o=>o.status===s).length;
     <div class="row"><div><h3>${esc(o.produto_nome)}</h3><div class="meta">${esc(pa.nome_loja)} · Pedido ${esc(o.numero)} · ${o.qtd} un.</div></div>${pillFor(o)}</div>
     ${o.status==='enviar'?`<div class="money"><span>Prazo do parceiro: <span class="timer">${fmt(left(o))}</span></span><strong>${brl(o.valor)}</strong></div>`:''}
     ${o.status==='enviado'?`<p class="track">Rastreio ${esc(o.rastreio)} · ${dt(o.enviado_em)}</p>`:''}
-    <div class="acts">${o.status==='enviado'?`<button class="btn ghost sm" data-copy="${esc(o.rastreio)}">${svg('copy')}Copiar rastreio</button><a class="btn navy sm" href="${LOJA_ADMIN+encodeURIComponent(o.shopify_order_id)}" target="_blank" rel="noopener">${svg('ext')}Informar na Shopify</a>`:''}
+    ${o.status==='enviado'?(o.rastreio_na_shopify?`<p class="meta">${svg('check','width="13" height="13" style="vertical-align:-2px;color:var(--ok)"')} Rastreio já está na Shopify e o cliente foi avisado.</p>`:`<p class="meta" style="color:var(--warn)">Rastreio ainda não foi para a Shopify.</p>`):''}
+    <div class="acts">${o.status==='enviado'&&!o.rastreio_na_shopify?`<button class="btn navy sm" data-rastreio="${o.id}">${svg('ext')}Enviar rastreio à Shopify</button>`:''}${o.status==='enviado'?`<button class="btn ghost sm" data-copy="${esc(o.rastreio)}">${svg('copy')}Copiar rastreio</button>`:''}
     ${o.status==='enviar'&&pa.whatsapp?`<a class="btn ghost sm" href="${wa(pa.whatsapp)}?text=${encodeURIComponent('Oi! O Pix do pedido '+o.numero+' ('+o.produto_nome+') já foi feito. O prazo de envio é de 24h. Obrigado!')}" target="_blank" rel="noopener">${svg('wa')}Avisar parceiro</a>`:''}
     <a class="btn ghost sm" href="${LOJA_ADMIN+encodeURIComponent(o.shopify_order_id)}" target="_blank" rel="noopener">${svg('ext')}Pedido na Shopify</a></div></div></article>`}).join(''):`<div class="empty">${svg('box')}${q?'Nada encontrado nessa busca.':'Nenhum pedido aqui.'}</div>`}
 function renderAProds(){chips('#aPrFilters',[['pendentes','Para ligar',prods.filter(p=>!p.shopify_product_id).length],['ativos','Ativos',prods.filter(p=>p.ativo).length],['esgotados','Esgotados',prods.filter(p=>p.estoque===0).length],['todos','Todos',prods.length]],F.apr,'apr');
