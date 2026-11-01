@@ -9,6 +9,10 @@
 <meta property="og:title" content="Fornece Mimo · Parceiros Mimovalle">
 <meta property="og:description" content="Seu estoque vendendo também na Mimovalle. Sem mensalidade, sem custo com anúncio, pagamento antes do envio.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%2324395C'/%3E%3Cpath d='M17 26l15-8 15 8-15 8z' fill='%23FF5A2E'/%3E%3Cpath d='M17 26v14l15 8V34zM47 26v14l-15 8V34z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Fornece Mimo">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -264,6 +268,12 @@ footer.foot{text-align:center;color:var(--soft);font-size:13px;padding-block:24p
 .ln strong{font-variant-numeric:tabular-nums;white-space:nowrap}
 .plus{color:var(--ok)}
 
+.pushbox{background:#fff;border:1.5px solid var(--line);border-radius:20px;padding:16px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.pushbox .ic{width:46px;height:46px;border-radius:14px;background:var(--butter);color:var(--warn);display:grid;place-items:center;flex-shrink:0}
+.pushbox .ic svg{width:24px;height:24px}
+.pushbox>div:nth-child(2){flex:1;min-width:190px;display:flex;flex-direction:column;gap:2px}
+.pushbox b{font-size:15px}
+.pushbox span{font-size:13px;color:var(--soft)}
 .toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:#fff;font-weight:600;font-size:14px;padding:13px 20px;border-radius:999px;z-index:60;max-width:calc(100% - 32px);text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.2)}
 @media (min-width:901px){.toast{bottom:28px}}
 .spin{width:30px;height:30px;border:3px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:s .9s linear infinite;margin:80px auto}
@@ -397,6 +407,7 @@ footer.foot{text-align:center;color:var(--soft);font-size:13px;padding-block:24p
     </div>
     <button class="btn block" type="submit">Enviar cadastro</button>
   </form>
+  <div class="pushbox" data-pushbox hidden></div>
   <button class="btn line" type="button" data-logout>Sair</button>
 </section>
 
@@ -409,6 +420,7 @@ footer.foot{text-align:center;color:var(--soft);font-size:13px;padding-block:24p
     <section class="view" id="v-inicio" hidden>
       <div class="vhead"><div><span class="kick" id="hiDate"></span><h1 id="hiTitle">Olá!</h1></div></div>
       <div id="hiAlert"></div>
+      <div class="pushbox" data-pushbox hidden></div>
       <div class="tiles" id="hiTiles"></div>
       <div class="two">
         <div class="card"><div class="row"><div><h2>recebido nos últimos 14 dias</h2><p class="meta" id="chartSum"></p></div></div><div class="chart" id="chart" role="img" aria-label="Gráfico de valores recebidos por dia"></div></div>
@@ -472,6 +484,7 @@ footer.foot{text-align:center;color:var(--soft);font-size:13px;padding-block:24p
     <section class="view" id="v-ainicio" hidden>
       <div class="vhead"><div><span class="kick" id="aDate"></span><h1>painel da mimovalle</h1></div></div>
       <div id="aAlert"></div>
+      <div class="pushbox" data-pushbox hidden></div>
       <div class="tiles" id="aTiles"></div>
       <div class="two">
         <div class="card"><div><h2>vendas de parceiros, 14 dias</h2><p class="meta" id="aChartSum"></p></div><div class="chart" id="aChart" role="img" aria-label="Gráfico de vendas por dia"></div></div>
@@ -568,7 +581,7 @@ function go(v){if(!VIEWS.includes(v))return;current=v;VIEWS.forEach(x=>$('#v-'+x
 function badge(v,n){$$(`[data-b="${v}"]`).forEach(b=>{b.hidden=!n;b.textContent=n})}
 function setWho(name,role){$('#who').hidden=!name;$('#whoName').textContent=name||'';$('#whoRole').textContent=role||'';
   $('#avatar').textContent=(name||'').split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join('')}
-function msg(title,text,pill,pc,complete){$('#msgTitle').textContent=title;$('#msgText').textContent=text;$('#msgPill').textContent=pill;$('#msgPill').className='pill '+pc;$('#fComplete').hidden=!complete;$('#msgWhats').hidden=complete;screen('msg')}
+function msg(title,text,pill,pc,complete){$('#msgTitle').textContent=title;$('#msgText').textContent=text;$('#msgPill').textContent=pill;$('#msgPill').className='pill '+pc;$('#fComplete').hidden=!complete;$('#msgWhats').hidden=complete;screen('msg');renderPush()}
 
 /* ---------- landing / auth ---------- */
 function seg(sign){$('#segLogin').setAttribute('aria-selected',String(!sign));$('#segSign').setAttribute('aria-selected',String(sign));$('#fLogin').hidden=sign;$('#fSign').hidden=!sign;$('#fNewPass').hidden=true}
@@ -587,10 +600,10 @@ $('#fSign').onsubmit=async e=>{e.preventDefault();
   busy(e.target,false);if(error){toast(errMsg(error));return}
   if(!data.session)msg('Confirme seu e-mail',`Enviamos um link de confirmação para ${email}. Toque no link e depois entre com seu e-mail e senha.`,'Falta pouco','p-wait',false)};
 $('#fNewPass').onsubmit=async e=>{e.preventDefault();busy(e.target,true);const {error}=await sb.auth.updateUser({password:$('#nPass').value});busy(e.target,false);if(error){toast(errMsg(error));return}recovery=false;toast('Senha alterada.');boot()};
-document.addEventListener('click',async e=>{if(e.target.closest('[data-logout]')){await sb.auth.signOut();history.replaceState(null,'',location.pathname)}});
+document.addEventListener('click',async e=>{if(e.target.closest('[data-logout]')){await pushOff();await sb.auth.signOut();history.replaceState(null,'',location.pathname)}});
 $('#fComplete').onsubmit=async e=>{e.preventDefault();busy(e.target,true);
   const {error}=await sb.from('fm_parceiros').insert({id:me.id,nome_loja:$('#cLoja').value.trim(),responsavel:$('#cResp').value.trim(),whatsapp:$('#cWhats').value.trim(),chave_pix:$('#cPix').value.trim()});
-  busy(e.target,false);if(error){toast(errMsg(error));return}boot()};
+  busy(e.target,false);if(error){toast(errMsg(error));return}notify('novo_parceiro');boot()};
 
 /* ---------- boot ---------- */
 async function boot(){
@@ -600,15 +613,15 @@ async function boot(){
   if(!session){me=null;setWho('');screen('land');landHash();return}
   me=session.user;
   const {data:adm}=await sb.rpc('fm_eh_admin');isAdmin=adm===true;
-  if(isAdmin){setWho('Mimovalle','administração');buildMenu();await loadAdmin();screen('app');go(VIEWS.includes(location.hash.slice(1))&&location.hash.startsWith('#a')?location.hash.slice(1):'ainicio');listen();return}
+  if(isAdmin){setWho('Mimovalle','administração');buildMenu();await loadAdmin();screen('app');renderPush();go(VIEWS.includes(location.hash.slice(1))&&location.hash.startsWith('#a')?location.hash.slice(1):'ainicio');listen();return}
   let {data:p}=await sb.from('fm_parceiros').select('*').eq('id',me.id).maybeSingle();
   if(!p){const c=me.user_metadata&&me.user_metadata.fm_cadastro;
-    if(c&&c.nome_loja){const r=await sb.from('fm_parceiros').insert({id:me.id,nome_loja:c.nome_loja,responsavel:c.responsavel,whatsapp:c.whatsapp,chave_pix:c.chave_pix}).select().single();p=r.data}
+    if(c&&c.nome_loja){const r=await sb.from('fm_parceiros').insert({id:me.id,nome_loja:c.nome_loja,responsavel:c.responsavel,whatsapp:c.whatsapp,chave_pix:c.chave_pix}).select().single();p=r.data;if(p)notify('novo_parceiro')}
     if(!p){setWho('');msg('Complete seu cadastro','Faltam alguns dados para a Mimovalle analisar sua loja.','Cadastro','p-wait',true);return}}
   parceiro=p;setWho(p.nome_loja,'parceiro');
   if(p.status==='pendente'){msg('Cadastro em análise',`Recebemos o cadastro da ${p.nome_loja}. A Mimovalle confere sua loja e libera o painel, normalmente no mesmo dia. Esta tela atualiza sozinha.`,'Em análise','p-wait',false);listen();return}
   if(p.status==='pausado'){msg('Parceria pausada','Seu painel está pausado no momento. Fale com a Mimovalle para entender e reativar.','Pausado','p-off',false);listen();return}
-  buildMenu();fillConta();await loadPartner();screen('app');const h=location.hash.slice(1);go(['inicio','pedidos','produtos','financeiro','conta'].includes(h)?h:'inicio');listen();
+  buildMenu();fillConta();await loadPartner();screen('app');renderPush();const h=location.hash.slice(1);go(['inicio','pedidos','produtos','financeiro','conta'].includes(h)?h:'inicio');listen();
 }
 let reloadT;function listen(){
   chan=sb.channel('fm-'+me.id)
@@ -749,15 +762,15 @@ document.addEventListener('click',async e=>{const t=e.target;
   const cp=t.closest('[data-copy]');if(cp){copy(cp.dataset.copy,'Chave Pix copiada.');return}
   if(t.closest('[data-copylink]')){copy(location.origin+location.pathname+'#cadastro','Link de convite copiado. Mande para os vendedores.');return}
   const px=t.closest('[data-pix]');if(px){px.disabled=true;const {error}=await sb.from('fm_pedidos').update({status:'enviar',pix_pago_em:new Date().toISOString()}).eq('id',px.dataset.pix);
-    if(error){px.disabled=false;toast(errMsg(error));return}toast('Pix registrado. O parceiro já pode enviar.');loadAdmin();return}
+    if(error){px.disabled=false;toast(errMsg(error));return}toast('Pix registrado. O parceiro já foi avisado para enviar.');notify('pix_pago',px.dataset.pix);loadAdmin();return}
   const ap=t.closest('[data-status]');if(ap){ap.disabled=true;const {error}=await sb.from('fm_parceiros').update({status:ap.dataset.status}).eq('id',ap.dataset.id);
-    if(error){ap.disabled=false;toast(errMsg(error));return}toast(ap.dataset.status==='ativo'?'Parceiro liberado.':'Parceiro pausado.');loadAdmin();return}
+    if(error){ap.disabled=false;toast(errMsg(error));return}toast(ap.dataset.status==='ativo'?'Parceiro liberado e avisado.':'Parceiro pausado.');if(ap.dataset.status==='ativo')notify('parceiro_liberado',ap.dataset.id);loadAdmin();return}
   const tg=t.closest('[data-toggle]');if(tg){tg.disabled=true;const p=prods.find(x=>x.id===tg.dataset.toggle);const {error}=await sb.from('fm_produtos').update({ativo:!p.ativo}).eq('id',p.id);
-    if(error){tg.disabled=false;toast(errMsg(error));return}toast(p.ativo?'Produto pausado.':'Produto ativo.');closeSheet();loadAdmin();return}
+    if(error){tg.disabled=false;toast(errMsg(error));return}toast(p.ativo?'Produto pausado.':'Produto ativo.');if(!p.ativo)notify('produto_ativo',p.id);closeSheet();loadAdmin();return}
 });
 document.addEventListener('submit',async e=>{const f=e.target;
   if(f.matches('.ship')){e.preventDefault();const v=f.querySelector('input').value.trim().toUpperCase();if(v.length<5){toast('Digite o código de rastreio completo.');return}busy(f,true);
-    const {error}=await sb.from('fm_pedidos').update({status:'enviado',rastreio:v}).eq('id',f.dataset.id);busy(f,false);if(error){toast(errMsg(error));return}toast('Envio confirmado. Obrigado pela agilidade!');loadPartner();return}
+    const {error}=await sb.from('fm_pedidos').update({status:'enviado',rastreio:v}).eq('id',f.dataset.id);busy(f,false);if(error){toast(errMsg(error));return}toast('Envio confirmado. Obrigado pela agilidade!');notify('enviado',f.dataset.id);loadPartner();return}
   if(f.id==='fProd'){e.preventDefault();const id=f.dataset.id;const nome=$('#pNome').value.trim(),preco=num($('#pPreco').value),est=parseInt($('#pEst').value,10),link=$('#pLink').value.trim();
     const cat=(f.querySelector('input[name=cat]:checked')||{}).value||null,desc=$('#pDesc').value.trim()||null;
     if(!(preco>0)||isNaN(est)||est<0){toast('Confira o preço e o estoque (só números).');return}
@@ -771,11 +784,11 @@ document.addEventListener('submit',async e=>{const f=e.target;
       const up=await sb.storage.from('fm-fotos').upload(path,sheetFile,{contentType:'image/jpeg',upsert:false});
       if(up.error)error=up.error;else{const r2=await sb.from('fm_produtos').update({foto_path:path}).eq('id',row.id);error=r2.error}}
     busy(f,false);confirmNoPhoto=false;if(error){toast(errMsg(error));return}
-    toast(id?'Produto atualizado.':'Produto enviado. A Mimovalle prepara o anúncio.');closeSheet();isAdmin?loadAdmin():loadPartner();return}
+    toast(id?'Produto atualizado.':'Produto enviado. A Mimovalle prepara o anúncio.');if(!id&&row)notify('novo_produto',row.id);closeSheet();isAdmin?loadAdmin():loadPartner();return}
   if(f.id==='fVinc'){e.preventDefault();busy(f,true);
     const {data,error}=await sb.functions.invoke('fm-vincular',{body:{produto_id:f.dataset.id,link:$('#vLink').value.trim()}});busy(f,false);
     if(error){let m='Não foi possível ligar o produto.';try{const j=await error.context.json();if(j&&j.erro)m=j.erro}catch(_){}toast(m);return}
-    toast('Ligado a: '+((data&&data.titulo)||'produto da Mimovalle'));closeSheet();loadAdmin()}
+    toast('Ligado a: '+((data&&data.titulo)||'produto da Mimovalle'));notify('produto_ativo',f.dataset.id);closeSheet();loadAdmin()}
 });
 let confirmNoPhoto=false;
 
@@ -827,6 +840,34 @@ function renderAParc(){$('#aParc').innerHTML=parceiros.length?parceiros.map(p=>{
     <div class="tiles" style="grid-template-columns:repeat(3,1fr)"><div class="tile" style="background:var(--bg2)"><small>Produtos</small><b>${n}</b></div><div class="tile" style="background:var(--bg2)"><small>Pedidos</small><b>${os.length}</b></div><div class="tile" style="background:var(--bg2)"><small>Envios atrasados</small><b style="color:${late?'var(--late)':'inherit'}">${late}</b></div></div>
     <div class="acts"><a class="btn ghost sm" href="${wa(p.whatsapp)}" target="_blank" rel="noopener">${svg('wa')}WhatsApp</a>
     ${p.status!=='ativo'?`<button class="btn sm" data-status="ativo" data-id="${p.id}">${svg('check')}Liberar parceiro</button>`:`<button class="btn line sm" data-status="pausado" data-id="${p.id}">Pausar</button>`}</div></article>`}).join(''):`<div class="empty">${svg('users')}Nenhum parceiro ainda. Copie o link de convite e mande para os vendedores.<button class="btn" data-copylink>Copiar link de convite</button></div>`}
+
+/* ---------- avisos no celular ---------- */
+const VAPID_PUB='BD1J2SyzV1H7xmY0G5O_NYgTGN0SOvgPTySmgegp0nC_A76XFVSETiIq7-w9sTEjSBDIfUdMN7DyAjNUB1J6FI0';
+const notify=(evento,id)=>{try{sb.functions.invoke('fm-notificar',{body:{evento,id}}).catch(()=>{})}catch(_){}};
+let swReg=null;
+if('serviceWorker' in navigator&&location.protocol==='https:'){navigator.serviceWorker.register('sw.js').then(r=>{swReg=r;renderPush()}).catch(()=>{})}
+const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent),standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+function b64u(s){const p='='.repeat((4-s.length%4)%4),b=atob((s+p).replace(/-/g,'+').replace(/_/g,'/'));return Uint8Array.from(b,c=>c.charCodeAt(0))}
+async function pushStatus(){
+  if(!('serviceWorker' in navigator)||!('PushManager' in window)||!('Notification' in window))return isIOS&&!standalone?'ios':'none';
+  if(Notification.permission==='denied')return 'denied';
+  try{const reg=swReg||await navigator.serviceWorker.getRegistration();const sub=reg&&await reg.pushManager.getSubscription();return sub?'on':'off'}catch(_){return 'off'}}
+async function renderPush(){if(!me)return;const st=await pushStatus(),boxes=$$('[data-pushbox]');
+  if(st==='on'||st==='none'){boxes.forEach(b=>b.hidden=true);return}
+  const html=st==='ios'?`<span class="ic">${svg('bell')}</span><div><b>Receba os avisos no iPhone</b><span>Toque em Compartilhar e depois em "Adicionar à Tela de Início". Abra pelo ícone e ative os avisos.</span></div>`
+    :st==='denied'?`<span class="ic">${svg('bell')}</span><div><b>Avisos bloqueados</b><span>Libere as notificações deste site nas configurações do navegador para saber na hora de cada venda.</span></div>`
+    :`<span class="ic">${svg('bell')}</span><div><b>Ative os avisos no celular</b><span>${isAdmin?'Saiba na hora quando cair uma venda de parceiro.':'Saiba na hora quando o Pix sair e for hora de enviar.'}</span></div><button class="btn" type="button" data-pushon>Ativar avisos</button>`;
+  boxes.forEach(b=>{b.innerHTML=html;b.hidden=false})}
+async function enablePush(btn){btn.disabled=true;
+  try{const perm=await Notification.requestPermission();if(perm!=='granted'){toast('Sem permissão os avisos não chegam. Você pode liberar depois.');renderPush();return}
+    const reg=swReg||await navigator.serviceWorker.ready;let sub=await reg.pushManager.getSubscription();
+    if(!sub)sub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(VAPID_PUB)});
+    const j=sub.toJSON();const {error}=await sb.from('fm_push').insert({user_id:me.id,endpoint:j.endpoint,p256dh:j.keys.p256dh,auth:j.keys.auth});
+    if(error&&error.code!=='23505')throw error;notify('teste');toast('Avisos ligados! Mandamos um aviso de teste.');renderPush()}
+  catch(_){toast('Não foi possível ligar os avisos neste aparelho.')}finally{btn.disabled=false}}
+async function pushOff(){try{const reg=swReg||await navigator.serviceWorker.getRegistration();const sub=reg&&await reg.pushManager.getSubscription();
+  if(sub){await sb.from('fm_push').delete().eq('endpoint',sub.endpoint);await sub.unsubscribe()}}catch(_){}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-pushon]');if(b)enablePush(b)},true);
 
 /* ---------- início ---------- */
 window.addEventListener('hashchange',()=>{const h=location.hash.slice(1);if(me&&VIEWS.includes(h)&&h!==current)go(h);else if(!me)landHash()});
