@@ -246,6 +246,15 @@ footer.foot{text-align:center;color:var(--soft);font-size:13px;padding-block:24p
 .sheet{background:#fff;width:min(520px,100%);height:100%;overflow-y:auto;display:flex;flex-direction:column;padding-block:max(18px,env(safe-area-inset-top)) max(24px,env(safe-area-inset-bottom));padding-left:max(20px,env(safe-area-inset-left));padding-right:max(20px,env(safe-area-inset-right));gap:16px;animation:in .22s ease-out}
 @keyframes in{from{transform:translateX(30px);opacity:0}}
 @media (max-width:640px){.sheet-bg{align-items:flex-end}.sheet{height:auto;max-height:92vh;border-radius:24px 24px 0 0;animation:up .22s ease-out}@keyframes up{from{transform:translateY(30px);opacity:0}}}
+input[readonly]{background:var(--bg2);color:var(--soft)}
+.varbox{display:flex;flex-direction:column;gap:12px;background:var(--bg2);border-radius:16px;padding:14px}
+.vrow{display:grid;grid-template-columns:1fr 96px 46px;gap:8px;align-items:center}.vrow input{min-width:0}
+.x2{width:46px;height:46px;border-radius:12px;border:1.5px solid var(--line);background:#fff;display:grid;place-items:center;cursor:pointer;color:var(--soft)}.x2 svg{width:16px;height:16px}
+.vtag{display:inline-flex;font-size:12px;font-weight:700;background:var(--info-bg);color:var(--info);border-radius:8px;padding:2px 8px;margin-top:5px}
+.nota{display:flex;align-items:center;gap:16px}.ring{width:84px;height:84px;border-radius:50%;display:grid;place-items:center;flex-shrink:0}.ring span{width:66px;height:66px;border-radius:50%;background:#fff;display:grid;place-items:center;font-weight:800;font-size:20px}
+.nota p{margin:0}.nota b.lv{font-size:17px}
+.relt{width:100%;border-collapse:collapse;font-size:14px}.relt th{font-size:12px;color:var(--soft);font-weight:600}.relt th,.relt td{padding:10px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}.relt .n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tscroll{overflow-x:auto;margin:0 -6px}
 .termo h3{font-size:15px;margin:18px 0 6px;color:var(--navy,#24395C)}.termo p,.termo li{font-size:14px;line-height:1.55;color:var(--ink,#1B2C49)}.termo ul{padding-left:18px;margin:4px 0}.termo .tv{font-size:12px;color:var(--soft)}
 .aceite{display:flex;gap:10px;align-items:flex-start;font-weight:500;font-size:14px;line-height:1.45}.aceite input{width:22px;height:22px;min-height:0;flex-shrink:0;margin-top:1px}.aceite .linkbtn{display:inline;padding:0;font-size:inherit}
 .sheet-h{display:flex;justify-content:space-between;align-items:center;gap:12px}
@@ -449,7 +458,10 @@ footer.foot{text-align:center;color:var(--soft);font-size:13px;padding-block:24p
         <div class="card"><div class="row"><div><h2>recebido nos últimos 14 dias</h2><p class="meta" id="chartSum"></p></div></div><div class="chart" id="chart" role="img" aria-label="Gráfico de valores recebidos por dia"></div></div>
         <div class="card"><h2>primeiros passos</h2><div class="check" id="checklist"></div></div>
       </div>
-      <div class="card" id="lowStock" hidden><h2>estoque acabando</h2><div id="lowList"></div></div>
+      <div class="two">
+        <div class="card"><h2>sua nota de envio</h2><div id="notaBox"></div></div>
+        <div class="card" id="lowStock" hidden><h2>estoque acabando</h2><div id="lowList"></div></div>
+      </div>
     </section>
 
     <!-- parceiro: pedidos -->
@@ -538,6 +550,16 @@ footer.foot{text-align:center;color:var(--soft);font-size:13px;padding-block:24p
       <div class="grid-p" id="aProds"></div>
     </section>
 
+    <!-- admin: relatórios -->
+    <section class="view" id="v-arel" hidden>
+      <div class="vhead"><div><span class="kick">números</span><h1>relatórios</h1><p class="sub">Vendas dos produtos de parceiros na Mimovalle.</p></div><button class="btn ghost sm" type="button" data-csv><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Baixar planilha</button></div>
+      <div class="chips" role="group" aria-label="Período" id="relFilters"></div>
+      <div class="tiles" id="relTiles"></div>
+      <div class="card"><div><h2 id="relChartT">vendas por dia</h2><p class="meta" id="relChartSum"></p></div><div class="chart" id="relChart" role="img" aria-label="Gráfico de vendas"></div></div>
+      <div class="card"><h2>produtos que mais vendem</h2><div class="tscroll" id="relProds"></div></div>
+      <div class="card"><h2>por parceiro</h2><div class="tscroll" id="relParc"></div></div>
+    </section>
+
     <!-- admin: parceiros -->
     <section class="view" id="v-aparc" hidden>
       <div class="vhead"><div><span class="kick">rede</span><h1>parceiros</h1></div><button class="btn ghost sm" type="button" data-copylink>Copiar link de convite</button></div>
@@ -574,7 +596,7 @@ const I={
   clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',check:'<path d="M20 6L9 17l-5-5"/>',copy:'<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>',
   wa:'<path d="M21 12a9 9 0 0 1-13.5 7.8L3 21l1.3-4.4A9 9 0 1 1 21 12z"/>',ext:'<path d="M14 4h6v6"/><path d="M20 4l-9 9"/><path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/>',
   cam:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>',plus:'<path d="M12 5v14M5 12h14"/>',
-  bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 0 0 4 0"/>',video:'<rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/>',star:'<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',spark:'<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M6 18l2.5-2.5M15.5 8.5L18 6"/>'
+  bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 0 0 4 0"/>',video:'<rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/>',chart:'<path d="M4 20V11M10 20V5M16 20v-8M21 20H3"/>',star:'<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',spark:'<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M6 18l2.5-2.5M15.5 8.5L18 6"/>'
 };
 const svg=(n,s='')=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" ${s}>${I[n]}</svg>`;
 let tt;function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(tt);tt=setTimeout(()=>t.hidden=true,3600)}
@@ -591,10 +613,10 @@ async function copy(v,ok){try{await navigator.clipboard.writeText(v);toast(ok)}c
 
 /* ---------- estado ---------- */
 let me=null,isAdmin=false,parceiro=null,orders=[],prods=[],parceiros=[],vendas={},chan=null,recovery=false,current='';
-const F={p:'enviar',pq:'',pr:'todos',a:'enviar',aq:'',apr:'pendentes'};
-const VIEWS=['inicio','pedidos','produtos','financeiro','conta','ainicio','apix','apedidos','aprods','aparc'];
+const F={p:'enviar',pq:'',pr:'todos',a:'enviar',aq:'',apr:'pendentes',rel:'30'};
+const VIEWS=['inicio','pedidos','produtos','financeiro','conta','ainicio','apix','apedidos','aprods','aparc','arel'];
 const MENU_P=[['inicio','Início','home'],['pedidos','Pedidos','box'],['produtos','Produtos','grid'],['financeiro','Financeiro','money'],['conta','Conta','user']];
-const MENU_A=[['ainicio','Início','home'],['apix','Pix','money'],['apedidos','Pedidos','box'],['aprods','Produtos','grid'],['aparc','Parceiros','users']];
+const MENU_A=[['ainicio','Início','home'],['apix','Pix','money'],['apedidos','Pedidos','box'],['aprods','Produtos','grid'],['aparc','Parceiros','users'],['arel','Relatórios','chart']];
 
 function screen(s){$('#loading').hidden=true;$('#v-land').hidden=s!=='land';$('#v-msg').hidden=s!=='msg';$('#shell').hidden=s!=='app';$('#tabsB').hidden=s!=='app';$('#topLogin').hidden=s!=='land'}
 function buildMenu(){const m=isAdmin?MENU_A:MENU_P;
@@ -683,7 +705,7 @@ setInterval(()=>{if(me&&!document.hidden)sched()},45000);
 document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g)go(g.dataset.go)});
 
 /* ---------- utilitários de pedido ---------- */
-const PCOLS='id,parceiro_id,produto_id,shopify_order_id,numero,produto_nome,qtd,valor,cliente,status,pix_pago_em,rastreio,enviado_em,created_at,rastreio_na_shopify';
+const PCOLS='id,parceiro_id,produto_id,shopify_order_id,numero,produto_nome,variante,qtd,valor,cliente,status,pix_pago_em,rastreio,enviado_em,created_at,rastreio_na_shopify';
 const left=o=>new Date(o.pix_pago_em).getTime()+24*H-Date.now();
 const fmt=ms=>{if(ms<=0)return 'prazo vencido';const h=Math.floor(ms/H),m=Math.floor(ms%H/60000);return `${h}h ${String(m).padStart(2,'0')}min`};
 function pillFor(o){if(o.status==='enviado')return `<span class="pill p-ok">${svg('check','width="12" height="12"')}Enviado</span>`;if(o.status==='cancelado')return '<span class="pill p-off">Cancelado</span>';
@@ -691,14 +713,26 @@ function pillFor(o){if(o.status==='enviado')return `<span class="pill p-ok">${sv
 const addrText=c=>{c=c||{};return [c.nome,[c.rua,c.complemento].filter(Boolean).join(', '),[c.cidade,c.uf].filter(Boolean).join(' - ')+(c.cep?' · CEP '+c.cep:''),c.telefone?'Tel.: '+c.telefone:''].filter(Boolean).join('\n')};
 function addrHtml(c){c=c||{};return `<div class="addr"><button class="btn ghost sm cp" type="button" data-copyaddr="${esc(addrText(c))}" aria-label="Copiar endereço">${svg('copy')}</button><b>${esc(c.nome)}</b><span>${esc([c.rua,c.complemento].filter(Boolean).join(', '))}</span><span>${esc([c.cidade,c.uf].filter(Boolean).join(' - '))}${c.cep?' · CEP '+esc(c.cep):''}</span>${c.telefone?`<span>Tel.: ${esc(c.telefone)}</span>`:''}</div>`}
 const prodOf=o=>prods.find(p=>p.id===o.produto_id);
+const vtag=o=>o.variante?`<span class="vtag">${esc((prodOf(o)||{}).opcao_nome||'Opção')}: ${esc(o.variante)}</span>`:'';
+const nomeItem=o=>o.produto_nome+(o.variante?' ('+o.variante+')':'');
+// nota de envio: % dos pedidos com Pix pago que foram postados em até 24h
+function nota(list){let ok=0,late=0,horas=[];
+  list.filter(o=>o.pix_pago_em&&o.status!=='cancelado').forEach(o=>{const lim=new Date(o.pix_pago_em).getTime()+24*H;
+    if(o.status==='enviado'&&o.enviado_em){const t=new Date(o.enviado_em).getTime();t<=lim?ok++:late++;horas.push((t-new Date(o.pix_pago_em).getTime())/H)}
+    else if(o.status==='enviar'&&Date.now()>lim)late++});
+  const tot=ok+late;if(!tot)return null;const pct=Math.round(ok/tot*100);
+  const nv=pct>=95?['Excelente','var(--ok)']:pct>=85?['Boa','var(--ok)']:pct>=70?['Atenção','var(--warn)']:['Crítica','var(--late)'];
+  const med=horas.length?horas.reduce((a,x)=>a+x,0)/horas.length:null;
+  return {pct,ok,late,tot,nivel:nv[0],cor:nv[1],med}}
+const horasTx=h=>h==null?'—':h<1?Math.max(1,Math.round(h*60))+' min':Math.round(h)+'h';
 const thumb=p=>{const u=fotoUrl(p);return u?`<img src="${esc(u)}" alt="" loading="lazy">`:svg('box')};
 function chips(el,list,cur,key){$(el).innerHTML=list.map(([v,l,n])=>`<button class="chip" data-chip="${key}" data-v="${v}" aria-pressed="${v===cur}">${l}${n!=null?`<span class="c">${n}</span>`:''}</button>`).join('')}
-function matchQ(o,q,extra=''){if(!q)return true;const c=o.cliente||{};return (o.produto_nome+' '+o.numero+' '+c.cidade+' '+c.nome+' '+extra).toLowerCase().includes(q)}
+function matchQ(o,q,extra=''){if(!q)return true;const c=o.cliente||{};return (o.produto_nome+' '+(o.variante||'')+' '+o.numero+' '+c.cidade+' '+c.nome+' '+extra).toLowerCase().includes(q)}
 const isToday=d=>new Date(d).toDateString()===new Date().toDateString();
 function days14(list,dateKey,valKey){const out=[];const t0=new Date();t0.setHours(0,0,0,0);
   for(let i=13;i>=0;i--){const d=new Date(t0.getTime()-i*DAY);const v=list.filter(o=>o[dateKey]&&new Date(o[dateKey]).toDateString()===d.toDateString()).reduce((a,o)=>a+(typeof valKey==='function'?valKey(o):Number(o[valKey])),0);out.push({d,v})}return out}
-function drawChart(el,data){const max=Math.max(...data.map(x=>x.v),1);
-  $(el).innerHTML=data.map((x,i)=>`<div class="bar${i===data.length-1?' on':''}" title="${x.d.toLocaleDateString('pt-BR')}: ${brl(x.v)}"><i style="height:${Math.max(3,Math.round(x.v/max*100))}%"></i><small>${x.d.getDate()}</small></div>`).join('')}
+function drawChart(el,data,lab=d=>d.getDate(),tip=d=>d.toLocaleDateString('pt-BR')){const max=Math.max(...data.map(x=>x.v),1);
+  $(el).innerHTML=data.map((x,i)=>`<div class="bar${i===data.length-1?' on':''}" title="${tip(x.d)}: ${brl(x.v)}"><i style="height:${Math.max(3,Math.round(x.v/max*100))}%"></i><small>${data.length<=14||i%5===0||i===data.length-1?lab(x.d):''}</small></div>`).join('')}
 
 /* ---------- PARCEIRO ---------- */
 async function loadPartner(){
@@ -720,8 +754,12 @@ function renderInicio(){
   const d=days14(paid,'pix_pago_em','valor');drawChart('#chart',d);$('#chartSum').textContent=brl(d.reduce((a,x)=>a+x.v,0))+' no período';
   const steps=[['Cadastro aprovado',true],['Cadastrar o primeiro produto',prods.length>0],['Colocar foto nos produtos',prods.length>0&&prods.every(p=>p.foto_path)],['Ter 3 produtos ativos na loja',ativos>=3],['Fazer o primeiro envio',orders.some(o=>o.status==='enviado')]];
   $('#checklist').innerHTML=steps.map(([t,ok])=>`<div class="${ok?'done':''}"><span class="ck">${ok?svg('check','width="14" height="14"'):''}</span>${t}</div>`).join('');
-  const low=prods.filter(p=>p.estoque<=3);$('#lowStock').hidden=!low.length;
-  $('#lowList').innerHTML=low.map(p=>`<div class="ln"><span>${esc(p.nome)}</span><strong style="color:${p.estoque?'var(--warn)':'var(--late)'}">${p.estoque?p.estoque+' un.':'esgotado'}</strong></div>`).join('');
+  const low=[];prods.filter(p=>!p.removido).forEach(p=>{const vs=p.variacoes||[];if(vs.length)vs.filter(v=>v.estoque<=3).forEach(v=>low.push([p.nome+' · '+v.nome,v.estoque]));else if(p.estoque<=3)low.push([p.nome,p.estoque])});
+  $('#lowStock').hidden=!low.length;
+  $('#lowList').innerHTML=low.map(([n,e])=>`<div class="ln"><span>${esc(n)}</span><strong style="color:${e?'var(--warn)':'var(--late)'}">${e?e+' un.':'esgotado'}</strong></div>`).join('');
+  const nt=nota(orders);
+  $('#notaBox').innerHTML=nt?`<div class="nota"><div class="ring" style="background:conic-gradient(${nt.cor} ${nt.pct}%,var(--line) 0)"><span>${nt.pct}%</span></div><div><b class="lv" style="color:${nt.cor}">${nt.nivel}</b><p class="meta">${nt.ok} de ${nt.tot} envio(s) dentro de 24h · você posta em média em ${horasTx(nt.med)}</p></div></div><p class="hint" style="margin-top:12px">Nota alta deixa seus produtos em destaque. Abaixo de 70% a parceria pode ser pausada.</p>`
+    :`<div class="nota"><div class="ring" style="background:var(--line)"><span>—</span></div><div><b class="lv">Sem envios ainda</b><p class="meta">Sua nota aparece depois do primeiro envio. Poste em até 24h depois do Pix para começar com 100%.</p></div></div>`;
 }
 function renderOrders(){
   const n=s=>orders.filter(o=>o.status===s).length;
@@ -737,22 +775,22 @@ function renderOrders(){
       foot=`<form class="form ship" data-id="${o.id}" hidden><div class="field"><label for="tr-${o.id}">Código de rastreio</label><input id="tr-${o.id}" required maxlength="40" placeholder="Ex.: QN123456789BR" autocomplete="off" autocapitalize="characters"></div><div class="acts"><button class="btn ghost" type="button" data-cancel>Cancelar</button><button class="btn" type="submit">Confirmar envio</button></div></form><div class="acts"><button class="btn" data-ship="${o.id}">${svg('box')}Marcar como enviado</button></div>`}
     else if(o.status==='enviado'){line='Pix recebido em '+dt(o.pix_pago_em);foot=`<p class="track">${svg('check','width="14" height="14" style="vertical-align:-2px"')} Rastreio ${esc(o.rastreio)} · enviado ${dt(o.enviado_em)}</p>`}
     else line='Pedido cancelado pelo cliente. Não envie.';
-    return `<article class="card order"><div class="ph ${p&&p.categoria?'cat-'+p.categoria:''}">${p?thumb(p):svg('box')}</div><div class="body"><div class="row"><div><h3>${esc(o.produto_nome)}</h3><div class="meta">Pedido ${esc(o.numero)} · ${o.qtd} un. · ${dt(o.created_at)}</div></div>${pillFor(o)}</div>
+    return `<article class="card order"><div class="ph ${p&&p.categoria?'cat-'+p.categoria:''}">${p?thumb(p):svg('box')}</div><div class="body"><div class="row"><div><h3>${esc(o.produto_nome)}</h3>${vtag(o)}<div class="meta">Pedido ${esc(o.numero)} · ${o.qtd} un. · ${dt(o.created_at)}</div></div>${pillFor(o)}</div>
       ${o.status==='enviar'||o.status==='enviado'?addrHtml(o.cliente):''}<div class="money"><span>${line}</span><strong>${brl(o.valor)}</strong></div>${extra}${foot}</div></article>`}).join('')}
 function prodStatus(p){if(p.removido)return '<span class="pill p-off">Removido</span>';if(!p.shopify_product_id)return '<span class="pill p-wait">Em análise</span>';if(p.estoque===0)return '<span class="pill p-late">Esgotado</span>';return p.ativo?'<span class="pill p-ok">Ativo</span>':'<span class="pill p-off">Pausado</span>'}
 function prodFilterList(list){const n=f=>list.filter(f).length;return [['todos','Todos',n(p=>!p.removido)],['ativos','Ativos',n(p=>p.ativo)],['pendentes','Em análise',n(p=>!p.shopify_product_id&&!p.removido)],['esgotados','Esgotados',n(p=>p.estoque===0&&!p.removido)],['removidos','Removidos',n(p=>p.removido)]]}
-const prodFilter=(f,p)=>f==='removidos'?p.removido:p.removido?false:(f==='todos'||(f==='ativos'&&p.ativo)||(f==='pendentes'&&!p.shopify_product_id)||(f==='esgotados'&&p.estoque===0)||(f==='pausados'&&p.shopify_product_id&&!p.ativo&&p.estoque>0));
+const prodFilter=(f,p)=>f==='removidos'?p.removido:p.removido?false:(f==='todos'||(f==='ativos'&&p.ativo)||(f==='pendentes'&&!p.shopify_product_id)||(f==='esgotados'&&p.estoque===0)||(f==='pausados'&&p.shopify_product_id&&!p.ativo));
 function pcard(p,admin){const pa=admin?parc(p.parceiro_id):null;
   const nm=(p.midias||[]).length,nv=(p.midias||[]).filter(m=>m.tipo==='video').length;
   return `<article class="pcard"><div class="img cat-${p.categoria||'outros'}">${thumb(p)}${prodStatus(p)}${nm>1?`<span class="mcount">${svg(nv?'video':'cam')}${nm}</span>`:''}</div><div class="tx"><b>${esc(p.nome)}</b>
-    ${admin?`<span class="st">${esc(pa.nome_loja||'')}</span>`:''}${admin&&p.preco_venda?`<span class="pr">${brl(p.preco_venda)}</span><span class="st">parceiro ${brl(p.preco_parceiro)} · margem ${brl(p.preco_venda-p.preco_parceiro)}${p.auto_preco?' · auto':''}</span>`:`<span class="pr">${brl(p.preco_parceiro)}</span>`}<span class="st">${p.estoque} em estoque${p.categoria?' · '+CATS[p.categoria]:''}</span>
+    ${admin?`<span class="st">${esc(pa.nome_loja||'')}</span>`:''}${admin&&p.preco_venda?`<span class="pr">${brl(p.preco_venda)}</span><span class="st">parceiro ${brl(p.preco_parceiro)} · margem ${brl(p.preco_venda-p.preco_parceiro)}${p.auto_preco?' · auto':''}</span>`:`<span class="pr">${brl(p.preco_parceiro)}</span>`}<span class="st">${p.estoque} em estoque${(p.variacoes||[]).length?` · ${p.variacoes.length} ${esc((p.opcao_nome||'opção').toLowerCase())}${p.variacoes.length>1?'s':''}`:''}${p.categoria?' · '+CATS[p.categoria]:''}</span>
     <button class="btn ${admin&&!p.shopify_product_id?'':'ghost'} sm block" data-editprod="${p.id}">${admin?(p.shopify_product_id?'Ver e editar':'Publicar na loja'):'Editar'}</button></div></article>`}
 function renderProds(){chips('#prFilters',prodFilterList(prods),F.pr,'pr');const list=prods.filter(p=>prodFilter(F.pr,p));
   $('#prods').innerHTML=list.length?list.map(p=>pcard(p,false)).join(''):`<div class="empty" style="grid-column:1/-1">${svg('grid')}${prods.length?'Nenhum produto nesse filtro.':'Nenhum produto ainda. Comece pelos 3 que mais vendem na sua loja.'}${prods.length?'':'<button class="btn" data-newprod>Cadastrar primeiro produto</button>'}</div>`}
 function renderFin(){
   const paid=orders.filter(o=>o.pix_pago_em&&o.status!=='cancelado').sort((a,b)=>new Date(b.pix_pago_em)-new Date(a.pix_pago_em));
   $('#fTotal').textContent=brl(paid.reduce((a,o)=>a+Number(o.valor),0));$('#fMonth').textContent=paid.length+' pagamento(s) recebido(s)';
-  $('#pixList').innerHTML=paid.length?paid.slice(0,30).map(o=>`<div class="ln"><div style="min-width:0"><b style="font-size:14px">${esc(o.produto_nome)}</b><div class="meta">Pedido ${esc(o.numero)} · ${dt(o.pix_pago_em)}</div></div><strong class="plus">+ ${brl(o.valor)}</strong></div>`).join(''):'<p class="meta">Os Pix que a Mimovalle fizer para você aparecem aqui.</p>';
+  $('#pixList').innerHTML=paid.length?paid.slice(0,30).map(o=>`<div class="ln"><div style="min-width:0"><b style="font-size:14px">${esc(nomeItem(o))}</b><div class="meta">Pedido ${esc(o.numero)} · ${dt(o.pix_pago_em)}</div></div><strong class="plus">+ ${brl(o.valor)}</strong></div>`).join(''):'<p class="meta">Os Pix que a Mimovalle fizer para você aparecem aqui.</p>';
   const by={};paid.forEach(o=>{const d=new Date(o.pix_pago_em);const k=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');(by[k]=by[k]||{v:0,n:0,d}).v+=Number(o.valor);by[k].n++});
   const ks=Object.keys(by).sort().reverse();
   $('#monthList').innerHTML=ks.length?ks.map(k=>`<div class="ln"><div><b style="font-size:14px;text-transform:capitalize">${by[k].d.toLocaleDateString('pt-BR',{month:'long',year:'numeric'})}</b><div class="meta">${by[k].n} venda(s)</div></div><strong>${brl(by[k].v)}</strong></div>`).join(''):'<p class="meta">Sem recebimentos ainda.</p>'}
@@ -787,7 +825,18 @@ async function addFiles(e){const files=[...e.target.files];e.target.value='';
       sheetMedia.push({tipo:'video',file:f,blobUrl:URL.createObjectURL(f),ext:(f.name.split('.').pop()||'mp4').toLowerCase().replace(/[^a-z0-9]/g,'')||'mp4',mime:f.type})}
     else if(f.type.startsWith('image/')){try{const b=await shrink(f);sheetMedia.push({tipo:'imagem',file:b,blobUrl:URL.createObjectURL(b),ext:'jpg',mime:'image/jpeg'})}catch(_){toast('Não consegui ler uma das imagens.')}}}
   renderGal()}
+const OPCS=['Cor','Tamanho','Modelo','Voltagem','Sabor'];
+const varRow=v=>`<div class="vrow"><input class="vn" maxlength="40" placeholder="Ex.: Azul" value="${esc(v.nome||'')}" aria-label="Nome da variação"><input class="ve" inputmode="numeric" placeholder="0" value="${v.estoque!=null?v.estoque:''}" aria-label="Estoque da variação"><button type="button" class="x2" data-rmvar aria-label="Remover variação">${svg('x')}</button></div>`;
+function syncVar(){const c=$('#pTemVar');if(!c)return;const on=c.checked;$('#varBox').hidden=!on;const est=$('#pEst');est.readOnly=on;
+  if(on){if(!$$('#varList .vrow').length){$('#varList').insertAdjacentHTML('beforeend',varRow({})+varRow({}))}
+    est.value=$$('#varList .ve').reduce((a,i)=>a+(parseInt(i.value,10)||0),0)}}
+document.addEventListener('click',e=>{if(e.target.closest('[data-addvar]')){$('#varList').insertAdjacentHTML('beforeend',varRow({}));const r=$$('#varList .vn');r[r.length-1].focus();syncVar();return}
+  const rv=e.target.closest('[data-rmvar]');if(rv){rv.closest('.vrow').remove();syncVar()}});
+document.addEventListener('input',e=>{if(e.target.closest('#varList'))syncVar()});
+document.addEventListener('change',e=>{if(e.target.id==='pTemVar')syncVar()});
 function openProd(p){lastFocus=document.activeElement;const admin=isAdmin;p=p||{};
+  const vars0=Array.isArray(p.variacoes)?p.variacoes:[],travaVar=!!(p.shopify_product_id&&vars0.length);
+  const opcs=OPCS.includes(p.opcao_nome||'Cor')?OPCS:[...OPCS,p.opcao_nome];
   sheetMedia=(p.midias&&p.midias.length?p.midias:(p.foto_path?[{path:p.foto_path,tipo:'imagem'}]:[])).map(m=>({path:m.path,tipo:m.tipo}));
   const pa=admin&&p.parceiro_id?parc(p.parceiro_id):null;
   $('#sheetRoot').innerHTML=`<div class="sheet-bg" data-closebg><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="shT">
@@ -798,6 +847,14 @@ function openProd(p){lastFocus=document.activeElement;const admin=isAdmin;p=p||{
     <div class="field"><label for="pNome">Nome do produto</label><input id="pNome" required minlength="2" maxlength="140" value="${esc(p.nome||'')}" placeholder="Ex.: Kit potes herméticos 10 peças"></div>
     <div class="g2"><div class="field"><label for="pPreco">Preço de parceiro (R$)</label><input id="pPreco" required inputmode="decimal" value="${p.preco_parceiro!=null?Number(p.preco_parceiro).toFixed(2).replace('.',','):''}" placeholder="45,00"></div>
     <div class="field"><label for="pEst">Estoque</label><input id="pEst" required inputmode="numeric" value="${p.estoque!=null?p.estoque:''}" placeholder="30"></div></div>
+    <label class="aceite"><input type="checkbox" id="pTemVar" ${vars0.length?'checked':''} ${travaVar?'disabled':''}> <span>Tem cores, tamanhos ou modelos diferentes</span></label>
+    <div class="varbox" id="varBox" ${vars0.length?'':'hidden'}>
+      <fieldset style="border:0;padding:0;margin:0"><legend style="font-size:13px;font-weight:600;padding:0;margin-bottom:8px">O que muda?</legend><div class="catpick">${opcs.map(o=>`<label><input type="radio" name="opc" value="${esc(o)}" ${(p.opcao_nome||'Cor')===o?'checked':''}><span>${esc(o)}</span></label>`).join('')}</div></fieldset>
+      <div style="display:grid;grid-template-columns:1fr 96px 46px;gap:8px;font-size:12px;font-weight:600;color:var(--soft)"><span>Nome</span><span>Estoque</span><span></span></div>
+      <div id="varList" style="display:flex;flex-direction:column;gap:8px">${vars0.map(varRow).join('')}</div>
+      <button class="btn ghost sm" type="button" data-addvar style="align-self:flex-start">${svg('plus')}Adicionar</button>
+      <span class="hint">Cada uma com seu estoque. O estoque total é a soma. Com estoque 0 ela aparece como esgotada na loja.${travaVar?' Para tirar as variações de um produto que já está na loja, fale com a Mimovalle.':''}</span>
+    </div>
     <fieldset style="border:0;padding:0;margin:0;display:flex;flex-direction:column;gap:6px"><legend style="font-size:13px;font-weight:600;padding:0;margin-bottom:6px">Categoria</legend><div class="catpick">${Object.entries(CATS).map(([k,l])=>`<label><input type="radio" name="cat" value="${k}" ${p.categoria===k?'checked':''}><span>${l}</span></label>`).join('')}</div></fieldset>
     <div class="field"><label for="pDesc">Descrição (medidas, material, o que vem na caixa)</label><textarea id="pDesc" maxlength="1200">${esc(p.descricao||'')}</textarea></div>
     <div class="field"><label for="pLink">Link do produto na Shopee (opcional)</label><input id="pLink" type="url" value="${esc(p.link_origem||'')}" placeholder="https://shopee.com.br/…"></div>
@@ -824,9 +881,9 @@ function openProd(p){lastFocus=document.activeElement;const admin=isAdmin;p=p||{
      <div class="field"><label for="prDe">Preço "de" (opcional)</label><input id="prDe" inputmode="decimal" value="${p.preco_de?Number(p.preco_de).toFixed(2).replace('.',','):''}" placeholder="riscado no anúncio"></div></div>
      <p class="meta" id="prMargem"></p>
      <label style="display:flex;gap:10px;align-items:flex-start;font-weight:500;font-size:14px"><input type="checkbox" id="prAuto" ${p.auto_preco!==false?'checked':''} style="width:22px;height:22px;min-height:0;flex-shrink:0;margin-top:1px"> Ajustar sozinho quando o parceiro mudar o preço, mantendo esta margem</label>
-     <div class="acts"><button class="btn navy" type="submit" data-ativar="0">Salvar preço</button>${!p.ativo&&!p.removido&&p.estoque>0?`<button class="btn" type="submit" data-ativar="1">Salvar e ativar na loja</button>`:''}</div>
+     <div class="acts"><button class="btn navy" type="submit" data-ativar="0">Salvar preço</button>${!p.ativo&&!p.removido?`<button class="btn" type="submit" data-ativar="1">Salvar e ativar na loja</button>`:''}</div>
      ${p.ativo?`<button class="btn line" type="button" data-toggle="${p.id}">Pausar produto na loja</button>`:''}
-     <p class="hint">Estoque zerado ou produto removido tira o anúncio do ar sozinho.</p>
+     <p class="hint">Estoque zerado tira o anúncio do ar e ele volta sozinho quando o parceiro repõe. Cada venda paga já baixa o estoque.</p>
    </form>`:''}
   </div></div>`;
   document.body.style.overflow='hidden';setTimeout(()=>$('#pNome').focus(),60);
@@ -834,7 +891,7 @@ function openProd(p){lastFocus=document.activeElement;const admin=isAdmin;p=p||{
   if($('#pbPreco')){$('#pbPreco').oninput=mg;mg()}
   const mg2=()=>{const v=num($('#prVenda').value),c=Number(p.preco_parceiro);$('#prMargem').innerHTML=v>0?`Sua margem: <b style="color:${v>c?'var(--ok)':'var(--late)'}">${brl(v-c)}</b> por unidade (${c?Math.round((v-c)/v*100):0}% do preço)`:''};
   if($('#prVenda')){$('#prVenda').oninput=mg2;mg2()}
-  renderGal()}
+  renderGal();syncVar()}
 document.addEventListener('click',e=>{const r=e.target.closest('[data-rm]');if(r){const m=sheetMedia.splice(+r.dataset.rm,1)[0];if(m&&m.blobUrl)URL.revokeObjectURL(m.blobUrl);renderGal();return}
   const c=e.target.closest('[data-capa]');if(c){const m=sheetMedia.splice(+c.dataset.capa,1)[0];sheetMedia.unshift(m);renderGal()}});
 function shrink(file){return new Promise((res,rej)=>{const img=new Image();img.onload=()=>{const m=1400,s=Math.min(1,m/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.round(img.width*s);c.height=Math.round(img.height*s);
@@ -844,7 +901,7 @@ document.addEventListener('click',e=>{if(e.target.matches('[data-closebg]')||e.t
 
 /* ---------- ações ---------- */
 document.addEventListener('click',async e=>{const t=e.target;
-  const ch=t.closest('[data-chip]');if(ch){const k=ch.dataset.chip;F[k]=ch.dataset.v;({p:renderOrders,pr:renderProds,a:renderAOrders,apr:renderAProds})[k]();return}
+  const ch=t.closest('[data-chip]');if(ch){const k=ch.dataset.chip;F[k]=ch.dataset.v;({p:renderOrders,pr:renderProds,a:renderAOrders,apr:renderAProds,rel:renderRel})[k]();return}
   if(t.closest('[data-newprod]')){openProd(null);return}
   const ep=t.closest('[data-editprod]');if(ep){openProd(prods.find(p=>p.id===ep.dataset.editprod));return}
   const s=t.closest('[data-ship]');if(s){const f=document.querySelector(`.ship[data-id="${s.dataset.ship}"]`);f.hidden=false;s.parentElement.hidden=true;f.querySelector('input').focus();return}
@@ -873,10 +930,16 @@ document.addEventListener('submit',async e=>{const f=e.target;
     const {error}=await sb.from('fm_pedidos').update({status:'enviado',rastreio:v}).eq('id',f.dataset.id);busy(f,false);if(error){toast(errMsg(error));return}toast('Envio confirmado. Obrigado pela agilidade!');notify('enviado',f.dataset.id);loadPartner();return}
   if(f.id==='fProd'){e.preventDefault();const id=f.dataset.id;const nome=$('#pNome').value.trim(),preco=num($('#pPreco').value),est=parseInt($('#pEst').value,10),link=$('#pLink').value.trim();
     const cat=(f.querySelector('input[name=cat]:checked')||{}).value||null,desc=$('#pDesc').value.trim()||null;
-    if(!(preco>0)||isNaN(est)||est<0){toast('Confira o preço e o estoque (só números).');return}
+    let variacoes=[],opcao_nome=null,estoque=est;
+    if($('#pTemVar').checked){const rows=$$('#varList .vrow').map(r=>({nome:r.querySelector('.vn').value.trim(),estoque:parseInt(r.querySelector('.ve').value||'0',10)})).filter(v=>v.nome);
+      if(!rows.length){toast('Escreva pelo menos uma variação, ou desmarque a opção.');return}
+      if(rows.some(v=>isNaN(v.estoque)||v.estoque<0)){toast('Confira o estoque de cada variação (só números).');return}
+      const nm=rows.map(v=>v.nome.toLowerCase());if(new Set(nm).size!==nm.length){toast('Tem variação com o nome repetido.');return}
+      variacoes=rows;opcao_nome=(f.querySelector('input[name=opc]:checked')||{}).value||'Cor';estoque=rows.reduce((a,v)=>a+v.estoque,0)}
+    if(!(preco>0)||isNaN(estoque)||estoque<0){toast('Confira o preço e o estoque (só números).');return}
     if(!id&&!sheetMedia.some(m=>m.tipo==='imagem')&&!confirmNoPhoto){confirmNoPhoto=true;toast('Produto com foto vende mais. Toque em enviar de novo para seguir sem foto.');return}
     busy(f,true);const btn=f.querySelector('button[type=submit]'),btnTx=btn.textContent;
-    const base={nome,preco_parceiro:Math.round(preco*100)/100,estoque:est,link_origem:/^https:\/\//.test(link)?link:null,categoria:cat,descricao:desc};
+    const base={nome,preco_parceiro:Math.round(preco*100)/100,estoque,variacoes,opcao_nome,link_origem:/^https:\/\//.test(link)?link:null,categoria:cat,descricao:desc};
     let row=id?prods.find(p=>p.id===id):null,error;
     if(!id){const r=await sb.from('fm_produtos').insert({...base,parceiro_id:me.id}).select('id').single();error=r.error;row=r.data}
     else{const r=await sb.from('fm_produtos').update(base).eq('id',id);error=r.error}
@@ -910,7 +973,7 @@ async function loadAdmin(){
   const [o,p,pa,v]=await Promise.all([sb.from('fm_pedidos').select(PCOLS).order('created_at',{ascending:false}),sb.from('fm_produtos').select('*').order('created_at',{ascending:false}),sb.from('fm_parceiros').select('*').order('created_at',{ascending:false}),sb.rpc('fm_admin_vendas')]);
   if(o.error||p.error||pa.error){toast('Não foi possível carregar. Recarregue a página.');return}
   orders=o.data;prods=p.data;parceiros=pa.data;vendas={};(v.data||[]).forEach(x=>vendas[x.id]=x.preco_venda);
-  renderAInicio();renderAPix();renderAOrders();renderAProds();renderAParc();
+  renderAInicio();renderAPix();renderAOrders();renderAProds();renderAParc();renderRel();
   badge('apix',orders.filter(x=>x.status==='aguardando_pix').length);badge('aprods',prods.filter(x=>!x.shopify_product_id).length);badge('aparc',parceiros.filter(x=>x.status==='pendente').length)}
 const venda=o=>vendas[o.id]!=null?Number(vendas[o.id])*o.qtd:null;
 function renderAInicio(){
@@ -930,7 +993,7 @@ function renderAInicio(){
   $('#aRank').innerHTML=rk.length?rk.map((x,i)=>`<div class="ln"><div><b style="font-size:14px">${i+1}º ${esc(x.p.nome_loja)}</b><div class="meta">${x.n} pedido(s)</div></div><strong>${brl(x.v)}</strong></div>`).join(''):'<p class="meta">O ranking aparece quando chegarem as primeiras vendas.</p>'}
 function renderAPix(){const w=orders.filter(o=>o.status==='aguardando_pix');
   $('#aPixList').innerHTML=w.length?w.map(o=>{const pa=parc(o.parceiro_id),p=prodOf(o),v=venda(o);return `<article class="card order"><div class="ph ${p&&p.categoria?'cat-'+p.categoria:''}">${p?thumb(p):svg('box')}</div><div class="body">
-    <div class="row"><div><h3>${esc(o.produto_nome)}</h3><div class="meta">${esc(pa.nome_loja)} · Pedido ${esc(o.numero)} · ${o.qtd} un. · ${dt(o.created_at)}</div></div><strong style="font-size:18px">${brl(o.valor)}</strong></div>
+    <div class="row"><div><h3>${esc(o.produto_nome)}</h3>${vtag(o)}<div class="meta">${esc(pa.nome_loja)} · Pedido ${esc(o.numero)} · ${o.qtd} un. · ${dt(o.created_at)}</div></div><strong style="font-size:18px">${brl(o.valor)}</strong></div>
     ${v!=null?`<p class="meta">Cliente pagou ${brl(v)} · sua margem <b style="color:var(--ok)">${brl(v-Number(o.valor))}</b></p>`:''}
     <div class="addr"><span class="meta">Chave Pix de ${esc(pa.responsavel)}</span><b style="overflow-wrap:anywhere">${esc(pa.chave_pix)}</b></div>
     <div class="acts"><button class="btn ghost" data-copy="${esc(pa.chave_pix)}">${svg('copy')}Copiar chave</button><button class="btn" data-pix="${o.id}">${svg('check')}Já fiz o Pix</button></div></div></article>`}).join(''):`<div class="empty">${svg('money')}Nenhum Pix pendente. Quando um cliente pagar um produto de parceiro, ele aparece aqui sozinho.</div>`}
@@ -938,21 +1001,57 @@ function renderAOrders(){const n=s=>orders.filter(o=>o.status===s).length;
   chips('#aFilters',[['enviar','A enviar',n('enviar')],['aguardando_pix','Aguardando Pix',n('aguardando_pix')],['enviado','Enviados',n('enviado')],['cancelado','Cancelados',n('cancelado')]],F.a,'a');
   const q=F.aq.toLowerCase();const list=orders.filter(o=>o.status===F.a&&matchQ(o,q,parc(o.parceiro_id).nome_loja));
   $('#aOrders').innerHTML=list.length?list.map(o=>{const pa=parc(o.parceiro_id),p=prodOf(o);return `<article class="card order"><div class="ph ${p&&p.categoria?'cat-'+p.categoria:''}">${p?thumb(p):svg('box')}</div><div class="body">
-    <div class="row"><div><h3>${esc(o.produto_nome)}</h3><div class="meta">${esc(pa.nome_loja)} · Pedido ${esc(o.numero)} · ${o.qtd} un.</div></div>${pillFor(o)}</div>
+    <div class="row"><div><h3>${esc(o.produto_nome)}</h3>${vtag(o)}<div class="meta">${esc(pa.nome_loja)} · Pedido ${esc(o.numero)} · ${o.qtd} un.</div></div>${pillFor(o)}</div>
     ${o.status==='enviar'?`<div class="money"><span>Prazo do parceiro: <span class="timer">${fmt(left(o))}</span></span><strong>${brl(o.valor)}</strong></div>`:''}
     ${o.status==='enviado'?`<p class="track">Rastreio ${esc(o.rastreio)} · ${dt(o.enviado_em)}</p>`:''}
     ${o.status==='enviado'?(o.rastreio_na_shopify?`<p class="meta">${svg('check','width="13" height="13" style="vertical-align:-2px;color:var(--ok)"')} Rastreio já está na Shopify e o cliente foi avisado.</p>`:`<p class="meta" style="color:var(--warn)">Rastreio ainda não foi para a Shopify.</p>`):''}
     <div class="acts">${o.status==='enviado'&&!o.rastreio_na_shopify?`<button class="btn navy sm" data-rastreio="${o.id}">${svg('ext')}Enviar rastreio à Shopify</button>`:''}${o.status==='enviado'?`<button class="btn ghost sm" data-copy="${esc(o.rastreio)}">${svg('copy')}Copiar rastreio</button>`:''}
-    ${o.status==='enviar'&&pa.whatsapp?`<a class="btn ghost sm" href="${wa(pa.whatsapp)}?text=${encodeURIComponent('Oi! O Pix do pedido '+o.numero+' ('+o.produto_nome+') já foi feito. O prazo de envio é de 24h. Obrigado!')}" target="_blank" rel="noopener">${svg('wa')}Avisar parceiro</a>`:''}
+    ${o.status==='enviar'&&pa.whatsapp?`<a class="btn ghost sm" href="${wa(pa.whatsapp)}?text=${encodeURIComponent('Oi! O Pix do pedido '+o.numero+' ('+nomeItem(o)+') já foi feito. O prazo de envio é de 24h. Obrigado!')}" target="_blank" rel="noopener">${svg('wa')}Avisar parceiro</a>`:''}
     <a class="btn ghost sm" href="${LOJA_ADMIN+encodeURIComponent(o.shopify_order_id)}" target="_blank" rel="noopener">${svg('ext')}Pedido na Shopify</a></div></div></article>`}).join(''):`<div class="empty">${svg('box')}${q?'Nada encontrado nessa busca.':'Nenhum pedido aqui.'}</div>`}
-function renderAProds(){const n=f=>prods.filter(f).length;chips('#aPrFilters',[['pendentes','Para publicar',n(p=>!p.shopify_product_id&&!p.removido)],['ativos','Ativos',n(p=>p.ativo)],['pausados','Pausados',n(p=>p.shopify_product_id&&!p.ativo&&p.estoque>0&&!p.removido)],['esgotados','Esgotados',n(p=>p.estoque===0&&!p.removido)],['removidos','Removidos',n(p=>p.removido)],['todos','Todos',n(p=>!p.removido)]],F.apr,'apr');
+function renderAProds(){const n=f=>prods.filter(f).length;chips('#aPrFilters',[['pendentes','Para publicar',n(p=>!p.shopify_product_id&&!p.removido)],['ativos','Ativos',n(p=>p.ativo)],['pausados','Pausados',n(p=>p.shopify_product_id&&!p.ativo&&!p.removido)],['esgotados','Esgotados',n(p=>p.estoque===0&&!p.removido)],['removidos','Removidos',n(p=>p.removido)],['todos','Todos',n(p=>!p.removido)]],F.apr,'apr');
   const list=prods.filter(p=>prodFilter(F.apr,p));$('#aProds').innerHTML=list.length?list.map(p=>pcard(p,true)).join(''):`<div class="empty" style="grid-column:1/-1">${svg('grid')}Nenhum produto nesse filtro.</div>`}
 function renderAParc(){$('#aParc').innerHTML=parceiros.length?parceiros.map(p=>{const pill=p.status==='ativo'?'<span class="pill p-ok">Ativo</span>':p.status==='pendente'?'<span class="pill p-send">Novo cadastro</span>':'<span class="pill p-off">Pausado</span>';
-    const n=prods.filter(x=>x.parceiro_id===p.id).length,os=orders.filter(x=>x.parceiro_id===p.id&&x.status!=='cancelado'),late=os.filter(o=>o.enviado_em&&new Date(o.enviado_em)-new Date(o.pix_pago_em)>24*H).length;
+    const n=prods.filter(x=>x.parceiro_id===p.id).length,os=orders.filter(x=>x.parceiro_id===p.id&&x.status!=='cancelado'),nt=nota(os);
     return `<article class="card"><div class="row"><div style="display:flex;gap:12px;align-items:center"><span class="avatar">${esc(p.nome_loja.split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase())}</span><div style="min-width:0"><h3>${esc(p.nome_loja)}</h3><div class="meta">${esc(p.responsavel)} · ${esc(p.whatsapp)} · desde ${new Date(p.created_at).toLocaleDateString('pt-BR')}</div><div class="meta" style="color:${p.termo_aceito_em?'var(--ok)':'var(--late)'}">${p.termo_aceito_em?`Termo v${esc(p.termo_versao)} aceito em ${new Date(p.termo_aceito_em).toLocaleDateString('pt-BR')}`:'Ainda não aceitou o termo'}</div></div></div>${pill}</div>
-    <div class="tiles" style="grid-template-columns:repeat(3,1fr)"><div class="tile" style="background:var(--bg2)"><small>Produtos</small><b>${n}</b></div><div class="tile" style="background:var(--bg2)"><small>Pedidos</small><b>${os.length}</b></div><div class="tile" style="background:var(--bg2)"><small>Envios atrasados</small><b style="color:${late?'var(--late)':'inherit'}">${late}</b></div></div>
+    <div class="tiles" style="grid-template-columns:repeat(3,1fr)"><div class="tile" style="background:var(--bg2)"><small>Produtos</small><b>${n}</b></div><div class="tile" style="background:var(--bg2)"><small>Pedidos</small><b>${os.length}</b></div><div class="tile" style="background:var(--bg2)"><small>Nota de envio</small><b style="color:${nt?nt.cor:'inherit'}">${nt?nt.pct+'%':'—'}</b><span>${nt?nt.nivel+' · média '+horasTx(nt.med):'sem envios'}</span></div></div>
     <div class="acts"><a class="btn ghost sm" href="${wa(p.whatsapp)}" target="_blank" rel="noopener">${svg('wa')}WhatsApp</a>
     ${p.status!=='ativo'?`<button class="btn sm" data-status="ativo" data-id="${p.id}">${svg('check')}Liberar parceiro</button>`:`<button class="btn line sm" data-status="pausado" data-id="${p.id}">Pausar</button>`}</div></article>`}).join(''):`<div class="empty">${svg('users')}Nenhum parceiro ainda. Copie o link de convite e mande para os vendedores.<button class="btn" data-copylink>Copiar link de convite</button></div>`}
+
+/* ---------- relatórios ---------- */
+function relInicio(k){const d=new Date();d.setHours(0,0,0,0);
+  if(k==='7')return new Date(d.getTime()-6*DAY);if(k==='30')return new Date(d.getTime()-29*DAY);
+  if(k==='mes'){d.setDate(1);return d}if(k==='ano'){d.setMonth(0,1);return d}return new Date(0)}
+function relDados(){const ini=relInicio(F.rel);const dentro=o=>new Date(o.created_at)>=ini;
+  return {ini,list:orders.filter(o=>o.status!=='cancelado'&&dentro(o)),canc:orders.filter(o=>o.status==='cancelado'&&dentro(o))}}
+function renderRel(){if(!isAdmin||!$('#relTiles'))return;
+  chips('#relFilters',[['7','7 dias'],['30','30 dias'],['mes','Este mês'],['ano','Este ano'],['tudo','Tudo']],F.rel,'rel');
+  const {ini,list,canc}=relDados();const vd=o=>venda(o);
+  const fat=list.reduce((a,o)=>a+(vd(o)||0),0),custo=list.reduce((a,o)=>a+Number(o.valor),0),comV=list.filter(o=>vd(o)!=null);
+  const marg=comV.reduce((a,o)=>a+vd(o)-Number(o.valor),0),peds=new Set(list.map(o=>o.shopify_order_id)).size,itens=list.reduce((a,o)=>a+o.qtd,0);
+  $('#relTiles').innerHTML=[['var(--peach)','Faturamento',brl0(fat),peds+' pedido(s) · '+itens+' item(ns)'],['var(--mint)','Sua margem',brl0(marg),fat?Math.round(marg/fat*100)+'% do faturamento':'venda menos custo'],['var(--butter)','Pago a parceiros',brl0(custo),canc.length+' cancelado(s) no período'],['var(--lilac)','Ticket médio',peds?brl0(fat/peds):'—','por pedido']]
+    .map(([bg,l,v,s])=>`<div class="tile" style="background:${bg}"><small>${l}</small><b>${v}</b><span>${s}</span></div>`).join('');
+  const val=o=>vd(o)!=null?vd(o):Number(o.valor);let data;
+  if(F.rel==='ano'||F.rel==='tudo'){const m0=new Date();m0.setDate(1);m0.setHours(0,0,0,0);const n=F.rel==='ano'?m0.getMonth()+1:12;data=[];
+    for(let i=n-1;i>=0;i--){const d=new Date(m0.getFullYear(),m0.getMonth()-i,1),e=new Date(d.getFullYear(),d.getMonth()+1,1);data.push({d,v:list.filter(o=>{const t=new Date(o.created_at);return t>=d&&t<e}).reduce((a,o)=>a+val(o),0)})}
+    $('#relChartT').textContent='vendas por mês';drawChart('#relChart',data,d=>d.toLocaleDateString('pt-BR',{month:'short'}).replace('.',''),d=>d.toLocaleDateString('pt-BR',{month:'long',year:'numeric'}))}
+  else{const t0=new Date();t0.setHours(0,0,0,0);const n=Math.round((t0-ini)/DAY)+1;data=[];
+    for(let i=n-1;i>=0;i--){const d=new Date(t0.getTime()-i*DAY);data.push({d,v:list.filter(o=>new Date(o.created_at).toDateString()===d.toDateString()).reduce((a,o)=>a+val(o),0)})}
+    $('#relChartT').textContent='vendas por dia';drawChart('#relChart',data)}
+  $('#relChartSum').textContent=brl(data.reduce((a,x)=>a+x.v,0))+' no período';
+  const byP={};list.forEach(o=>{const k=o.produto_id;const r=byP[k]=byP[k]||{nome:o.produto_nome,parc:parc(o.parceiro_id).nome_loja||'',q:0,f:0,m:0};r.q+=o.qtd;r.f+=vd(o)||0;if(vd(o)!=null)r.m+=vd(o)-Number(o.valor)});
+  const tp=Object.values(byP).sort((a,b)=>b.f-a.f||b.q-a.q).slice(0,10);
+  $('#relProds').innerHTML=tp.length?`<table class="relt"><thead><tr><th>Produto</th><th class="n">Vendidos</th><th class="n">Faturou</th><th class="n">Margem</th></tr></thead><tbody>${tp.map(r=>`<tr><td><b>${esc(r.nome)}</b><div class="meta">${esc(r.parc)}</div></td><td class="n">${r.q}</td><td class="n">${brl(r.f)}</td><td class="n" style="color:var(--ok)">${brl(r.m)}</td></tr>`).join('')}</tbody></table>`:'<p class="meta">Nenhuma venda no período.</p>';
+  const pr=parceiros.map(p=>{const os=list.filter(o=>o.parceiro_id===p.id);return {p,os,f:os.reduce((a,o)=>a+(vd(o)||0),0),c:os.reduce((a,o)=>a+Number(o.valor),0),nt:nota(orders.filter(o=>o.parceiro_id===p.id))}}).filter(x=>x.os.length).sort((a,b)=>b.f-a.f);
+  $('#relParc').innerHTML=pr.length?`<table class="relt"><thead><tr><th>Parceiro</th><th class="n">Pedidos</th><th class="n">Pago a ele</th><th class="n">Sua margem</th><th class="n">Nota</th></tr></thead><tbody>${pr.map(x=>`<tr><td><b>${esc(x.p.nome_loja)}</b></td><td class="n">${new Set(x.os.map(o=>o.shopify_order_id)).size}</td><td class="n">${brl(x.c)}</td><td class="n" style="color:var(--ok)">${brl(x.f-x.c)}</td><td class="n" style="color:${x.nt?x.nt.cor:'inherit'}">${x.nt?x.nt.pct+'%':'—'}</td></tr>`).join('')}</tbody></table>`:'<p class="meta">Nenhuma venda no período.</p>'}
+function baixarCsv(){const {list,canc}=relDados();const all=[...list,...canc].sort((a,b)=>new Date(a.created_at)-new Date(b.created_at));
+  if(!all.length){toast('Nenhum pedido no período.');return}
+  const st={aguardando_pix:'Aguardando Pix',enviar:'Enviar',enviado:'Enviado',cancelado:'Cancelado'};
+  const cel=v=>{const s=String(v??'');return /[;"\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s};const n2=v=>v==null?'':Number(v).toFixed(2).replace('.',',');
+  const linhas=[['Data','Pedido','Parceiro','Produto','Variação','Qtd','Venda (R$)','Pago ao parceiro (R$)','Margem (R$)','Status','Pix pago em','Enviado em','Rastreio','Cidade','UF']]
+    .concat(all.map(o=>{const v=venda(o);return [new Date(o.created_at).toLocaleString('pt-BR'),o.numero,parc(o.parceiro_id).nome_loja||'',o.produto_nome,o.variante||'',o.qtd,n2(v),n2(o.valor),v!=null&&o.status!=='cancelado'?n2(v-Number(o.valor)):'',st[o.status]||o.status,o.pix_pago_em?new Date(o.pix_pago_em).toLocaleString('pt-BR'):'',o.enviado_em?new Date(o.enviado_em).toLocaleString('pt-BR'):'',o.rastreio||'',(o.cliente||{}).cidade||'',(o.cliente||{}).uf||'']}));
+  const blob=new Blob(['﻿'+linhas.map(l=>l.map(cel).join(';')).join('\r\n')],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`fornece-mimo-vendas-${new Date().toISOString().slice(0,10)}.csv`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
+document.addEventListener('click',e=>{if(e.target.closest('[data-csv]'))baixarCsv()});
 
 /* ---------- avisos no celular ---------- */
 const VAPID_PUB='BD1J2SyzV1H7xmY0G5O_NYgTGN0SOvgPTySmgegp0nC_A76XFVSETiIq7-w9sTEjSBDIfUdMN7DyAjNUB1J6FI0';
