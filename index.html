@@ -246,6 +246,8 @@ footer.foot{text-align:center;color:var(--soft);font-size:13px;padding-block:24p
 .sheet{background:#fff;width:min(520px,100%);height:100%;overflow-y:auto;display:flex;flex-direction:column;padding-block:max(18px,env(safe-area-inset-top)) max(24px,env(safe-area-inset-bottom));padding-left:max(20px,env(safe-area-inset-left));padding-right:max(20px,env(safe-area-inset-right));gap:16px;animation:in .22s ease-out}
 @keyframes in{from{transform:translateX(30px);opacity:0}}
 @media (max-width:640px){.sheet-bg{align-items:flex-end}.sheet{height:auto;max-height:92vh;border-radius:24px 24px 0 0;animation:up .22s ease-out}@keyframes up{from{transform:translateY(30px);opacity:0}}}
+.termo h3{font-size:15px;margin:18px 0 6px;color:var(--navy,#24395C)}.termo p,.termo li{font-size:14px;line-height:1.55;color:var(--ink,#1B2C49)}.termo ul{padding-left:18px;margin:4px 0}.termo .tv{font-size:12px;color:var(--soft)}
+.aceite{display:flex;gap:10px;align-items:flex-start;font-weight:500;font-size:14px;line-height:1.45}.aceite input{width:22px;height:22px;min-height:0;flex-shrink:0;margin-top:1px}.aceite .linkbtn{display:inline;padding:0;font-size:inherit}
 .sheet-h{display:flex;justify-content:space-between;align-items:center;gap:12px}
 .x{width:40px;height:40px;border-radius:50%;border:0;background:var(--bg2);cursor:pointer;display:grid;place-items:center;color:var(--ink);flex-shrink:0}
 .x svg{width:18px;height:18px}
@@ -390,6 +392,7 @@ footer.foot{text-align:center;color:var(--soft);font-size:13px;padding-block:24p
         </div>
         <div class="field"><label for="sEmail">E-mail</label><input id="sEmail" type="email" autocomplete="email" required></div>
         <div class="field"><label for="sPass">Crie uma senha</label><input id="sPass" type="password" autocomplete="new-password" required minlength="8"><span class="hint">Mínimo de 8 caracteres.</span></div>
+        <label class="aceite"><input type="checkbox" id="sTermo" required> <span>Li e aceito o <button class="linkbtn" type="button" data-termo>termo de parceria</button>.</span></label>
         <button class="btn block" type="submit">Enviar cadastro</button>
         <p class="hint">A chave Pix é para a Mimovalle pagar você antes de cada envio.</p>
       </form>
@@ -419,7 +422,13 @@ footer.foot{text-align:center;color:var(--soft);font-size:13px;padding-block:24p
       <div class="field"><label for="cWhats">WhatsApp</label><input id="cWhats" required inputmode="tel"></div>
       <div class="field"><label for="cPix">Chave Pix</label><input id="cPix" required maxlength="120"></div>
     </div>
+    <label class="aceite"><input type="checkbox" id="cTermo" required> <span>Li e aceito o <button class="linkbtn" type="button" data-termo>termo de parceria</button>.</span></label>
     <button class="btn block" type="submit">Enviar cadastro</button>
+  </form>
+  <form class="card form" id="fTermo" hidden>
+    <div class="termo" id="termoTxt"></div>
+    <label class="aceite"><input type="checkbox" id="tTermo" required> <span>Li e aceito o termo de parceria da Fornece Mimo.</span></label>
+    <button class="btn block" type="submit">Aceitar e continuar</button>
   </form>
   <div class="pushbox" data-pushbox hidden></div>
   <button class="btn line" type="button" data-logout>Sair</button>
@@ -488,6 +497,8 @@ footer.foot{text-align:center;color:var(--soft);font-size:13px;padding-block:24p
             <div><span class="ck" style="border-color:var(--accent);color:var(--accent)">3</span>Estoque e preço sempre em dia no painel</div>
             <div><span class="ck" style="border-color:var(--accent);color:var(--accent)">4</span>Código de rastreio em todo envio</div>
           </div>
+          <p class="hint" id="contaTermo"></p>
+          <button class="btn ghost" type="button" data-termo>Ler o termo completo</button>
           <a class="btn ghost" href="https://wa.me/5569992826272" target="_blank" rel="noopener">Falar com a Mimovalle</a>
           <button class="btn line" type="button" data-logout>Sair da conta</button>
         </div>
@@ -595,7 +606,26 @@ function go(v){if(!VIEWS.includes(v))return;current=v;VIEWS.forEach(x=>$('#v-'+x
 function badge(v,n){$$(`[data-b="${v}"]`).forEach(b=>{b.hidden=!n;b.textContent=n})}
 function setWho(name,role){$('#who').hidden=!name;$('#whoName').textContent=name||'';$('#whoRole').textContent=role||'';
   $('#avatar').textContent=(name||'').split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join('')}
-function msg(title,text,pill,pc,complete){$('#msgTitle').textContent=title;$('#msgText').textContent=text;$('#msgPill').textContent=pill;$('#msgPill').className='pill '+pc;$('#fComplete').hidden=!complete;$('#msgWhats').hidden=complete;screen('msg');renderPush()}
+function msg(title,text,pill,pc,complete){$('#msgTitle').textContent=title;$('#msgText').textContent=text;$('#msgPill').textContent=pill;$('#msgPill').className='pill '+pc;$('#fComplete').hidden=!complete;$('#fTermo').hidden=true;$('#msgWhats').hidden=complete;screen('msg');renderPush()}
+
+/* ---------- termo de parceria ---------- */
+const TERMO_V='1.0',TERMO_DATA='01/11/2026';
+const TERMO_HTML=`<p class="tv">Versão ${TERMO_V} · ${TERMO_DATA}</p>
+<p>Este termo explica as regras entre a <b>Mimovalle</b> (loja que vende) e a sua loja (<b>parceiro</b>, que fornece e envia os produtos).</p>
+<h3>1. Como funciona</h3><p>A Mimovalle anuncia e vende na loja dela os produtos que você cadastra no painel. Você é um fornecedor independente: não existe vínculo de emprego nem exclusividade. Você pode continuar vendendo onde quiser.</p>
+<h3>2. Preço e pagamento</h3><ul><li>Você informa no painel o seu preço por unidade.</li><li>A Mimovalle define o preço de venda ao cliente.</li><li>A cada pedido pago, a Mimovalle paga você por Pix, na chave cadastrada, <b>antes do envio</b>: seu preço × quantidade.</li></ul>
+<h3>3. Envio</h3><ul><li>Envio em até <b>24 horas</b> depois do Pix.</li><li>Embalagem neutra, sem propaganda, cartão ou cupom de outra loja.</li><li>Código de rastreio informado no painel em todo envio.</li></ul>
+<h3>4. Estoque e preço em dia</h3><p>Mantenha estoque e preço sempre atualizados. Produto sem estoque sai da loja sozinho. Se faltar um produto já pago, avise a Mimovalle na hora e devolva o Pix recebido.</p>
+<h3>5. Produtos permitidos</h3><p>Só produtos originais, legais e de procedência comprovada. É proibido enviar réplica, falsificação ou qualquer item proibido por lei.</p>
+<h3>6. Defeito, troca e devolução</h3><ul><li>Produto com defeito, errado ou avariado: você troca ou devolve o valor que recebeu.</li><li>O cliente tem <b>7 dias</b> após receber para desistir da compra (Código de Defesa do Consumidor, art. 49). Quando o produto voltar, você devolve o valor que recebeu por ele.</li><li>O frete de volta fica com quem causou o problema.</li></ul>
+<h3>7. Dados dos clientes (LGPD)</h3><p>Nome, endereço e telefone do cliente servem <b>só para o envio</b>. Não entre em contato com o cliente, não guarde e não use esses dados para outra coisa.</p>
+<h3>8. Atrasos, pausa e saída</h3><p>Atrasos repetidos ou problemas com clientes podem pausar a parceria. Qualquer um dos dois pode encerrar quando quiser, avisando pelo WhatsApp. Pedidos já pagos precisam ser enviados.</p>
+<h3>9. Mudanças no termo</h3><p>Se este termo mudar, o painel mostra a nova versão e pede um novo aceite.</p>`;
+function openTermo(){lastFocus=document.activeElement;document.body.style.overflow='hidden';
+  $('#sheetRoot').innerHTML=`<div class="sheet-bg" data-closebg><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="shT"><div class="sheet-h"><div><span class="kick">fornece mimo</span><h2 id="shT">Termo de parceria</h2></div><button class="x" type="button" data-close aria-label="Fechar">${svg('x')}</button></div><div class="termo">${TERMO_HTML}</div><button class="btn block" type="button" data-close style="margin-top:20px">Entendi</button></div></div>`}
+document.addEventListener('click',e=>{if(e.target.closest('[data-termo]')){e.preventDefault();openTermo()}});
+function showTermo(p){$('#msgTitle').textContent='Novo termo de parceria';$('#msgText').textContent=`Para continuar usando o painel da ${p.nome_loja}, leia e aceite as regras da parceria.`;$('#msgPill').textContent='Leitura rápida';$('#msgPill').className='pill p-send';$('#fComplete').hidden=true;$('#msgWhats').hidden=true;$('#termoTxt').innerHTML=TERMO_HTML;$('#fTermo').hidden=false;screen('msg')}
+$('#fTermo').onsubmit=async e=>{e.preventDefault();busy(e.target,true);const {error}=await sb.from('fm_parceiros').update({termo_versao:TERMO_V}).eq('id',me.id);busy(e.target,false);if(error){toast(errMsg(error));return}toast('Termo aceito. Obrigado!');boot()};
 
 /* ---------- landing / auth ---------- */
 function seg(sign){$('#segLogin').setAttribute('aria-selected',String(!sign));$('#segSign').setAttribute('aria-selected',String(sign));$('#fLogin').hidden=sign;$('#fSign').hidden=!sign;$('#fNewPass').hidden=true}
@@ -607,8 +637,9 @@ $('#fLogin').onsubmit=async e=>{e.preventDefault();busy(e.target,true);const {er
 $('#forgot').onclick=async()=>{const email=$('#lEmail').value.trim();if(!email){toast('Digite seu e-mail no campo acima primeiro.');$('#lEmail').focus();return}
   const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});toast(error?errMsg(error):'Enviamos um link para criar uma nova senha no seu e-mail.')};
 $('#fSign').onsubmit=async e=>{e.preventDefault();
-  const d={nome_loja:$('#sLoja').value.trim(),responsavel:$('#sResp').value.trim(),whatsapp:$('#sWhats').value.trim(),chave_pix:$('#sPix').value.trim()};
+  const d={nome_loja:$('#sLoja').value.trim(),responsavel:$('#sResp').value.trim(),whatsapp:$('#sWhats').value.trim(),chave_pix:$('#sPix').value.trim(),termo_versao:TERMO_V};
   if(digits(d.whatsapp).length<10){toast('Digite o WhatsApp com DDD.');return}
+  if(!$('#sTermo').checked){toast('Leia e aceite o termo de parceria.');return}
   busy(e.target,true);const email=$('#sEmail').value.trim();
   const {data,error}=await sb.auth.signUp({email,password:$('#sPass').value,options:{data:{fm_cadastro:d},emailRedirectTo:location.origin+location.pathname}});
   busy(e.target,false);if(error){toast(errMsg(error));return}
@@ -616,7 +647,7 @@ $('#fSign').onsubmit=async e=>{e.preventDefault();
 $('#fNewPass').onsubmit=async e=>{e.preventDefault();busy(e.target,true);const {error}=await sb.auth.updateUser({password:$('#nPass').value});busy(e.target,false);if(error){toast(errMsg(error));return}recovery=false;toast('Senha alterada.');boot()};
 document.addEventListener('click',async e=>{if(e.target.closest('[data-logout]')){await pushOff();await sb.auth.signOut();history.replaceState(null,'',location.pathname)}});
 $('#fComplete').onsubmit=async e=>{e.preventDefault();busy(e.target,true);
-  const {error}=await sb.from('fm_parceiros').insert({id:me.id,nome_loja:$('#cLoja').value.trim(),responsavel:$('#cResp').value.trim(),whatsapp:$('#cWhats').value.trim(),chave_pix:$('#cPix').value.trim()});
+  const {error}=await sb.from('fm_parceiros').insert({id:me.id,nome_loja:$('#cLoja').value.trim(),responsavel:$('#cResp').value.trim(),whatsapp:$('#cWhats').value.trim(),chave_pix:$('#cPix').value.trim(),termo_versao:TERMO_V});
   busy(e.target,false);if(error){toast(errMsg(error));return}notify('novo_parceiro');boot()};
 
 /* ---------- boot ---------- */
@@ -630,9 +661,10 @@ async function boot(){
   if(isAdmin){setWho('Mimovalle','administração');buildMenu();await loadAdmin();screen('app');renderPush();go(VIEWS.includes(location.hash.slice(1))&&location.hash.startsWith('#a')?location.hash.slice(1):'ainicio');listen();return}
   let {data:p}=await sb.from('fm_parceiros').select('*').eq('id',me.id).maybeSingle();
   if(!p){const c=me.user_metadata&&me.user_metadata.fm_cadastro;
-    if(c&&c.nome_loja){const r=await sb.from('fm_parceiros').insert({id:me.id,nome_loja:c.nome_loja,responsavel:c.responsavel,whatsapp:c.whatsapp,chave_pix:c.chave_pix}).select().single();p=r.data;if(p)notify('novo_parceiro')}
+    if(c&&c.nome_loja){const r=await sb.from('fm_parceiros').insert({id:me.id,nome_loja:c.nome_loja,responsavel:c.responsavel,whatsapp:c.whatsapp,chave_pix:c.chave_pix,termo_versao:c.termo_versao||null}).select().single();p=r.data;if(p)notify('novo_parceiro')}
     if(!p){setWho('');msg('Complete seu cadastro','Faltam alguns dados para a Mimovalle analisar sua loja.','Cadastro','p-wait',true);return}}
   parceiro=p;setWho(p.nome_loja,'parceiro');
+  if(p.termo_versao!==TERMO_V&&p.status!=='pausado'){showTermo(p);listen();return}
   if(p.status==='pendente'){msg('Cadastro em análise',`Recebemos o cadastro da ${p.nome_loja}. A Mimovalle confere sua loja e libera o painel, normalmente no mesmo dia. Esta tela atualiza sozinha.`,'Em análise','p-wait',false);listen();return}
   if(p.status==='pausado'){msg('Parceria pausada','Seu painel está pausado no momento. Fale com a Mimovalle para entender e reativar.','Pausado','p-off',false);listen();return}
   buildMenu();fillConta();await loadPartner();screen('app');renderPush();const h=location.hash.slice(1);go(['inicio','pedidos','produtos','financeiro','conta'].includes(h)?h:'inicio');listen();
@@ -724,7 +756,7 @@ function renderFin(){
   const by={};paid.forEach(o=>{const d=new Date(o.pix_pago_em);const k=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');(by[k]=by[k]||{v:0,n:0,d}).v+=Number(o.valor);by[k].n++});
   const ks=Object.keys(by).sort().reverse();
   $('#monthList').innerHTML=ks.length?ks.map(k=>`<div class="ln"><div><b style="font-size:14px;text-transform:capitalize">${by[k].d.toLocaleDateString('pt-BR',{month:'long',year:'numeric'})}</b><div class="meta">${by[k].n} venda(s)</div></div><strong>${brl(by[k].v)}</strong></div>`).join(''):'<p class="meta">Sem recebimentos ainda.</p>'}
-function fillConta(){$('#aLoja').value=parceiro.nome_loja;$('#aResp').value=parceiro.responsavel;$('#aWhats').value=parceiro.whatsapp;$('#aPix').value=parceiro.chave_pix}
+function fillConta(){$('#aLoja').value=parceiro.nome_loja;$('#aResp').value=parceiro.responsavel;$('#aWhats').value=parceiro.whatsapp;$('#aPix').value=parceiro.chave_pix;$('#contaTermo').textContent=parceiro.termo_aceito_em?`Termo de parceria versão ${parceiro.termo_versao}, aceito em ${new Date(parceiro.termo_aceito_em).toLocaleDateString('pt-BR')}.`:''}
 $('#fConta').onsubmit=async e=>{e.preventDefault();busy(e.target,true);
   const {data,error}=await sb.from('fm_parceiros').update({nome_loja:$('#aLoja').value.trim(),responsavel:$('#aResp').value.trim(),whatsapp:$('#aWhats').value.trim(),chave_pix:$('#aPix').value.trim()}).eq('id',me.id).select().single();
   busy(e.target,false);if(error){toast(errMsg(error));return}parceiro=data;setWho(data.nome_loja,'parceiro');toast('Dados salvos.')};
@@ -917,7 +949,7 @@ function renderAProds(){const n=f=>prods.filter(f).length;chips('#aPrFilters',[[
   const list=prods.filter(p=>prodFilter(F.apr,p));$('#aProds').innerHTML=list.length?list.map(p=>pcard(p,true)).join(''):`<div class="empty" style="grid-column:1/-1">${svg('grid')}Nenhum produto nesse filtro.</div>`}
 function renderAParc(){$('#aParc').innerHTML=parceiros.length?parceiros.map(p=>{const pill=p.status==='ativo'?'<span class="pill p-ok">Ativo</span>':p.status==='pendente'?'<span class="pill p-send">Novo cadastro</span>':'<span class="pill p-off">Pausado</span>';
     const n=prods.filter(x=>x.parceiro_id===p.id).length,os=orders.filter(x=>x.parceiro_id===p.id&&x.status!=='cancelado'),late=os.filter(o=>o.enviado_em&&new Date(o.enviado_em)-new Date(o.pix_pago_em)>24*H).length;
-    return `<article class="card"><div class="row"><div style="display:flex;gap:12px;align-items:center"><span class="avatar">${esc(p.nome_loja.split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase())}</span><div style="min-width:0"><h3>${esc(p.nome_loja)}</h3><div class="meta">${esc(p.responsavel)} · ${esc(p.whatsapp)} · desde ${new Date(p.created_at).toLocaleDateString('pt-BR')}</div></div></div>${pill}</div>
+    return `<article class="card"><div class="row"><div style="display:flex;gap:12px;align-items:center"><span class="avatar">${esc(p.nome_loja.split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase())}</span><div style="min-width:0"><h3>${esc(p.nome_loja)}</h3><div class="meta">${esc(p.responsavel)} · ${esc(p.whatsapp)} · desde ${new Date(p.created_at).toLocaleDateString('pt-BR')}</div><div class="meta" style="color:${p.termo_aceito_em?'var(--ok)':'var(--late)'}">${p.termo_aceito_em?`Termo v${esc(p.termo_versao)} aceito em ${new Date(p.termo_aceito_em).toLocaleDateString('pt-BR')}`:'Ainda não aceitou o termo'}</div></div></div>${pill}</div>
     <div class="tiles" style="grid-template-columns:repeat(3,1fr)"><div class="tile" style="background:var(--bg2)"><small>Produtos</small><b>${n}</b></div><div class="tile" style="background:var(--bg2)"><small>Pedidos</small><b>${os.length}</b></div><div class="tile" style="background:var(--bg2)"><small>Envios atrasados</small><b style="color:${late?'var(--late)':'inherit'}">${late}</b></div></div>
     <div class="acts"><a class="btn ghost sm" href="${wa(p.whatsapp)}" target="_blank" rel="noopener">${svg('wa')}WhatsApp</a>
     ${p.status!=='ativo'?`<button class="btn sm" data-status="ativo" data-id="${p.id}">${svg('check')}Liberar parceiro</button>`:`<button class="btn line sm" data-status="pausado" data-id="${p.id}">Pausar</button>`}</div></article>`}).join(''):`<div class="empty">${svg('users')}Nenhum parceiro ainda. Copie o link de convite e mande para os vendedores.<button class="btn" data-copylink>Copiar link de convite</button></div>`}
