@@ -3,484 +3,837 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Fornece Mimo · Painel do Parceiro</title>
-<meta name="description" content="Painel dos fornecedores parceiros da loja Mimovalle.">
-<meta name="theme-color" content="#C2410C">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23C2410C'/%3E%3Cpath d='M18 26l14-8 14 8-14 8z' fill='%23FFE3D6'/%3E%3Cpath d='M18 26v14l14 8V34zM46 26v14l-14 8V34z' fill='%23FFF8F4'/%3E%3C/svg%3E">
+<title>Fornece Mimo · Parceiros Mimovalle</title>
+<meta name="description" content="Venda o seu estoque também na Mimovalle. Você recebe o pedido já pago e só faz o envio.">
+<meta name="theme-color" content="#24395C">
+<meta property="og:title" content="Fornece Mimo · Parceiros Mimovalle">
+<meta property="og:description" content="Seu estoque vendendo também na Mimovalle. Sem mensalidade, sem custo com anúncio, pagamento antes do envio.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%2324395C'/%3E%3Cpath d='M17 26l15-8 15 8-15 8z' fill='%23FF5A2E'/%3E%3Cpath d='M17 26v14l15 8V34zM47 26v14l-15 8V34z' fill='%23fff'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
+/* Visual da Mimovalle: branco, azul-marinho, laranja, bege e cores pastel; botões em pílula */
 :root{
-  --bg:#FFF8F4; --card:#FFFFFF; --ink:#1F1A17; --soft:#5E534B; --line:#F1DED3;
-  --accent:#C2410C; --accent-ink:#FFF8F4; --peach:#FFE3D6; --peach-ink:#7A3412;
-  --ok:#15803D; --ok-bg:#DCFCE7; --warn:#B45309; --warn-bg:#FEF3C7; --late:#B91C1C; --late-bg:#FEE2E2; --info:#1D4ED8; --info-bg:#DBEAFE;
-  --font:'Poppins','Segoe UI',Arial,sans-serif; color-scheme:light;
+  --bg:#FFFFFF; --bg2:#F7F4F0; --card:#FFFFFF; --ink:#24395C; --ink2:#1B2C49; --soft:#5B6B85; --line:#E7E2DC;
+  --accent:#FF5A2E; --accent2:#E8481C; --on-accent:#FFFFFF;
+  --peach:#FFE3D6; --mint:#DCE9E7; --butter:#FFF0C7; --lilac:#E6E0F5; --rose:#FBDDE6; --sky:#DDE6F5; --sage:#E3F1DA;
+  --ok:#157A3F; --ok-bg:#DFF3E6; --warn:#A35400; --warn-bg:#FFF0C7; --late:#C0281B; --late-bg:#FDE1DD; --info:#24395C; --info-bg:#DDE6F5;
+  --font:'Inter',system-ui,-apple-system,'Segoe UI',Arial,sans-serif; --r:18px; --shadow:0 10px 30px rgba(36,57,92,.08);
 }
-@media (prefers-color-scheme: dark){:root{
-  --bg:#181412; --card:#231D1A; --ink:#F7EDE6; --soft:#C9B8AC; --line:#3A302A;
-  --accent:#F97316; --accent-ink:#1F1A17; --peach:#3B2418; --peach-ink:#FDBA8C;
-  --ok:#4ADE80; --ok-bg:#14301F; --warn:#FBBF24; --warn-bg:#352A10; --late:#F87171; --late-bg:#3A1717; --info:#93C5FD; --info-bg:#172554; color-scheme:dark}}
 *{box-sizing:border-box}
 html,body{margin:0}
-body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+body{background:var(--bg2);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
 [hidden]{display:none!important}
-.app{max-width:600px;margin:0 auto;padding-left:max(16px, env(safe-area-inset-left));padding-right:max(16px, env(safe-area-inset-right));padding-top:max(16px, env(safe-area-inset-top));padding-bottom:120px;display:flex;flex-direction:column;gap:18px}
-header.top{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.logo{font-size:22px;font-weight:800;letter-spacing:-.5px}
-.logo span{color:var(--accent)}
-.who{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--soft);min-width:0}
-.who span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.avatar{width:38px;height:38px;border-radius:50%;background:var(--peach);color:var(--peach-ink);display:grid;place-items:center;font-weight:700;flex-shrink:0}
-h1{font-size:24px;font-weight:700;margin:0;line-height:1.25;text-wrap:balance}
-h2{font-size:17px;font-weight:700;margin:0}
-p{margin:0}
-.view{display:flex;flex-direction:column;gap:16px}
-.lead{color:var(--soft)}
-.notice{font-size:13px;font-weight:500;color:var(--peach-ink);background:var(--peach);padding:12px 14px;border-radius:14px}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.stat{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px;display:flex;flex-direction:column;gap:2px;min-width:0}
-.stat b{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.stat small{font-size:12px;color:var(--soft);font-weight:500}
-.stat.hot{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
-.stat.hot small{color:var(--accent-ink);opacity:.85}
-.filters{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px}
-.chip{border:1px solid var(--line);background:var(--card);color:var(--ink);font:600 13px var(--font);padding:8px 14px;border-radius:999px;cursor:pointer;white-space:nowrap;min-height:40px}
-.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.list{display:flex;flex-direction:column;gap:12px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:12px}
+a{color:inherit}
+img{max-width:100%;display:block}
+h1,h2,h3,p{margin:0}
+h1{font-size:26px;font-weight:800;letter-spacing:-.6px;line-height:1.15;text-wrap:balance}
+h2{font-size:19px;font-weight:800;letter-spacing:-.3px;text-wrap:balance}
+h3{font-size:15px;font-weight:700;line-height:1.3}
+.sub{color:var(--soft);font-size:14px}
+.kick{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.gut{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}
+
+/* faixa e topo */
+.strip{background:var(--ink);color:#fff;font-size:12.5px;font-weight:600;text-align:center;padding-block:8px}
+.strip b{color:#FFB59E}
+.top{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+.top .in{max-width:1180px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:62px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.brand-mark{width:36px;height:36px;border-radius:11px;background:var(--ink);display:grid;place-items:center;flex-shrink:0}
+.brand-tx{display:flex;flex-direction:column;line-height:1.05}
+.brand-tx b{font-size:19px;font-weight:900;letter-spacing:-.6px}
+.brand-tx b span{color:var(--accent)}
+.brand-tx small{font-size:11px;color:var(--soft);font-weight:600}
+.who{display:flex;align-items:center;gap:10px;min-width:0}
+.who-tx{display:flex;flex-direction:column;align-items:flex-end;min-width:0;line-height:1.2}
+.who-tx b{font-size:13px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.who-tx small{font-size:11px;color:var(--soft)}
+.avatar{width:38px;height:38px;border-radius:50%;background:var(--peach);color:var(--accent2);display:grid;place-items:center;font-weight:800;font-size:14px;flex-shrink:0}
+
+/* botões e campos */
+.btn{border:0;background:var(--accent);color:var(--on-accent);font:700 15px var(--font);border-radius:999px;min-height:48px;padding:0 22px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;transition:background .15s,transform .1s}
+.btn:hover{background:var(--accent2)}
+.btn:active{transform:scale(.98)}
+.btn.block{width:100%}
+.btn.navy{background:var(--ink)} .btn.navy:hover{background:var(--ink2)}
+.btn.line{background:transparent;color:var(--ink);border:1.5px solid var(--ink)} .btn.line:hover{background:var(--bg2)}
+.btn.ghost{background:var(--bg2);color:var(--ink)} .btn.ghost:hover{background:var(--line)}
+.btn.sm{min-height:38px;font-size:13px;padding:0 14px}
+.btn[disabled]{opacity:.55;cursor:wait}
+.btn svg{width:18px;height:18px;flex-shrink:0}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+label{font-size:13px;font-weight:600;color:var(--ink)}
+input,select,textarea{font:500 16px var(--font);border:1.5px solid var(--line);background:#fff;color:var(--ink);border-radius:12px;padding:0 14px;min-height:48px;width:100%;min-width:0}
+textarea{padding:12px 14px;min-height:96px;resize:vertical}
+input:focus,select:focus,textarea:focus{border-color:var(--ink);outline:none}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.hint{font-size:12px;color:var(--soft)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:400px){.g2{grid-template-columns:1fr}}
+.form{display:flex;flex-direction:column;gap:14px}
+
+/* cartões */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:flex;flex-direction:column;gap:12px}
+.pill{font-size:12px;font-weight:700;padding:4px 11px;border-radius:999px;white-space:nowrap;display:inline-flex;align-items:center;gap:5px}
+.p-send{background:var(--warn-bg);color:var(--warn)} .p-late{background:var(--late-bg);color:var(--late)}
+.p-ok{background:var(--ok-bg);color:var(--ok)} .p-wait{background:var(--info-bg);color:var(--info)} .p-off{background:var(--bg2);color:var(--soft)}
 .row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
 .row>div{min-width:0}
-.card h3{font-size:16px;font-weight:700;margin:0;line-height:1.3;overflow-wrap:anywhere}
 .meta{font-size:13px;color:var(--soft)}
-.pill{font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px;white-space:nowrap}
-.p-send{background:var(--warn-bg);color:var(--warn)} .p-late{background:var(--late-bg);color:var(--late)}
-.p-ok{background:var(--ok-bg);color:var(--ok)} .p-wait{background:var(--info-bg);color:var(--info)} .p-off{background:var(--line);color:var(--soft)}
-.addr{background:var(--bg);border-radius:14px;padding:12px;font-size:13px;display:flex;flex-direction:column;gap:2px;overflow-wrap:anywhere}
+.empty{text-align:center;color:var(--soft);padding:34px 18px;font-size:14px;background:#fff;border:1.5px dashed var(--line);border-radius:var(--r);display:flex;flex-direction:column;align-items:center;gap:10px}
+.empty svg{width:40px;height:40px;color:var(--line)}
+
+/* ===== LANDING ===== */
+.land{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:56px;padding-block:28px 64px}
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center}
+.hero h1{font-size:46px;letter-spacing:-1.6px;line-height:1.04}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.hero .lead{font-size:18px;color:var(--soft);max-width:30em}
+.hero-cta{display:flex;flex-wrap:wrap;gap:10px}
+.trust{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13px;font-weight:600;color:var(--soft)}
+.trust span{display:inline-flex;align-items:center;gap:6px}
+.trust svg{width:16px;height:16px;color:var(--ok)}
+.hero-art{background:var(--peach);border-radius:28px;padding:22px;display:flex;flex-direction:column;gap:12px;position:relative;overflow:hidden}
+.hero-art::after{content:"";position:absolute;width:220px;height:220px;border-radius:50%;background:#FFD0BD;right:-70px;top:-70px}
+.mini{background:#fff;border-radius:16px;padding:14px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow);position:relative;z-index:1}
+.mini .ic{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;flex-shrink:0}
+.mini .ic svg{width:22px;height:22px}
+.mini b{font-size:14px;display:block}
+.mini small{font-size:12px;color:var(--soft)}
+.mini .val{margin-left:auto;font-weight:800;font-size:15px;white-space:nowrap}
+.sec{display:flex;flex-direction:column;gap:18px}
+.sec-head{display:flex;flex-direction:column;gap:4px}
+.sec-head h2{font-size:26px;letter-spacing:-.7px;text-transform:lowercase}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.step{border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:10px;min-height:190px}
+.step .n{width:40px;height:40px;border-radius:50%;background:#fff;display:grid;place-items:center;font-weight:900;font-size:17px}
+.step p{color:#3D4E6B;font-size:14px}
+.band{background:var(--ink);color:#fff;border-radius:22px;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:8px}
+.band div{padding:16px;display:flex;flex-direction:column;gap:2px}
+.band b{font-size:16px} .band span{font-size:13px;color:#B9C6DD}
+.why{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.why .card{gap:8px}
+.why .ic{width:46px;height:46px;border-radius:14px;display:grid;place-items:center}
+.why .ic svg{width:24px;height:24px}
+.faq{display:flex;flex-direction:column;gap:10px}
+.faq details{background:#fff;border:1px solid var(--line);border-radius:16px;padding:0 18px}
+.faq summary{cursor:pointer;font-weight:700;padding:16px 0;list-style:none;display:flex;justify-content:space-between;gap:12px}
+.faq summary::after{content:"+";font-size:20px;color:var(--accent);line-height:1}
+.faq details[open] summary::after{content:"–"}
+.faq p{padding-bottom:16px;color:var(--soft);font-size:14px}
+.auth-wrap{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+.auth-card{background:#fff;border:1px solid var(--line);border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:16px;box-shadow:var(--shadow)}
+.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--bg2);border-radius:999px;padding:4px;gap:4px}
+.seg button{border:0;background:transparent;color:var(--soft);font:700 14px var(--font);border-radius:999px;min-height:42px;cursor:pointer}
+.seg button[aria-selected="true"]{background:#fff;color:var(--ink);box-shadow:0 2px 8px rgba(36,57,92,.12)}
+.linkbtn{background:none;border:0;color:var(--accent2);font:700 14px var(--font);cursor:pointer;padding:4px 0;text-align:left}
+footer.foot{text-align:center;color:var(--soft);font-size:13px;padding-block:24px 40px}
+@media (max-width:900px){
+  .hero{grid-template-columns:1fr;gap:26px}.hero h1{font-size:36px}
+  .steps{grid-template-columns:1fr 1fr}.band{grid-template-columns:1fr 1fr}.why{grid-template-columns:1fr}
+  .auth-wrap{grid-template-columns:1fr}
+}
+@media (max-width:520px){.steps{grid-template-columns:1fr}.step{min-height:0}.hero h1{font-size:32px}}
+
+/* ===== APP ===== */
+.shell{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:230px 1fr;gap:28px;padding-block:24px 110px}
+.side{position:sticky;top:86px;align-self:start;display:flex;flex-direction:column;gap:4px}
+.side .nav{border:0;background:transparent;color:var(--soft);font:600 14.5px var(--font);display:flex;align-items:center;gap:12px;padding:0 14px;min-height:46px;border-radius:14px;cursor:pointer;text-align:left;width:100%;position:relative}
+.side .nav svg{width:21px;height:21px;flex-shrink:0}
+.side .nav:hover{background:#fff;color:var(--ink)}
+.side .nav[aria-current="page"]{background:var(--ink);color:#fff}
+.side .nav .badge{position:static;margin-left:auto}
+.side hr{border:0;border-top:1px solid var(--line);margin:10px 0}
+.main{display:flex;flex-direction:column;gap:20px;min-width:0}
+.view{display:flex;flex-direction:column;gap:18px;min-width:0}
+.vhead{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.vhead>div{display:flex;flex-direction:column;gap:4px;min-width:0}
+.tabs-b{display:none}
+.badge{background:var(--accent);color:#fff;font-size:11px;font-weight:800;min-width:20px;height:20px;border-radius:10px;display:grid;place-items:center;padding:0 6px}
+@media (max-width:900px){
+  .shell{grid-template-columns:1fr;padding-block:18px 110px}
+  .side{display:none}
+  .tabs-b{display:flex;position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right);z-index:30;justify-content:center}
+  .tabs-b .in{display:flex;width:100%;max-width:640px}
+  .tab{flex:1;border:0;background:transparent;color:var(--soft);font:600 11px var(--font);padding:9px 2px 11px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;min-height:62px;position:relative}
+  .tab svg{width:23px;height:23px}
+  .tab[aria-current="page"]{color:var(--accent)}
+  .tab .badge{position:absolute;top:5px;left:calc(50% + 5px);min-width:18px;height:18px;font-size:10px}
+}
+
+/* painel início */
+.alert{background:var(--accent);color:#fff;border-radius:22px;padding:20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.alert .ic{width:50px;height:50px;border-radius:16px;background:rgba(255,255,255,.18);display:grid;place-items:center;flex-shrink:0}
+.alert .ic svg{width:26px;height:26px}
+.alert>div:nth-child(2){flex:1;min-width:180px}
+.alert b{font-size:17px;display:block}
+.alert span{font-size:14px;opacity:.92}
+.alert .btn{background:#fff;color:var(--accent2)}
+.alert.calm{background:var(--ink)} .alert.calm .btn{color:var(--ink)}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.tile{border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.tile small{font-size:12.5px;font-weight:600;color:#3D4E6B}
+.tile b{font-size:24px;font-weight:900;letter-spacing:-.5px;font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tile span{font-size:12px;color:#55657F}
+@media (max-width:700px){.tiles{grid-template-columns:1fr 1fr}.tile b{font-size:21px}}
+.chart{display:flex;align-items:flex-end;gap:5px;height:150px;padding-top:10px}
+.chart .bar{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:5px;height:100%;min-width:0}
+.chart .bar i{display:block;width:100%;max-width:26px;border-radius:7px 7px 3px 3px;background:var(--peach);min-height:4px}
+.chart .bar.on i{background:var(--accent)}
+.chart .bar small{font-size:10px;color:var(--soft);font-variant-numeric:tabular-nums}
+.check{display:flex;flex-direction:column;gap:10px}
+.check div{display:flex;align-items:center;gap:12px;font-size:14px;font-weight:600}
+.check .ck{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;flex-shrink:0}
+.check .done .ck{background:var(--ok);border-color:var(--ok);color:#fff}
+.check .done{color:var(--soft);text-decoration:line-through}
+.two{display:grid;grid-template-columns:1.4fr 1fr;gap:18px}
+@media (max-width:900px){.two{grid-template-columns:1fr}}
+
+/* filtros */
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.chip{border:1.5px solid var(--line);background:#fff;color:var(--ink);font:600 13px var(--font);padding:0 15px;border-radius:999px;cursor:pointer;white-space:nowrap;min-height:40px;display:inline-flex;align-items:center;gap:6px}
+.chip[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.chip .c{font-size:11px;background:var(--bg2);color:var(--ink);border-radius:999px;padding:1px 7px;font-weight:800}
+.chip[aria-pressed="true"] .c{background:rgba(255,255,255,.2);color:#fff}
+.search{position:relative}
+.search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--soft)}
+.search input{padding-left:42px;border-radius:999px}
+
+/* pedidos */
+.list{display:flex;flex-direction:column;gap:12px}
+.order{display:grid;grid-template-columns:64px 1fr;gap:14px}
+.order .ph{width:64px;height:64px;border-radius:14px;overflow:hidden;background:var(--peach);display:grid;place-items:center;color:var(--accent2)}
+.order .ph img{width:100%;height:100%;object-fit:cover}
+.order .ph svg{width:28px;height:28px}
+.order .body{display:flex;flex-direction:column;gap:10px;min-width:0}
+.addr{background:var(--bg2);border-radius:14px;padding:12px 14px;font-size:13px;display:flex;flex-direction:column;gap:1px;overflow-wrap:anywhere;position:relative}
 .addr b{font-size:14px}
-.money{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;color:var(--soft)}
+.addr .cp{position:absolute;right:8px;top:8px}
+.money{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;color:var(--soft);flex-wrap:wrap}
 .money strong{font-size:18px;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
-.timer{font-variant-numeric:tabular-nums;font-weight:700}
-.btn{border:0;background:var(--accent);color:var(--accent-ink);font:700 15px var(--font);border-radius:14px;min-height:48px;padding:0 18px;cursor:pointer;width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none}
-.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
-.btn.dark{background:var(--ink);color:var(--bg)}
-.btn.small{min-height:40px;font-size:13px;width:auto;padding:0 14px}
-.btn[disabled]{opacity:.55;cursor:wait}
-.btn:focus-visible,.chip:focus-visible,.tab:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-.form{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:12px}
-.field{display:flex;flex-direction:column;gap:4px;min-width:0}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-@media (max-width:380px){.grid2{grid-template-columns:1fr}}
-label{font-size:13px;font-weight:600}
-input{font:500 16px var(--font);border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:12px;padding:0 12px;min-height:48px;width:100%;min-width:0}
-.hint{font-size:12px;color:var(--soft)}
-.inline{display:flex;flex-direction:column;gap:8px}
-.inline-row{display:flex;gap:8px;align-items:stretch}
-.inline-row .btn{width:auto;flex-shrink:0}
-.track{font-size:13px;color:var(--ok);font-weight:600;overflow-wrap:anywhere}
-.thumb{width:52px;height:52px;border-radius:14px;background:var(--peach);color:var(--peach-ink);display:grid;place-items:center;flex-shrink:0}
-.prod-top{display:flex;gap:14px;align-items:center}
-.prod-top .info{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
-.big{background:var(--ink);color:var(--bg);border-radius:22px;padding:20px;display:flex;flex-direction:column;gap:4px}
-.big small{opacity:.8;font-size:13px}
-.big b{font-size:32px;font-weight:800;font-variant-numeric:tabular-nums}
-.empty{text-align:center;color:var(--soft);padding:24px 12px;font-size:14px;background:var(--card);border:1px dashed var(--line);border-radius:20px}
-.seg{display:grid;grid-template-columns:1fr 1fr;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px;gap:4px}
-.seg button{border:0;background:transparent;color:var(--soft);font:600 14px var(--font);border-radius:10px;min-height:42px;cursor:pointer}
-.seg button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink)}
-.hero{display:flex;flex-direction:column;gap:10px;padding:8px 0 4px}
-.hero h1{font-size:30px;font-weight:800;letter-spacing:-.8px}
-.link{background:none;border:0;color:var(--accent);font:600 14px var(--font);cursor:pointer;padding:6px 0;text-align:left}
-nav.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;justify-content:center;padding-bottom:env(safe-area-inset-bottom);padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right);z-index:5}
-nav.tabs .in{display:flex;max-width:600px;width:100%}
-.tab{flex:1;border:0;background:transparent;color:var(--soft);font:600 11px var(--font);padding:10px 2px 12px;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;min-height:62px;position:relative}
-.tab[aria-current="page"]{color:var(--accent)}
-.tab svg{width:24px;height:24px}
-.badge{position:absolute;top:6px;left:calc(50% + 6px);background:var(--late);color:#fff;font-size:10px;font-weight:700;min-width:18px;height:18px;border-radius:9px;display:grid;place-items:center;padding:0 5px}
-.toast{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:var(--bg);font-weight:600;font-size:14px;padding:12px 18px;border-radius:14px;z-index:9;max-width:calc(100% - 32px);text-align:center}
-.spin{width:28px;height:28px;border:3px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:s 0.9s linear infinite;margin:40px auto}
+.timer{font-variant-numeric:tabular-nums;font-weight:800}
+.bar-time{height:6px;border-radius:3px;background:var(--bg2);overflow:hidden}
+.bar-time i{display:block;height:100%;background:var(--warn);border-radius:3px}
+.track{font-size:13px;color:var(--ok);font-weight:700;overflow-wrap:anywhere}
+.acts{display:flex;gap:8px;flex-wrap:wrap}
+.acts .btn{flex:1 1 140px;white-space:nowrap}
+@media (max-width:520px){.who-tx,.brand-tx small{display:none}.strip .more{display:none}}
+
+/* produtos */
+.grid-p{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.pcard{background:#fff;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column}
+.pcard .img{aspect-ratio:1/1;position:relative;display:grid;place-items:center;max-width:100%}
+.pcard .img img{width:100%;height:100%;object-fit:cover}
+.pcard .img svg{width:46px;height:46px;opacity:.55}
+.pcard .img .pill{position:absolute;top:10px;right:10px}
+.pcard .tx{padding:12px 14px 14px;display:flex;flex-direction:column;gap:6px;flex:1}
+.pcard .tx b{font-size:14px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pcard .pr{font-size:17px;font-weight:900;color:var(--ink)}
+.pcard .st{font-size:12px;color:var(--soft)}
+.pcard .tx .btn{margin-top:auto}
+@media (max-width:480px){.grid-p{grid-template-columns:1fr 1fr;gap:10px}.pcard .tx{padding:10px 11px 12px}}
+.cat-cozinha{background:#E9E2D8}.cat-casa{background:#DCE9E7}.cat-beleza{background:#F6E1F0}.cat-moda{background:#FBDDE6}.cat-tecnologia{background:#E6E0F5}.cat-ferramentas{background:#E4ECF2}.cat-brinquedos{background:#FFF3C4}.cat-pets{background:#E3F1DA}.cat-outros{background:#FFE3D6}
+
+/* gaveta */
+.sheet-bg{position:fixed;inset:0;background:rgba(27,44,73,.45);z-index:50;display:flex;justify-content:flex-end}
+.sheet{background:#fff;width:min(520px,100%);height:100%;overflow-y:auto;display:flex;flex-direction:column;padding-block:max(18px,env(safe-area-inset-top)) max(24px,env(safe-area-inset-bottom));padding-left:max(20px,env(safe-area-inset-left));padding-right:max(20px,env(safe-area-inset-right));gap:16px;animation:in .22s ease-out}
+@keyframes in{from{transform:translateX(30px);opacity:0}}
+@media (max-width:640px){.sheet-bg{align-items:flex-end}.sheet{height:auto;max-height:92vh;border-radius:24px 24px 0 0;animation:up .22s ease-out}@keyframes up{from{transform:translateY(30px);opacity:0}}}
+.sheet-h{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.x{width:40px;height:40px;border-radius:50%;border:0;background:var(--bg2);cursor:pointer;display:grid;place-items:center;color:var(--ink);flex-shrink:0}
+.x svg{width:18px;height:18px}
+.drop{border:2px dashed var(--line);border-radius:18px;aspect-ratio:16/10;display:grid;place-items:center;text-align:center;color:var(--soft);font-size:13px;cursor:pointer;overflow:hidden;position:relative;background:var(--bg2);max-width:100%}
+.drop img{width:100%;height:100%;object-fit:contain;background:#fff}
+.drop input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.drop svg{width:34px;height:34px;margin:0 auto 6px;display:block}
+.catpick{display:flex;flex-wrap:wrap;gap:8px}
+.catpick label{cursor:pointer}
+.catpick input{position:absolute;opacity:0;width:1px;height:1px;min-height:0}
+.catpick span{display:inline-flex;align-items:center;min-height:38px;padding:0 14px;border-radius:999px;border:1.5px solid var(--line);font-size:13px;font-weight:600}
+.catpick input:checked+span{background:var(--ink);color:#fff;border-color:var(--ink)}
+.catpick input:focus-visible+span{outline:3px solid var(--accent);outline-offset:2px}
+
+/* financeiro */
+.big{background:var(--ink);color:#fff;border-radius:24px;padding:22px;display:flex;flex-direction:column;gap:4px;position:relative;overflow:hidden}
+.big::after{content:"";position:absolute;width:180px;height:180px;border-radius:50%;background:var(--accent);opacity:.9;right:-60px;bottom:-80px}
+.big small{color:#B9C6DD;font-size:13px;position:relative;z-index:1}
+.big b{font-size:34px;font-weight:900;letter-spacing:-1px;font-variant-numeric:tabular-nums;position:relative;z-index:1}
+.ln{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.ln:last-child{border-bottom:0}
+.ln strong{font-variant-numeric:tabular-nums;white-space:nowrap}
+.plus{color:var(--ok)}
+
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:#fff;font-weight:600;font-size:14px;padding:13px 20px;border-radius:999px;z-index:60;max-width:calc(100% - 32px);text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.2)}
+@media (min-width:901px){.toast{bottom:28px}}
+.spin{width:30px;height:30px;border:3px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:s .9s linear infinite;margin:80px auto}
 @keyframes s{to{transform:rotate(360deg)}}
-@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+.state{max-width:560px;margin:40px auto;display:flex;flex-direction:column;gap:16px}
+.state .card{align-items:flex-start;padding:26px;gap:14px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
 <body>
-<div class="app">
-  <header class="top">
-    <div class="logo">fornece<span>mimo</span></div>
-    <div class="who" id="who" hidden><span id="whoName"></span><div class="avatar" id="avatar" aria-hidden="true"></div></div>
-  </header>
+<div class="strip gut"><span class="more">parceiros mimovalle · </span><b>pagamento antes do envio</b> · sem mensalidade</div>
+<header class="top gut"><div class="in">
+  <a class="brand" href="#" id="home"><span class="brand-mark" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 64 64"><path d="M10 24l22-12 22 12-22 12z" fill="#FF5A2E"/><path d="M10 24v20l22 12V36zM54 24v20L32 56V36z" fill="#fff"/></svg></span>
+    <span class="brand-tx"><b>fornece<span>mimo</span></b><small>parceiros da mimovalle</small></span></a>
+  <div class="who" id="who" hidden><div class="who-tx"><b id="whoName"></b><small id="whoRole"></small></div><div class="avatar" id="avatar" aria-hidden="true"></div></div>
+  <a class="btn sm navy" href="#entrar" id="topLogin">Entrar</a>
+</div></header>
 
-  <div id="loading"><div class="spin" role="status" aria-label="Carregando"></div></div>
+<div id="loading"><div class="spin" role="status" aria-label="Carregando"></div></div>
 
-  <!-- ===== Entrar / Cadastro ===== -->
-  <section class="view" id="v-auth" hidden>
-    <div class="hero">
-      <h1>Seu estoque vendendo também na Mimovalle.</h1>
-      <p class="lead">Painel dos fornecedores parceiros. Você recebe o pedido já pago e só faz o envio.</p>
+<!-- ================= LANDING ================= -->
+<main class="land gut" id="v-land" hidden>
+  <section class="hero">
+    <div style="display:flex;flex-direction:column;gap:20px">
+      <span class="kick">programa de parceiros</span>
+      <h1>Você tem o produto. <em>A gente vende.</em></h1>
+      <p class="lead">Coloque o seu estoque na vitrine da Mimovalle. A gente cuida das fotos, do anúncio e do cliente. Você recebe o pedido já pago e só faz o envio.</p>
+      <div class="hero-cta"><a class="btn" href="#cadastro">Quero ser parceiro</a><a class="btn line" href="#entrar">Já sou parceiro</a></div>
+      <div class="trust"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>sem mensalidade</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>sem custo com anúncio</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>teste com 3 produtos</span></div>
     </div>
-    <div class="seg" role="tablist" aria-label="Entrar ou cadastrar">
-      <button role="tab" id="segLogin" aria-selected="true">Entrar</button>
-      <button role="tab" id="segSign" aria-selected="false">Quero ser parceiro</button>
+    <div class="hero-art" aria-label="Exemplo do painel do parceiro">
+      <div class="mini"><span class="ic" style="background:var(--ok-bg);color:var(--ok)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20"/></svg></span><div><b>Pix recebido</b><small>pedido #1048 · fatiador 16 em 1</small></div><span class="val" style="color:var(--ok)">+ R$ 55,00</span></div>
+      <div class="mini"><span class="ic" style="background:var(--warn-bg);color:var(--warn)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><div><b>Enviar até amanhã 14h</b><small>Campinas, SP · 1 unidade</small></div><span class="val">23h 40min</span></div>
+      <div class="mini"><span class="ic" style="background:var(--sky);color:var(--ink)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/></svg></span><div><b>Enviado</b><small>rastreio QN284917355BR</small></div><span class="pill p-ok" style="margin-left:auto">ok</span></div>
+      <p style="position:relative;z-index:1;font-size:12px;color:#7A4A33;text-align:center">exemplo ilustrativo do painel</p>
     </div>
-    <form class="form" id="fLogin">
-      <div class="field"><label for="lEmail">E-mail</label><input id="lEmail" type="email" autocomplete="email" required></div>
-      <div class="field"><label for="lPass">Senha</label><input id="lPass" type="password" autocomplete="current-password" required minlength="6"></div>
-      <button class="btn" type="submit">Entrar</button>
-      <button class="link" type="button" id="forgot">Esqueci minha senha</button>
-    </form>
-    <form class="form" id="fSign" hidden>
-      <h2>Cadastro de parceiro</h2>
-      <div class="field"><label for="sLoja">Nome da sua loja</label><input id="sLoja" required minlength="2" maxlength="80" placeholder="Ex.: Casa Bela Utilidades"></div>
-      <div class="field"><label for="sResp">Seu nome</label><input id="sResp" required minlength="2" maxlength="80" autocomplete="name"></div>
-      <div class="grid2">
-        <div class="field"><label for="sWhats">WhatsApp</label><input id="sWhats" required inputmode="tel" autocomplete="tel" placeholder="(11) 99999-9999"></div>
-        <div class="field"><label for="sPix">Chave Pix</label><input id="sPix" required maxlength="120" placeholder="CPF, e-mail, celular…"></div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head"><span class="kick">como funciona</span><h2>do cadastro ao envio em 4 passos</h2></div>
+    <div class="steps">
+      <div class="step" style="background:var(--peach)"><span class="n">1</span><h3>Cadastre seus produtos</h3><p>Nome, foto, estoque e o seu preço de parceiro. Leva 2 minutos.</p></div>
+      <div class="step" style="background:var(--butter)"><span class="n">2</span><h3>A gente anuncia</h3><p>Fotos, descrição e anúncios na Mimovalle, sem custo para você.</p></div>
+      <div class="step" style="background:var(--mint)"><span class="n">3</span><h3>Você recebe o Pix</h3><p>Cliente comprou: a Mimovalle paga você antes de qualquer envio.</p></div>
+      <div class="step" style="background:var(--lilac)"><span class="n">4</span><h3>Envie em até 24h</h3><p>O endereço aparece no painel. Postou, coloca o rastreio e pronto.</p></div>
+    </div>
+  </section>
+
+  <section class="band" aria-label="Vantagens">
+    <div><b>R$ 0 de mensalidade</b><span>nem taxa de adesão</span></div>
+    <div><b>R$ 0 em anúncios</b><span>o marketing é nosso</span></div>
+    <div><b>Pix antes do envio</b><span>zero risco de calote</span></div>
+    <div><b>Novos clientes</b><span>fora da Shopee</span></div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head"><span class="kick">o que você ganha</span><h2>cada um faz o que sabe fazer melhor</h2></div>
+    <div class="why">
+      <div class="card"><span class="ic" style="background:var(--peach);color:var(--accent2)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg></span><h3>Mais vendas, mesmo estoque</h3><p class="meta">Seu produto ganha uma vitrine nova, sem você mudar nada na sua loja.</p></div>
+      <div class="card"><span class="ic" style="background:var(--mint);color:var(--ok)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></span><h3>Pagamento garantido</h3><p class="meta">O pedido só libera para envio depois que o seu Pix caiu.</p></div>
+      <div class="card"><span class="ic" style="background:var(--sky);color:var(--ink)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span><h3>Cliente é com a gente</h3><p class="meta">Dúvidas, atendimento e trocas ficam com a Mimovalle.</p></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head"><span class="kick">dúvidas</span><h2>perguntas frequentes</h2></div>
+    <div class="faq">
+      <details><summary>Quanto custa para participar?</summary><p>Nada. Não tem mensalidade, adesão nem taxa. Você define o seu preço de parceiro e recebe esse valor em cada venda.</p></details>
+      <details><summary>Quando eu recebo?</summary><p>Antes de enviar. Quando um cliente compra, a Mimovalle faz o Pix para a sua chave e só então o pedido libera no seu painel com o prazo de 24 horas.</p></details>
+      <details><summary>Preciso parar de vender na Shopee?</summary><p>Não. Você continua vendendo normalmente. A Mimovalle é um canal extra para o mesmo estoque.</p></details>
+      <details><summary>Como é a embalagem?</summary><p>Neutra, sem panfleto ou propaganda de outra loja, e com o código de rastreio informado no painel.</p></details>
+      <details><summary>E se o cliente cancelar?</summary><p>O pedido aparece como cancelado no painel na hora. Pedido cancelado não deve ser enviado.</p></details>
+    </div>
+  </section>
+
+  <section class="auth-wrap" id="authArea">
+    <div class="sec-head" style="gap:10px;padding-top:8px">
+      <span class="kick">comece agora</span>
+      <h2 style="font-size:30px;letter-spacing:-.8px">teste com 3 produtos, sem compromisso</h2>
+      <p class="sub" style="font-size:16px">Faça o cadastro, a Mimovalle confere sua loja e libera o painel. Se as vendas vierem, ampliamos juntos.</p>
+      <p class="sub">Dúvidas: WhatsApp <b style="color:var(--ink)">(69) 99282-6272</b></p>
+    </div>
+    <div class="auth-card">
+      <div class="seg" role="tablist" aria-label="Entrar ou cadastrar">
+        <button role="tab" id="segLogin" aria-selected="false">Entrar</button>
+        <button role="tab" id="segSign" aria-selected="true">Quero ser parceiro</button>
       </div>
-      <div class="field"><label for="sEmail">E-mail</label><input id="sEmail" type="email" autocomplete="email" required></div>
-      <div class="field"><label for="sPass">Crie uma senha</label><input id="sPass" type="password" autocomplete="new-password" required minlength="8"><span class="hint">Mínimo de 8 caracteres.</span></div>
-      <button class="btn" type="submit">Enviar cadastro</button>
-      <p class="hint">A chave Pix é para a Mimovalle pagar você antes de cada envio.</p>
-    </form>
-    <form class="form" id="fNewPass" hidden>
-      <h2>Crie uma nova senha</h2>
-      <div class="field"><label for="nPass">Nova senha</label><input id="nPass" type="password" autocomplete="new-password" required minlength="8"></div>
-      <button class="btn" type="submit">Salvar nova senha</button>
-    </form>
-  </section>
-
-  <!-- ===== Mensagens de estado ===== -->
-  <section class="view" id="v-msg" hidden>
-    <div class="card" style="align-items:flex-start">
-      <span class="pill p-wait" id="msgPill">Em análise</span>
-      <h1 id="msgTitle"></h1>
-      <p class="lead" id="msgText"></p>
+      <form class="form" id="fLogin" hidden>
+        <div class="field"><label for="lEmail">E-mail</label><input id="lEmail" type="email" autocomplete="email" required></div>
+        <div class="field"><label for="lPass">Senha</label><input id="lPass" type="password" autocomplete="current-password" required minlength="6"></div>
+        <button class="btn block" type="submit">Entrar no painel</button>
+        <button class="linkbtn" type="button" id="forgot">Esqueci minha senha</button>
+      </form>
+      <form class="form" id="fSign">
+        <div class="field"><label for="sLoja">Nome da sua loja</label><input id="sLoja" required minlength="2" maxlength="80" placeholder="Ex.: Casa Bela Utilidades"></div>
+        <div class="field"><label for="sResp">Seu nome</label><input id="sResp" required minlength="2" maxlength="80" autocomplete="name"></div>
+        <div class="g2">
+          <div class="field"><label for="sWhats">WhatsApp</label><input id="sWhats" required inputmode="tel" autocomplete="tel" placeholder="(11) 99999-9999"></div>
+          <div class="field"><label for="sPix">Chave Pix</label><input id="sPix" required maxlength="120" placeholder="CPF, e-mail ou celular"></div>
+        </div>
+        <div class="field"><label for="sEmail">E-mail</label><input id="sEmail" type="email" autocomplete="email" required></div>
+        <div class="field"><label for="sPass">Crie uma senha</label><input id="sPass" type="password" autocomplete="new-password" required minlength="8"><span class="hint">Mínimo de 8 caracteres.</span></div>
+        <button class="btn block" type="submit">Enviar cadastro</button>
+        <p class="hint">A chave Pix é para a Mimovalle pagar você antes de cada envio.</p>
+      </form>
+      <form class="form" id="fNewPass" hidden>
+        <h2>Crie uma nova senha</h2>
+        <div class="field"><label for="nPass">Nova senha</label><input id="nPass" type="password" autocomplete="new-password" required minlength="8"></div>
+        <button class="btn block" type="submit">Salvar nova senha</button>
+      </form>
     </div>
-    <form class="form" id="fComplete" hidden>
-      <h2>Complete seu cadastro</h2>
-      <div class="field"><label for="cLoja">Nome da sua loja</label><input id="cLoja" required minlength="2" maxlength="80"></div>
-      <div class="field"><label for="cResp">Seu nome</label><input id="cResp" required minlength="2" maxlength="80"></div>
-      <div class="grid2">
-        <div class="field"><label for="cWhats">WhatsApp</label><input id="cWhats" required inputmode="tel"></div>
-        <div class="field"><label for="cPix">Chave Pix</label><input id="cPix" required maxlength="120"></div>
+  </section>
+  <footer class="foot">fornece mimo · um programa da loja mimovalle</footer>
+</main>
+
+<!-- ================= ESTADOS ================= -->
+<section class="state gut" id="v-msg" hidden>
+  <div class="card">
+    <span class="pill p-wait" id="msgPill"></span>
+    <h1 id="msgTitle"></h1>
+    <p class="sub" style="font-size:15px" id="msgText"></p>
+    <a class="btn" id="msgWhats" href="https://wa.me/5569992826272" target="_blank" rel="noopener">Falar no WhatsApp</a>
+  </div>
+  <form class="card form" id="fComplete" hidden>
+    <h2>Complete seu cadastro</h2>
+    <div class="field"><label for="cLoja">Nome da sua loja</label><input id="cLoja" required minlength="2" maxlength="80"></div>
+    <div class="field"><label for="cResp">Seu nome</label><input id="cResp" required minlength="2" maxlength="80"></div>
+    <div class="g2">
+      <div class="field"><label for="cWhats">WhatsApp</label><input id="cWhats" required inputmode="tel"></div>
+      <div class="field"><label for="cPix">Chave Pix</label><input id="cPix" required maxlength="120"></div>
+    </div>
+    <button class="btn block" type="submit">Enviar cadastro</button>
+  </form>
+  <button class="btn line" type="button" data-logout>Sair</button>
+</section>
+
+<!-- ================= APP ================= -->
+<div class="shell gut" id="shell" hidden>
+  <nav class="side" id="side" aria-label="Menu"></nav>
+  <main class="main" id="main">
+
+    <!-- parceiro: início -->
+    <section class="view" id="v-inicio" hidden>
+      <div class="vhead"><div><span class="kick" id="hiDate"></span><h1 id="hiTitle">Olá!</h1></div></div>
+      <div id="hiAlert"></div>
+      <div class="tiles" id="hiTiles"></div>
+      <div class="two">
+        <div class="card"><div class="row"><div><h2>recebido nos últimos 14 dias</h2><p class="meta" id="chartSum"></p></div></div><div class="chart" id="chart" role="img" aria-label="Gráfico de valores recebidos por dia"></div></div>
+        <div class="card"><h2>primeiros passos</h2><div class="check" id="checklist"></div></div>
       </div>
-      <button class="btn" type="submit">Enviar cadastro</button>
-    </form>
-    <button class="btn ghost" type="button" data-logout>Sair</button>
-  </section>
+      <div class="card" id="lowStock" hidden><h2>estoque acabando</h2><div id="lowList"></div></div>
+    </section>
 
-  <!-- ===== PARCEIRO ===== -->
-  <section class="view" id="v-pedidos" hidden>
-    <h1>Pedidos da Mimovalle</h1>
-    <div class="stats">
-      <div class="stat hot"><small>A enviar</small><b id="sSend">0</b></div>
-      <div class="stat"><small>Enviados</small><b id="sDone">0</b></div>
-      <div class="stat"><small>Recebido</small><b id="sPaid">R$ 0</b></div>
-    </div>
-    <div class="filters" role="group" aria-label="Filtrar pedidos">
-      <button class="chip" data-f="enviar" aria-pressed="true">A enviar</button>
-      <button class="chip" data-f="aguardando_pix" aria-pressed="false">Aguardando Pix</button>
-      <button class="chip" data-f="enviado" aria-pressed="false">Enviados</button>
-      <button class="chip" data-f="cancelado" aria-pressed="false">Cancelados</button>
-    </div>
-    <div class="list" id="orders"></div>
-  </section>
+    <!-- parceiro: pedidos -->
+    <section class="view" id="v-pedidos" hidden>
+      <div class="vhead"><div><span class="kick">pedidos</span><h1>pedidos da mimovalle</h1></div></div>
+      <div class="chips" role="group" aria-label="Filtrar pedidos" id="pFilters"></div>
+      <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="pSearch" type="search" placeholder="Buscar por produto, pedido ou cidade" aria-label="Buscar pedidos"></div>
+      <div class="list" id="orders"></div>
+    </section>
 
-  <section class="view" id="v-produtos" hidden>
-    <h1>Meus produtos</h1>
-    <p class="lead">Cadastre o produto com o seu preço de parceiro. A Mimovalle prepara fotos e anúncio, e ele fica ativo na loja.</p>
-    <div class="list" id="prods"></div>
-    <form class="form" id="fProd">
-      <h2>Adicionar produto</h2>
-      <div class="field"><label for="pNome">Nome do produto</label><input id="pNome" required minlength="2" maxlength="140" placeholder="Ex.: Kit potes herméticos 10 peças"></div>
-      <div class="grid2">
-        <div class="field"><label for="pPreco">Preço de parceiro (R$)</label><input id="pPreco" required inputmode="decimal" placeholder="45,00"></div>
-        <div class="field"><label for="pEstoque">Estoque</label><input id="pEstoque" required inputmode="numeric" placeholder="30"></div>
+    <!-- parceiro: produtos -->
+    <section class="view" id="v-produtos" hidden>
+      <div class="vhead"><div><span class="kick">catálogo</span><h1>meus produtos</h1></div><button class="btn" type="button" data-newprod><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>Novo produto</button></div>
+      <div class="chips" role="group" aria-label="Filtrar produtos" id="prFilters"></div>
+      <div class="grid-p" id="prods"></div>
+    </section>
+
+    <!-- parceiro: financeiro -->
+    <section class="view" id="v-financeiro" hidden>
+      <div class="vhead"><div><span class="kick">financeiro</span><h1>seus recebimentos</h1></div></div>
+      <div class="big"><small>Total recebido via Pix</small><b id="fTotal">R$ 0,00</b><small id="fMonth"></small></div>
+      <div class="two">
+        <div class="card"><h2>últimos Pix</h2><div id="pixList"></div></div>
+        <div class="card"><h2>por mês</h2><div id="monthList"></div></div>
       </div>
-      <div class="field"><label for="pLink">Link do produto na Shopee (opcional)</label><input id="pLink" type="url" placeholder="https://shopee.com.br/…"></div>
-      <button class="btn" type="submit">Enviar para a Mimovalle</button>
-    </form>
-  </section>
+    </section>
 
-  <section class="view" id="v-financeiro" hidden>
-    <h1>Financeiro</h1>
-    <div class="big"><small>Total recebido via Pix</small><b id="fTotal">R$ 0,00</b><small>Você recebe antes de cada envio</small></div>
-    <div class="list" id="pixList"></div>
-  </section>
-
-  <section class="view" id="v-conta" hidden>
-    <h1>Minha conta</h1>
-    <form class="form" id="fConta">
-      <div class="field"><label for="aLoja">Nome da loja</label><input id="aLoja" required minlength="2" maxlength="80"></div>
-      <div class="field"><label for="aResp">Responsável</label><input id="aResp" required minlength="2" maxlength="80"></div>
-      <div class="grid2">
-        <div class="field"><label for="aWhats">WhatsApp</label><input id="aWhats" required inputmode="tel"></div>
-        <div class="field"><label for="aPix">Chave Pix</label><input id="aPix" required maxlength="120"></div>
+    <!-- parceiro: conta -->
+    <section class="view" id="v-conta" hidden>
+      <div class="vhead"><div><span class="kick">conta</span><h1>dados da sua loja</h1></div></div>
+      <div class="two">
+        <form class="card form" id="fConta">
+          <div class="field"><label for="aLoja">Nome da loja</label><input id="aLoja" required minlength="2" maxlength="80"></div>
+          <div class="field"><label for="aResp">Responsável</label><input id="aResp" required minlength="2" maxlength="80"></div>
+          <div class="g2">
+            <div class="field"><label for="aWhats">WhatsApp</label><input id="aWhats" required inputmode="tel"></div>
+            <div class="field"><label for="aPix">Chave Pix</label><input id="aPix" required maxlength="120"></div>
+          </div>
+          <button class="btn navy" type="submit">Salvar dados</button>
+        </form>
+        <div class="card"><h2>regras da parceria</h2>
+          <div class="check">
+            <div><span class="ck" style="border-color:var(--accent);color:var(--accent)">1</span>Envio em até 24 horas depois do Pix</div>
+            <div><span class="ck" style="border-color:var(--accent);color:var(--accent)">2</span>Embalagem neutra, sem propaganda de outra loja</div>
+            <div><span class="ck" style="border-color:var(--accent);color:var(--accent)">3</span>Estoque e preço sempre em dia no painel</div>
+            <div><span class="ck" style="border-color:var(--accent);color:var(--accent)">4</span>Código de rastreio em todo envio</div>
+          </div>
+          <a class="btn ghost" href="https://wa.me/5569992826272" target="_blank" rel="noopener">Falar com a Mimovalle</a>
+          <button class="btn line" type="button" data-logout>Sair da conta</button>
+        </div>
       </div>
-      <button class="btn dark" type="submit">Salvar dados</button>
-    </form>
-    <div class="card">
-      <h2>Regras da parceria</h2>
-      <p class="meta">Envio em até 24 horas depois do Pix. Embalagem neutra, sem propaganda de outra loja. Estoque sempre em dia. Código de rastreio em todo envio.</p>
-    </div>
-    <button class="btn ghost" type="button" data-logout>Sair</button>
-  </section>
+    </section>
 
-  <!-- ===== ADMIN (Mimovalle) ===== -->
-  <section class="view" id="v-apix" hidden>
-    <h1>Pix a pagar</h1>
-    <p class="lead">Pedidos pagos na Mimovalle. Faça o Pix ao parceiro e confirme aqui para ele enviar.</p>
-    <div class="list" id="aPixList"></div>
-  </section>
+    <!-- admin: início -->
+    <section class="view" id="v-ainicio" hidden>
+      <div class="vhead"><div><span class="kick" id="aDate"></span><h1>painel da mimovalle</h1></div></div>
+      <div id="aAlert"></div>
+      <div class="tiles" id="aTiles"></div>
+      <div class="two">
+        <div class="card"><div><h2>vendas de parceiros, 14 dias</h2><p class="meta" id="aChartSum"></p></div><div class="chart" id="aChart" role="img" aria-label="Gráfico de vendas por dia"></div></div>
+        <div class="card"><h2>ranking de parceiros</h2><div id="aRank"></div></div>
+      </div>
+    </section>
 
-  <section class="view" id="v-apedidos" hidden>
-    <h1>Todos os pedidos</h1>
-    <div class="filters" role="group" aria-label="Filtrar pedidos">
-      <button class="chip" data-af="enviar" aria-pressed="true">A enviar</button>
-      <button class="chip" data-af="enviado" aria-pressed="false">Enviados</button>
-      <button class="chip" data-af="cancelado" aria-pressed="false">Cancelados</button>
-    </div>
-    <div class="list" id="aOrders"></div>
-  </section>
+    <!-- admin: pix -->
+    <section class="view" id="v-apix" hidden>
+      <div class="vhead"><div><span class="kick">pagamentos</span><h1>pix a pagar</h1><p class="sub">Pedidos pagos na Mimovalle. Faça o Pix ao parceiro e confirme aqui.</p></div></div>
+      <div class="list" id="aPixList"></div>
+    </section>
 
-  <section class="view" id="v-aprods" hidden>
-    <h1>Produtos dos parceiros</h1>
-    <p class="lead">Para ligar, crie o produto na Mimovalle e cole aqui o link dele.</p>
-    <div class="list" id="aProds"></div>
-  </section>
+    <!-- admin: pedidos -->
+    <section class="view" id="v-apedidos" hidden>
+      <div class="vhead"><div><span class="kick">pedidos</span><h1>todos os pedidos</h1></div></div>
+      <div class="chips" role="group" aria-label="Filtrar pedidos" id="aFilters"></div>
+      <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="aSearch" type="search" placeholder="Buscar por produto, pedido, parceiro ou cidade" aria-label="Buscar pedidos"></div>
+      <div class="list" id="aOrders"></div>
+    </section>
 
-  <section class="view" id="v-aparc" hidden>
-    <h1>Parceiros</h1>
-    <div class="list" id="aParc"></div>
-    <button class="btn ghost" type="button" data-logout>Sair</button>
-  </section>
+    <!-- admin: produtos -->
+    <section class="view" id="v-aprods" hidden>
+      <div class="vhead"><div><span class="kick">catálogo</span><h1>produtos dos parceiros</h1><p class="sub">Crie o produto na Mimovalle e cole o link dele para ligar.</p></div></div>
+      <div class="chips" role="group" aria-label="Filtrar produtos" id="aPrFilters"></div>
+      <div class="grid-p" id="aProds"></div>
+    </section>
+
+    <!-- admin: parceiros -->
+    <section class="view" id="v-aparc" hidden>
+      <div class="vhead"><div><span class="kick">rede</span><h1>parceiros</h1></div><button class="btn ghost sm" type="button" data-copylink>Copiar link de convite</button></div>
+      <div class="list" id="aParc"></div>
+      <button class="btn line" type="button" data-logout style="align-self:flex-start">Sair da conta</button>
+    </section>
+  </main>
 </div>
 
-<nav class="tabs" id="tabsP" hidden aria-label="Painel do parceiro"><div class="in">
-  <button class="tab" data-v="pedidos" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg>Pedidos<span class="badge" id="bSend" hidden></span></button>
-  <button class="tab" data-v="produtos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Produtos</button>
-  <button class="tab" data-v="financeiro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20"/><path d="M6 15h4"/></svg>Financeiro</button>
-  <button class="tab" data-v="conta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>Conta</button>
-</div></nav>
-
-<nav class="tabs" id="tabsA" hidden aria-label="Painel da Mimovalle"><div class="in">
-  <button class="tab" data-v="apix" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20"/><path d="M6 15h4"/></svg>Pix<span class="badge" id="bPix" hidden></span></button>
-  <button class="tab" data-v="apedidos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg>Pedidos</button>
-  <button class="tab" data-v="aprods"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Produtos<span class="badge" id="bProd" hidden></span></button>
-  <button class="tab" data-v="aparc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c1-3.5 3.5-5.5 6.5-5.5s5.5 2 6.5 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.6c2.6.2 4.6 2 5.5 5.4"/></svg>Parceiros<span class="badge" id="bParc" hidden></span></button>
-</div></nav>
-
+<nav class="tabs-b" id="tabsB" hidden aria-label="Menu"><div class="in" id="tabsIn"></div></nav>
+<div id="sheetRoot"></div>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
-const SB_URL='https://tipodqcudmktthbbmhqv.supabase.co';
-const SB_KEY='sb_publishable_z9-3kH87I0NzVx4SUQlDSA_d8chShmc';
-const LOJA_ADMIN='https://admin.shopify.com/store/mbyhdh-1f/orders/';
-const WHATS_MIMO='5569992826272';
+const SB_URL='https://tipodqcudmktthbbmhqv.supabase.co', SB_KEY='sb_publishable_z9-3kH87I0NzVx4SUQlDSA_d8chShmc';
+const LOJA_ADMIN='https://admin.shopify.com/store/mbyhdh-1f/orders/', LOJA_NOVO='https://admin.shopify.com/store/mbyhdh-1f/products/new';
 const sb=supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
-const H=3600e3;
-const $=s=>document.querySelector(s);
+const H=3600e3, DAY=864e5;
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const brl=v=>(Number(v)||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-const dt=v=>v?new Date(v).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})+' '+new Date(v).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}):'';
+const brl0=v=>brl(v).replace(/,00$/,'');
+const dt=v=>v?new Date(v).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}).replace(',',' ·'):'';
 const digits=s=>String(s||'').replace(/\D/g,'');
-let tt;function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(tt);tt=setTimeout(()=>t.hidden=true,3400)}
+const wa=w=>'https://wa.me/55'+digits(w).replace(/^55/,'');
+const fotoUrl=p=>p&&p.foto_path?SB_URL+'/storage/v1/object/public/fm-fotos/'+p.foto_path.split('/').map(encodeURIComponent).join('/'):'';
+const CATS={cozinha:'Cozinha',casa:'Casa',beleza:'Beleza',moda:'Moda',tecnologia:'Tecnologia',ferramentas:'Ferramentas',brinquedos:'Brinquedos',pets:'Pets',outros:'Outros'};
+const I={
+  home:'<path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>',box:'<path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/>',
+  grid:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+  money:'<rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20"/><path d="M6 15h4"/>',user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
+  users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c1-3.5 3.5-5.5 6.5-5.5s5.5 2 6.5 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.6c2.6.2 4.6 2 5.5 5.4"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',check:'<path d="M20 6L9 17l-5-5"/>',copy:'<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>',
+  wa:'<path d="M21 12a9 9 0 0 1-13.5 7.8L3 21l1.3-4.4A9 9 0 1 1 21 12z"/>',ext:'<path d="M14 4h6v6"/><path d="M20 4l-9 9"/><path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/>',
+  cam:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>',plus:'<path d="M12 5v14M5 12h14"/>',
+  bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 0 0 4 0"/>',spark:'<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M6 18l2.5-2.5M15.5 8.5L18 6"/>'
+};
+const svg=(n,s='')=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" ${s}>${I[n]}</svg>`;
+let tt;function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(tt);tt=setTimeout(()=>t.hidden=true,3600)}
 const errMsg=e=>{const m=(e&&e.message)||'';
   if(/Invalid login/i.test(m))return 'E-mail ou senha incorretos.';
   if(/Email not confirmed/i.test(m))return 'Confirme seu e-mail antes de entrar. Procure a mensagem na caixa de entrada ou no spam.';
   if(/already registered|already been registered/i.test(m))return 'Esse e-mail já tem cadastro. Use "Entrar".';
   if(/rate limit|security purposes/i.test(m))return 'Muitas tentativas seguidas. Espere um minuto e tente de novo.';
-  if(/Password should/i.test(m))return 'A senha precisa ter pelo menos 8 caracteres.';
+  if(/Password should|weak/i.test(m))return 'Escolha uma senha mais forte, com pelo menos 8 caracteres.';
   if(/Só é possível/.test(m))return m;
+  if(/payload too large|exceeded|maximum allowed size/i.test(m))return 'A foto é muito grande. Use uma foto menor que 5 MB.';
   return 'Não foi possível concluir agora. Verifique a internet e tente de novo.'};
+async function copy(v,ok){try{await navigator.clipboard.writeText(v);toast(ok)}catch(_){toast(v)}}
 
-let me=null,isAdmin=false,parceiro=null,orders=[],prods=[],parceiros=[],filter='enviar',afilter='enviar',openShip=null,chan=null,recovery=false;
-const views=['auth','msg','pedidos','produtos','financeiro','conta','apix','apedidos','aprods','aparc'];
-function show(v){views.forEach(x=>$('#v-'+x).hidden=x!==v);$('#loading').hidden=true;window.scrollTo(0,0)}
-function setTabs(kind,v){$('#tabsP').hidden=kind!=='p';$('#tabsA').hidden=kind!=='a';
-  const nav=kind==='p'?$('#tabsP'):kind==='a'?$('#tabsA'):null;
-  if(nav)nav.querySelectorAll('.tab').forEach(b=>{if(b.dataset.v===v)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});}
-document.querySelectorAll('nav.tabs').forEach(n=>n.addEventListener('click',e=>{const b=e.target.closest('.tab');if(!b)return;
-  n.querySelectorAll('.tab').forEach(x=>x.removeAttribute('aria-current'));b.setAttribute('aria-current','page');show(b.dataset.v)}));
-function setWho(name){$('#who').hidden=!name;$('#whoName').textContent=name||'';$('#avatar').textContent=(name||'').split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join('')}
+/* ---------- estado ---------- */
+let me=null,isAdmin=false,parceiro=null,orders=[],prods=[],parceiros=[],vendas={},chan=null,recovery=false,current='';
+const F={p:'enviar',pq:'',pr:'todos',a:'enviar',aq:'',apr:'pendentes'};
+const VIEWS=['inicio','pedidos','produtos','financeiro','conta','ainicio','apix','apedidos','aprods','aparc'];
+const MENU_P=[['inicio','Início','home'],['pedidos','Pedidos','box'],['produtos','Produtos','grid'],['financeiro','Financeiro','money'],['conta','Conta','user']];
+const MENU_A=[['ainicio','Início','home'],['apix','Pix','money'],['apedidos','Pedidos','box'],['aprods','Produtos','grid'],['aparc','Parceiros','users']];
 
-/* ---------- Auth ---------- */
+function screen(s){$('#loading').hidden=true;$('#v-land').hidden=s!=='land';$('#v-msg').hidden=s!=='msg';$('#shell').hidden=s!=='app';$('#tabsB').hidden=s!=='app';$('#topLogin').hidden=s!=='land'}
+function buildMenu(){const m=isAdmin?MENU_A:MENU_P;
+  $('#side').innerHTML=m.map(([v,l,ic])=>`<button class="nav" data-go="${v}">${svg(ic)}<span>${l}</span><span class="badge" data-b="${v}" hidden></span></button>`).join('');
+  $('#tabsIn').innerHTML=m.map(([v,l,ic])=>`<button class="tab" data-go="${v}">${svg(ic)}<span>${l}</span><span class="badge" data-b="${v}" hidden></span></button>`).join('')}
+function go(v){if(!VIEWS.includes(v))return;current=v;VIEWS.forEach(x=>$('#v-'+x).hidden=x!==v);
+  $$('[data-go]').forEach(b=>b.dataset.go===v?b.setAttribute('aria-current','page'):b.removeAttribute('aria-current'));
+  if(location.hash!=='#'+v)history.replaceState(null,'','#'+v);window.scrollTo(0,0)}
+function badge(v,n){$$(`[data-b="${v}"]`).forEach(b=>{b.hidden=!n;b.textContent=n})}
+function setWho(name,role){$('#who').hidden=!name;$('#whoName').textContent=name||'';$('#whoRole').textContent=role||'';
+  $('#avatar').textContent=(name||'').split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join('')}
+function msg(title,text,pill,pc,complete){$('#msgTitle').textContent=title;$('#msgText').textContent=text;$('#msgPill').textContent=pill;$('#msgPill').className='pill '+pc;$('#fComplete').hidden=!complete;$('#msgWhats').hidden=complete;screen('msg')}
+
+/* ---------- landing / auth ---------- */
 function seg(sign){$('#segLogin').setAttribute('aria-selected',String(!sign));$('#segSign').setAttribute('aria-selected',String(sign));$('#fLogin').hidden=sign;$('#fSign').hidden=!sign;$('#fNewPass').hidden=true}
 $('#segLogin').onclick=()=>seg(false);$('#segSign').onclick=()=>seg(true);
+function landHash(){const h=location.hash;if(h==='#entrar'||h==='#cadastro'){seg(h==='#cadastro');setTimeout(()=>$('#authArea').scrollIntoView({behavior:'smooth',block:'start'}),50)}}
+$('#home').onclick=e=>{e.preventDefault();if(me)go(isAdmin?'ainicio':'inicio');else window.scrollTo({top:0,behavior:'smooth'})};
 const busy=(f,on)=>f.querySelectorAll('button[type=submit]').forEach(b=>b.disabled=on);
-$('#fLogin').onsubmit=async e=>{e.preventDefault();busy(e.target,true);
-  const {error}=await sb.auth.signInWithPassword({email:$('#lEmail').value.trim(),password:$('#lPass').value});
-  busy(e.target,false);if(error)toast(errMsg(error));};
+$('#fLogin').onsubmit=async e=>{e.preventDefault();busy(e.target,true);const {error}=await sb.auth.signInWithPassword({email:$('#lEmail').value.trim(),password:$('#lPass').value});busy(e.target,false);if(error)toast(errMsg(error))};
 $('#forgot').onclick=async()=>{const email=$('#lEmail').value.trim();if(!email){toast('Digite seu e-mail no campo acima primeiro.');$('#lEmail').focus();return}
-  const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});
-  toast(error?errMsg(error):'Enviamos um link para criar uma nova senha no seu e-mail.')};
+  const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin+location.pathname});toast(error?errMsg(error):'Enviamos um link para criar uma nova senha no seu e-mail.')};
 $('#fSign').onsubmit=async e=>{e.preventDefault();
-  const dados={nome_loja:$('#sLoja').value.trim(),responsavel:$('#sResp').value.trim(),whatsapp:$('#sWhats').value.trim(),chave_pix:$('#sPix').value.trim()};
-  if(digits(dados.whatsapp).length<10){toast('Digite o WhatsApp com DDD.');return}
-  busy(e.target,true);
-  const {data,error}=await sb.auth.signUp({email:$('#sEmail').value.trim(),password:$('#sPass').value,options:{data:{fm_cadastro:dados},emailRedirectTo:location.origin+location.pathname}});
-  busy(e.target,false);
-  if(error){toast(errMsg(error));return}
-  if(!data.session){msg('Confirme seu e-mail','Enviamos um link de confirmação para '+$('#sEmail').value.trim()+'. Toque no link e depois entre com seu e-mail e senha.','Falta pouco','p-wait',false)}
-};
-$('#fNewPass').onsubmit=async e=>{e.preventDefault();busy(e.target,true);const {error}=await sb.auth.updateUser({password:$('#nPass').value});busy(e.target,false);
-  if(error){toast(errMsg(error));return}recovery=false;toast('Senha alterada.');boot()};
-document.addEventListener('click',async e=>{if(e.target.closest('[data-logout]')){await sb.auth.signOut();location.hash='';}});
-
-function msg(title,text,pill,pc,complete){$('#msgTitle').textContent=title;$('#msgText').textContent=text;$('#msgPill').textContent=pill;$('#msgPill').className='pill '+pc;$('#fComplete').hidden=!complete;setTabs(null);show('msg')}
-
-/* ---------- Boot ---------- */
-async function boot(){
-  const {data:{session}}=await sb.auth.getSession();
-  if(chan){sb.removeChannel(chan);chan=null}
-  if(recovery){setTabs(null);setWho('');show('auth');$('#fLogin').hidden=true;$('#fSign').hidden=true;$('#fNewPass').hidden=false;return}
-  if(!session){me=null;setTabs(null);setWho('');seg(false);show('auth');return}
-  me=session.user;
-  const {data:adm}=await sb.rpc('fm_eh_admin');isAdmin=adm===true;
-  if(isAdmin){setWho('Mimovalle');await loadAdmin();setTabs('a','apix');show('apix');listen();return}
-  let {data:p}=await sb.from('fm_parceiros').select('*').eq('id',me.id).maybeSingle();
-  if(!p){const c=me.user_metadata&&me.user_metadata.fm_cadastro;
-    if(c&&c.nome_loja){const r=await sb.from('fm_parceiros').insert({id:me.id,nome_loja:c.nome_loja,responsavel:c.responsavel,whatsapp:c.whatsapp,chave_pix:c.chave_pix}).select().single();p=r.data}
-    if(!p){setWho('');msg('Complete seu cadastro','Faltam alguns dados para a Mimovalle analisar sua loja.','Cadastro','p-wait',true);return}}
-  parceiro=p;setWho(p.nome_loja);
-  if(p.status==='pendente'){msg('Cadastro em análise',`Recebemos o cadastro da ${p.nome_loja}. A Mimovalle vai conferir e liberar seu painel. Se quiser agilizar, chame no WhatsApp (69) 99282-6272.`,'Em análise','p-wait',false);listen();return}
-  if(p.status==='pausado'){msg('Parceria pausada','Seu painel está pausado no momento. Fale com a Mimovalle no WhatsApp (69) 99282-6272.','Pausado','p-off',false);return}
-  fillConta();await loadPartner();setTabs('p','pedidos');show('pedidos');listen();
-}
+  const d={nome_loja:$('#sLoja').value.trim(),responsavel:$('#sResp').value.trim(),whatsapp:$('#sWhats').value.trim(),chave_pix:$('#sPix').value.trim()};
+  if(digits(d.whatsapp).length<10){toast('Digite o WhatsApp com DDD.');return}
+  busy(e.target,true);const email=$('#sEmail').value.trim();
+  const {data,error}=await sb.auth.signUp({email,password:$('#sPass').value,options:{data:{fm_cadastro:d},emailRedirectTo:location.origin+location.pathname}});
+  busy(e.target,false);if(error){toast(errMsg(error));return}
+  if(!data.session)msg('Confirme seu e-mail',`Enviamos um link de confirmação para ${email}. Toque no link e depois entre com seu e-mail e senha.`,'Falta pouco','p-wait',false)};
+$('#fNewPass').onsubmit=async e=>{e.preventDefault();busy(e.target,true);const {error}=await sb.auth.updateUser({password:$('#nPass').value});busy(e.target,false);if(error){toast(errMsg(error));return}recovery=false;toast('Senha alterada.');boot()};
+document.addEventListener('click',async e=>{if(e.target.closest('[data-logout]')){await sb.auth.signOut();history.replaceState(null,'',location.pathname)}});
 $('#fComplete').onsubmit=async e=>{e.preventDefault();busy(e.target,true);
   const {error}=await sb.from('fm_parceiros').insert({id:me.id,nome_loja:$('#cLoja').value.trim(),responsavel:$('#cResp').value.trim(),whatsapp:$('#cWhats').value.trim(),chave_pix:$('#cPix').value.trim()});
   busy(e.target,false);if(error){toast(errMsg(error));return}boot()};
 
+/* ---------- boot ---------- */
+async function boot(){
+  const {data:{session}}=await sb.auth.getSession();
+  if(chan){sb.removeChannel(chan);chan=null}
+  if(recovery){setWho('');screen('land');seg(false);$('#fLogin').hidden=true;$('#fNewPass').hidden=false;$('#authArea').scrollIntoView();return}
+  if(!session){me=null;setWho('');screen('land');landHash();return}
+  me=session.user;
+  const {data:adm}=await sb.rpc('fm_eh_admin');isAdmin=adm===true;
+  if(isAdmin){setWho('Mimovalle','administração');buildMenu();await loadAdmin();screen('app');go(VIEWS.includes(location.hash.slice(1))&&location.hash.startsWith('#a')?location.hash.slice(1):'ainicio');listen();return}
+  let {data:p}=await sb.from('fm_parceiros').select('*').eq('id',me.id).maybeSingle();
+  if(!p){const c=me.user_metadata&&me.user_metadata.fm_cadastro;
+    if(c&&c.nome_loja){const r=await sb.from('fm_parceiros').insert({id:me.id,nome_loja:c.nome_loja,responsavel:c.responsavel,whatsapp:c.whatsapp,chave_pix:c.chave_pix}).select().single();p=r.data}
+    if(!p){setWho('');msg('Complete seu cadastro','Faltam alguns dados para a Mimovalle analisar sua loja.','Cadastro','p-wait',true);return}}
+  parceiro=p;setWho(p.nome_loja,'parceiro');
+  if(p.status==='pendente'){msg('Cadastro em análise',`Recebemos o cadastro da ${p.nome_loja}. A Mimovalle confere sua loja e libera o painel, normalmente no mesmo dia. Esta tela atualiza sozinha.`,'Em análise','p-wait',false);listen();return}
+  if(p.status==='pausado'){msg('Parceria pausada','Seu painel está pausado no momento. Fale com a Mimovalle para entender e reativar.','Pausado','p-off',false);listen();return}
+  buildMenu();fillConta();await loadPartner();screen('app');const h=location.hash.slice(1);go(['inicio','pedidos','produtos','financeiro','conta'].includes(h)?h:'inicio');listen();
+}
 let reloadT;function listen(){
   chan=sb.channel('fm-'+me.id)
    .on('postgres_changes',{event:'*',schema:'public',table:'fm_pedidos'},()=>sched())
    .on('postgres_changes',{event:'*',schema:'public',table:'fm_produtos'},()=>sched())
-   .on('postgres_changes',{event:'*',schema:'public',table:'fm_parceiros'},()=>sched(true))
-   .subscribe();
-}
+   .on('postgres_changes',{event:'*',schema:'public',table:'fm_parceiros'},()=>sched(true)).subscribe()}
 function sched(full){clearTimeout(reloadT);reloadT=setTimeout(async()=>{
-  if(!isAdmin&&full){const {data:p}=await sb.from('fm_parceiros').select('*').eq('id',me.id).maybeSingle();if(p&&(!parceiro||p.status!==parceiro.status)){boot();return}}
-  isAdmin?await loadAdmin():parceiro&&parceiro.status==='ativo'&&await loadPartner()},400)}
+  if(!me)return;
+  if(!isAdmin&&(full||!parceiro||parceiro.status!=='ativo')){const {data:p}=await sb.from('fm_parceiros').select('*').eq('id',me.id).maybeSingle();if(p&&(!parceiro||p.status!==parceiro.status)){boot();return}}
+  if(isAdmin)await loadAdmin();else if(parceiro&&parceiro.status==='ativo')await loadPartner()},400)}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&me)sched()});
+setInterval(()=>{if(me&&!document.hidden)sched()},45000);
+document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g)go(g.dataset.go)});
 
-/* ---------- Parceiro ---------- */
-async function loadPartner(){
-  const [o,p]=await Promise.all([sb.from('fm_pedidos').select('*').order('created_at',{ascending:false}),sb.from('fm_produtos').select('*').order('created_at',{ascending:false})]);
-  if(o.error||p.error){toast('Não foi possível carregar seus dados. Recarregue a página.');return}
-  orders=o.data;prods=p.data;renderOrders();renderProds();renderFin();
-}
+/* ---------- utilitários de pedido ---------- */
+const PCOLS='id,parceiro_id,produto_id,shopify_order_id,numero,produto_nome,qtd,valor,cliente,status,pix_pago_em,rastreio,enviado_em,created_at';
 const left=o=>new Date(o.pix_pago_em).getTime()+24*H-Date.now();
 const fmt=ms=>{if(ms<=0)return 'prazo vencido';const h=Math.floor(ms/H),m=Math.floor(ms%H/60000);return `${h}h ${String(m).padStart(2,'0')}min`};
-function pillFor(o){if(o.status==='enviado')return '<span class="pill p-ok">Enviado</span>';if(o.status==='cancelado')return '<span class="pill p-off">Cancelado</span>';
+function pillFor(o){if(o.status==='enviado')return `<span class="pill p-ok">${svg('check','width="12" height="12"')}Enviado</span>`;if(o.status==='cancelado')return '<span class="pill p-off">Cancelado</span>';
   if(o.status==='aguardando_pix')return '<span class="pill p-wait">Aguardando Pix</span>';return left(o)<=0?'<span class="pill p-late">Atrasado</span>':'<span class="pill p-send">Enviar</span>'}
-function addrHtml(c){c=c||{};return `<div class="addr"><b>${esc(c.nome)}</b><span>${esc([c.rua,c.complemento].filter(Boolean).join(', '))}</span><span>${esc([c.cidade,c.uf].filter(Boolean).join(' - '))}${c.cep?' · CEP '+esc(c.cep):''}</span>${c.telefone?`<span>Tel.: ${esc(c.telefone)}</span>`:''}</div>`}
+const addrText=c=>{c=c||{};return [c.nome,[c.rua,c.complemento].filter(Boolean).join(', '),[c.cidade,c.uf].filter(Boolean).join(' - ')+(c.cep?' · CEP '+c.cep:''),c.telefone?'Tel.: '+c.telefone:''].filter(Boolean).join('\n')};
+function addrHtml(c){c=c||{};return `<div class="addr"><button class="btn ghost sm cp" type="button" data-copyaddr="${esc(addrText(c))}" aria-label="Copiar endereço">${svg('copy')}</button><b>${esc(c.nome)}</b><span>${esc([c.rua,c.complemento].filter(Boolean).join(', '))}</span><span>${esc([c.cidade,c.uf].filter(Boolean).join(' - '))}${c.cep?' · CEP '+esc(c.cep):''}</span>${c.telefone?`<span>Tel.: ${esc(c.telefone)}</span>`:''}</div>`}
+const prodOf=o=>prods.find(p=>p.id===o.produto_id);
+const thumb=p=>{const u=fotoUrl(p);return u?`<img src="${esc(u)}" alt="" loading="lazy">`:svg('box')};
+function chips(el,list,cur,key){$(el).innerHTML=list.map(([v,l,n])=>`<button class="chip" data-chip="${key}" data-v="${v}" aria-pressed="${v===cur}">${l}${n!=null?`<span class="c">${n}</span>`:''}</button>`).join('')}
+function matchQ(o,q,extra=''){if(!q)return true;const c=o.cliente||{};return (o.produto_nome+' '+o.numero+' '+c.cidade+' '+c.nome+' '+extra).toLowerCase().includes(q)}
+const isToday=d=>new Date(d).toDateString()===new Date().toDateString();
+function days14(list,dateKey,valKey){const out=[];const t0=new Date();t0.setHours(0,0,0,0);
+  for(let i=13;i>=0;i--){const d=new Date(t0.getTime()-i*DAY);const v=list.filter(o=>o[dateKey]&&new Date(o[dateKey]).toDateString()===d.toDateString()).reduce((a,o)=>a+(typeof valKey==='function'?valKey(o):Number(o[valKey])),0);out.push({d,v})}return out}
+function drawChart(el,data){const max=Math.max(...data.map(x=>x.v),1);
+  $(el).innerHTML=data.map((x,i)=>`<div class="bar${i===data.length-1?' on':''}" title="${x.d.toLocaleDateString('pt-BR')}: ${brl(x.v)}"><i style="height:${Math.max(3,Math.round(x.v/max*100))}%"></i><small>${x.d.getDate()}</small></div>`).join('')}
+
+/* ---------- PARCEIRO ---------- */
+async function loadPartner(){
+  const [o,p]=await Promise.all([sb.from('fm_pedidos').select(PCOLS).order('created_at',{ascending:false}),sb.from('fm_produtos').select('*').order('created_at',{ascending:false})]);
+  if(o.error||p.error){toast('Não foi possível carregar seus dados. Recarregue a página.');return}
+  orders=o.data;prods=p.data;renderInicio();renderOrders();renderProds();renderFin();badge('pedidos',orders.filter(x=>x.status==='enviar').length)}
+function renderInicio(){
+  const nome=(parceiro.responsavel||'').split(' ')[0];const hr=new Date().getHours();
+  $('#hiTitle').textContent=`${hr<12?'bom dia':hr<18?'boa tarde':'boa noite'}, ${nome}`;
+  $('#hiDate').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
+  const send=orders.filter(o=>o.status==='enviar').sort((a,b)=>new Date(a.pix_pago_em)-new Date(b.pix_pago_em));
+  const paid=orders.filter(o=>o.pix_pago_em&&o.status!=='cancelado');const m0=new Date();m0.setDate(1);m0.setHours(0,0,0,0);
+  const mes=paid.filter(o=>new Date(o.pix_pago_em)>=m0);
+  $('#hiAlert').innerHTML=send.length?`<div class="alert"><span class="ic">${svg('clock')}</span><div><b>${send.length} pedido${send.length>1?'s':''} para enviar</b><span>O mais urgente vence em ${fmt(left(send[0]))}.</span></div><button class="btn" data-go="pedidos">Ver pedidos</button></div>`
+    :`<div class="alert calm"><span class="ic">${svg('check')}</span><div><b>Tudo em dia</b><span>Nenhum pedido esperando envio. Os novos chegam aqui sozinhos.</span></div><button class="btn" data-go="produtos">Meus produtos</button></div>`;
+  const ativos=prods.filter(p=>p.ativo).length;
+  $('#hiTiles').innerHTML=[['var(--peach)','A enviar',send.length,'pedidos com Pix pago'],['var(--mint)','Recebido no mês',brl0(mes.reduce((a,o)=>a+Number(o.valor),0)),mes.length+' venda(s)'],['var(--butter)','Aguardando Pix',orders.filter(o=>o.status==='aguardando_pix').length,'a Mimovalle está pagando'],['var(--lilac)','Produtos ativos',ativos+'/'+prods.length,'na vitrine da Mimovalle']]
+    .map(([bg,l,v,s])=>`<div class="tile" style="background:${bg}"><small>${l}</small><b>${v}</b><span>${s}</span></div>`).join('');
+  const d=days14(paid,'pix_pago_em','valor');drawChart('#chart',d);$('#chartSum').textContent=brl(d.reduce((a,x)=>a+x.v,0))+' no período';
+  const steps=[['Cadastro aprovado',true],['Cadastrar o primeiro produto',prods.length>0],['Colocar foto nos produtos',prods.length>0&&prods.every(p=>p.foto_path)],['Ter 3 produtos ativos na loja',ativos>=3],['Fazer o primeiro envio',orders.some(o=>o.status==='enviado')]];
+  $('#checklist').innerHTML=steps.map(([t,ok])=>`<div class="${ok?'done':''}"><span class="ck">${ok?svg('check','width="14" height="14"'):''}</span>${t}</div>`).join('');
+  const low=prods.filter(p=>p.estoque<=3);$('#lowStock').hidden=!low.length;
+  $('#lowList').innerHTML=low.map(p=>`<div class="ln"><span>${esc(p.nome)}</span><strong style="color:${p.estoque?'var(--warn)':'var(--late)'}">${p.estoque?p.estoque+' un.':'esgotado'}</strong></div>`).join('');
+}
 function renderOrders(){
-  const by=s=>orders.filter(o=>o.status===s);const send=by('enviar');
-  $('#sSend').textContent=send.length;$('#sDone').textContent=by('enviado').length;
-  $('#sPaid').textContent=brl(orders.filter(o=>o.pix_pago_em&&o.status!=='cancelado').reduce((a,o)=>a+Number(o.valor),0)).replace(',00','');
-  $('#bSend').hidden=!send.length;$('#bSend').textContent=send.length;
-  const list=by(filter).sort((a,b)=>filter==='enviar'?new Date(a.pix_pago_em)-new Date(b.pix_pago_em):0);
+  const n=s=>orders.filter(o=>o.status===s).length;
+  chips('#pFilters',[['enviar','A enviar',n('enviar')],['aguardando_pix','Aguardando Pix',n('aguardando_pix')],['enviado','Enviados',n('enviado')],['cancelado','Cancelados',n('cancelado')]],F.p,'p');
+  const q=F.pq.toLowerCase();const list=orders.filter(o=>o.status===F.p&&matchQ(o,q)).sort((a,b)=>F.p==='enviar'?new Date(a.pix_pago_em)-new Date(b.pix_pago_em):0);
   const empty={enviar:'Nenhum pedido para enviar agora. Quando a Mimovalle pagar um pedido, ele aparece aqui com o prazo de 24 horas.',aguardando_pix:'Nenhum pedido aguardando o Pix da Mimovalle.',enviado:'Os pedidos enviados aparecem aqui com o código de rastreio.',cancelado:'Nenhum pedido cancelado.'};
-  if(!list.length){$('#orders').innerHTML=`<p class="empty">${empty[filter]}</p>`;return}
-  $('#orders').innerHTML=list.map(o=>{let line,foot='';const ms=o.pix_pago_em?left(o):0;
+  if(!list.length){$('#orders').innerHTML=`<div class="empty">${svg('box')}${q?'Nada encontrado nessa busca.':empty[F.p]}</div>`;return}
+  $('#orders').innerHTML=list.map(o=>{const p=prodOf(o);let line='',foot='',extra='';
     if(o.status==='aguardando_pix')line='A Mimovalle está fazendo o seu Pix';
-    else if(o.status==='enviar'){line=`Postar em: <span class="timer" style="color:var(${ms<=0?'--late':'--warn'})">${fmt(ms)}</span>`;
-      foot=openShip===o.id?`<form class="inline ship" data-id="${o.id}"><label for="tr-${o.id}">Código de rastreio</label><input id="tr-${o.id}" required maxlength="40" placeholder="Ex.: QN123456789BR" autocomplete="off" autocapitalize="characters"><div class="inline-row"><button class="btn ghost" type="button" data-cancel style="flex:1">Cancelar</button><button class="btn" type="submit" style="flex:1">Confirmar envio</button></div></form>`:`<button class="btn" data-ship="${o.id}">Marcar como enviado</button>`}
-    else if(o.status==='enviado'){line='Pix recebido em '+dt(o.pix_pago_em);foot=`<p class="track">Rastreio: ${esc(o.rastreio)} · enviado ${dt(o.enviado_em)}</p>`}
+    else if(o.status==='enviar'){const ms=left(o);const pct=Math.max(0,Math.min(100,ms/(24*H)*100));
+      line=`Postar em <span class="timer" style="color:var(${ms<=0?'--late':'--warn'})">${fmt(ms)}</span>`;
+      extra=`<div class="bar-time"><i style="width:${pct}%;background:var(${ms<=0?'--late':pct<25?'--late':'--warn'})"></i></div>`;
+      foot=`<form class="form ship" data-id="${o.id}" hidden><div class="field"><label for="tr-${o.id}">Código de rastreio</label><input id="tr-${o.id}" required maxlength="40" placeholder="Ex.: QN123456789BR" autocomplete="off" autocapitalize="characters"></div><div class="acts"><button class="btn ghost" type="button" data-cancel>Cancelar</button><button class="btn" type="submit">Confirmar envio</button></div></form><div class="acts"><button class="btn" data-ship="${o.id}">${svg('box')}Marcar como enviado</button></div>`}
+    else if(o.status==='enviado'){line='Pix recebido em '+dt(o.pix_pago_em);foot=`<p class="track">${svg('check','width="14" height="14" style="vertical-align:-2px"')} Rastreio ${esc(o.rastreio)} · enviado ${dt(o.enviado_em)}</p>`}
     else line='Pedido cancelado pelo cliente. Não envie.';
-    return `<article class="card"><div class="row"><div><h3>${esc(o.produto_nome)}</h3><div class="meta">Pedido ${esc(o.numero)} · ${o.qtd} un. · ${dt(o.created_at)}</div></div>${pillFor(o)}</div>
-      ${o.status==='enviar'||o.status==='enviado'?addrHtml(o.cliente):''}<div class="money"><span>${line}</span><strong>${brl(o.valor)}</strong></div>${foot}</article>`}).join('');
-}
-function prodStatus(p){if(!p.shopify_product_id)return '<span class="pill p-wait">Em análise</span>';if(p.estoque===0)return '<span class="pill p-late">Sem estoque</span>';return p.ativo?'<span class="pill p-ok">Ativo na loja</span>':'<span class="pill p-off">Pausado</span>'}
-const boxIcon='<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/></svg>';
-function renderProds(){
-  $('#prods').innerHTML=prods.length?prods.map(p=>`<div class="card"><div class="prod-top"><div class="thumb">${boxIcon}</div><div class="info"><b>${esc(p.nome)}</b><span class="meta">${brl(p.preco_parceiro)} · ${p.estoque} em estoque</span></div></div>
-     <div class="row" style="align-items:center">${prodStatus(p)}<button class="chip" data-edit="${p.id}">Estoque e preço</button></div>
-     <form class="inline editProd" data-id="${p.id}" hidden><div class="grid2"><div class="field"><label for="ep-${p.id}">Preço de parceiro</label><input id="ep-${p.id}" inputmode="decimal" value="${String(p.preco_parceiro).replace('.',',')}"></div><div class="field"><label for="ee-${p.id}">Estoque</label><input id="ee-${p.id}" inputmode="numeric" value="${p.estoque}"></div></div>
-     <p class="hint">Mudar o preço pausa o produto até a Mimovalle atualizar o anúncio.</p><button class="btn dark" type="submit">Salvar</button></form></div>`).join(''):'<p class="empty">Nenhum produto ainda. Cadastre os 3 primeiros no formulário abaixo.</p>';
-}
+    return `<article class="card order"><div class="ph ${p&&p.categoria?'cat-'+p.categoria:''}">${p?thumb(p):svg('box')}</div><div class="body"><div class="row"><div><h3>${esc(o.produto_nome)}</h3><div class="meta">Pedido ${esc(o.numero)} · ${o.qtd} un. · ${dt(o.created_at)}</div></div>${pillFor(o)}</div>
+      ${o.status==='enviar'||o.status==='enviado'?addrHtml(o.cliente):''}<div class="money"><span>${line}</span><strong>${brl(o.valor)}</strong></div>${extra}${foot}</div></article>`}).join('')}
+function prodStatus(p){if(!p.shopify_product_id)return '<span class="pill p-wait">Em análise</span>';if(p.estoque===0)return '<span class="pill p-late">Esgotado</span>';return p.ativo?'<span class="pill p-ok">Ativo</span>':'<span class="pill p-off">Pausado</span>'}
+function prodFilterList(list){const n=f=>list.filter(f).length;return [['todos','Todos',list.length],['ativos','Ativos',n(p=>p.ativo)],['pendentes','Em análise',n(p=>!p.shopify_product_id)],['esgotados','Esgotados',n(p=>p.estoque===0)]]}
+const prodFilter=(f,p)=>f==='todos'||(f==='ativos'&&p.ativo)||(f==='pendentes'&&!p.shopify_product_id)||(f==='esgotados'&&p.estoque===0);
+function pcard(p,admin){const pa=admin?parc(p.parceiro_id):null;
+  return `<article class="pcard"><div class="img cat-${p.categoria||'outros'}">${thumb(p)}${prodStatus(p)}</div><div class="tx"><b>${esc(p.nome)}</b>
+    ${admin?`<span class="st">${esc(pa.nome_loja||'')}</span>`:''}<span class="pr">${brl(p.preco_parceiro)}</span><span class="st">${p.estoque} em estoque${p.categoria?' · '+CATS[p.categoria]:''}</span>
+    <button class="btn ${admin&&!p.shopify_product_id?'':'ghost'} sm block" data-editprod="${p.id}">${admin?(p.shopify_product_id?'Ver e editar':'Ligar à loja'):'Editar'}</button></div></article>`}
+function renderProds(){chips('#prFilters',prodFilterList(prods),F.pr,'pr');const list=prods.filter(p=>prodFilter(F.pr,p));
+  $('#prods').innerHTML=list.length?list.map(p=>pcard(p,false)).join(''):`<div class="empty" style="grid-column:1/-1">${svg('grid')}${prods.length?'Nenhum produto nesse filtro.':'Nenhum produto ainda. Comece pelos 3 que mais vendem na sua loja.'}${prods.length?'':'<button class="btn" data-newprod>Cadastrar primeiro produto</button>'}</div>`}
 function renderFin(){
   const paid=orders.filter(o=>o.pix_pago_em&&o.status!=='cancelado').sort((a,b)=>new Date(b.pix_pago_em)-new Date(a.pix_pago_em));
-  $('#fTotal').textContent=brl(paid.reduce((a,o)=>a+Number(o.valor),0));
-  $('#pixList').innerHTML=paid.length?paid.map(o=>`<div class="card" style="flex-direction:row;justify-content:space-between;align-items:center"><div style="min-width:0"><b style="font-size:14px">${esc(o.produto_nome)}</b><div class="meta">Pedido ${esc(o.numero)} · ${dt(o.pix_pago_em)}</div></div><strong style="font-variant-numeric:tabular-nums;color:var(--ok);white-space:nowrap">+ ${brl(o.valor)}</strong></div>`).join(''):'<p class="empty">Os Pix que a Mimovalle fizer para você aparecem aqui.</p>';
-}
-function fillConta(){if(!parceiro)return;$('#aLoja').value=parceiro.nome_loja;$('#aResp').value=parceiro.responsavel;$('#aWhats').value=parceiro.whatsapp;$('#aPix').value=parceiro.chave_pix}
+  $('#fTotal').textContent=brl(paid.reduce((a,o)=>a+Number(o.valor),0));$('#fMonth').textContent=paid.length+' pagamento(s) recebido(s)';
+  $('#pixList').innerHTML=paid.length?paid.slice(0,30).map(o=>`<div class="ln"><div style="min-width:0"><b style="font-size:14px">${esc(o.produto_nome)}</b><div class="meta">Pedido ${esc(o.numero)} · ${dt(o.pix_pago_em)}</div></div><strong class="plus">+ ${brl(o.valor)}</strong></div>`).join(''):'<p class="meta">Os Pix que a Mimovalle fizer para você aparecem aqui.</p>';
+  const by={};paid.forEach(o=>{const d=new Date(o.pix_pago_em);const k=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');(by[k]=by[k]||{v:0,n:0,d}).v+=Number(o.valor);by[k].n++});
+  const ks=Object.keys(by).sort().reverse();
+  $('#monthList').innerHTML=ks.length?ks.map(k=>`<div class="ln"><div><b style="font-size:14px;text-transform:capitalize">${by[k].d.toLocaleDateString('pt-BR',{month:'long',year:'numeric'})}</b><div class="meta">${by[k].n} venda(s)</div></div><strong>${brl(by[k].v)}</strong></div>`).join(''):'<p class="meta">Sem recebimentos ainda.</p>'}
+function fillConta(){$('#aLoja').value=parceiro.nome_loja;$('#aResp').value=parceiro.responsavel;$('#aWhats').value=parceiro.whatsapp;$('#aPix').value=parceiro.chave_pix}
 $('#fConta').onsubmit=async e=>{e.preventDefault();busy(e.target,true);
   const {data,error}=await sb.from('fm_parceiros').update({nome_loja:$('#aLoja').value.trim(),responsavel:$('#aResp').value.trim(),whatsapp:$('#aWhats').value.trim(),chave_pix:$('#aPix').value.trim()}).eq('id',me.id).select().single();
-  busy(e.target,false);if(error){toast(errMsg(error));return}parceiro=data;setWho(data.nome_loja);toast('Dados salvos.')};
-const num=s=>parseFloat(String(s).trim().replace(/\./g,'').replace(',','.'));
-$('#fProd').onsubmit=async e=>{e.preventDefault();
-  const nome=$('#pNome').value.trim(),preco=num($('#pPreco').value),estoque=parseInt($('#pEstoque').value,10),link=$('#pLink').value.trim();
-  if(!(preco>0)||isNaN(estoque)||estoque<0){toast('Confira o preço e o estoque (só números).');return}
-  busy(e.target,true);const {error}=await sb.from('fm_produtos').insert({parceiro_id:me.id,nome,preco_parceiro:Math.round(preco*100)/100,estoque,link_origem:/^https:\/\//.test(link)?link:null});
-  busy(e.target,false);if(error){toast(errMsg(error));return}e.target.reset();toast('Produto enviado. A Mimovalle prepara o anúncio.');loadPartner()};
+  busy(e.target,false);if(error){toast(errMsg(error));return}parceiro=data;setWho(data.nome_loja,'parceiro');toast('Dados salvos.')};
+$('#pSearch').oninput=e=>{F.pq=e.target.value.trim();renderOrders()};
+$('#aSearch').oninput=e=>{F.aq=e.target.value.trim();renderAOrders()};
 
-/* ---------- Ações compartilhadas ---------- */
-document.addEventListener('click',async e=>{
-  const c=e.target.closest('.chip[data-f]');if(c){filter=c.dataset.f;openShip=null;document.querySelectorAll('.chip[data-f]').forEach(b=>b.setAttribute('aria-pressed',String(b===c)));renderOrders();return}
-  const ac=e.target.closest('.chip[data-af]');if(ac){afilter=ac.dataset.af;document.querySelectorAll('.chip[data-af]').forEach(b=>b.setAttribute('aria-pressed',String(b===ac)));renderAOrders();return}
-  const s=e.target.closest('[data-ship]');if(s){openShip=s.dataset.ship;renderOrders();const i=document.getElementById('tr-'+openShip);i&&i.focus();return}
-  if(e.target.closest('[data-cancel]')){openShip=null;renderOrders();return}
-  const ed=e.target.closest('[data-edit]');if(ed){const f=document.querySelector(`.editProd[data-id="${ed.dataset.edit}"]`);f.hidden=!f.hidden;return}
-  const cp=e.target.closest('[data-copy]');if(cp){const v=cp.dataset.copy;try{await navigator.clipboard.writeText(v);toast('Chave Pix copiada.')}catch(_){toast('Chave Pix: '+v)}return}
-  const px=e.target.closest('[data-pix]');if(px){px.disabled=true;const {error}=await sb.from('fm_pedidos').update({status:'enviar',pix_pago_em:new Date().toISOString()}).eq('id',px.dataset.pix);
+/* ---------- gaveta de produto ---------- */
+const num=s=>parseFloat(String(s).trim().replace(/\./g,'').replace(',','.'));
+let sheetFile=null,lastFocus=null;
+function closeSheet(){$('#sheetRoot').innerHTML='';sheetFile=null;document.body.style.overflow='';lastFocus&&lastFocus.focus()}
+function openProd(p){lastFocus=document.activeElement;sheetFile=null;const admin=isAdmin;p=p||{};
+  const pa=admin&&p.parceiro_id?parc(p.parceiro_id):null;
+  $('#sheetRoot').innerHTML=`<div class="sheet-bg" data-closebg><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="shT">
+   <div class="sheet-h"><div><span class="kick">${p.id?(admin?esc(pa&&pa.nome_loja):'editar produto'):'novo produto'}</span><h2 id="shT">${p.id?esc(p.nome):'Cadastrar produto'}</h2></div><button class="x" type="button" data-close aria-label="Fechar">${svg('x')}</button></div>
+   ${p.id?`<div>${prodStatus(p)}</div>`:''}
+   <form class="form" id="fProd" data-id="${p.id||''}">
+    <label class="drop" for="phFile" id="drop">${p.foto_path?`<img src="${esc(fotoUrl(p))}" alt="Foto atual">`:`<span>${svg('cam')}Toque para escolher a foto<br>do produto</span>`}<input id="phFile" type="file" accept="image/jpeg,image/png,image/webp"></label>
+    <div class="field"><label for="pNome">Nome do produto</label><input id="pNome" required minlength="2" maxlength="140" value="${esc(p.nome||'')}" placeholder="Ex.: Kit potes herméticos 10 peças"></div>
+    <div class="g2"><div class="field"><label for="pPreco">Preço de parceiro (R$)</label><input id="pPreco" required inputmode="decimal" value="${p.preco_parceiro!=null?String(p.preco_parceiro).replace('.',','):''}" placeholder="45,00"></div>
+    <div class="field"><label for="pEst">Estoque</label><input id="pEst" required inputmode="numeric" value="${p.estoque!=null?p.estoque:''}" placeholder="30"></div></div>
+    <fieldset style="border:0;padding:0;margin:0;display:flex;flex-direction:column;gap:6px"><legend style="font-size:13px;font-weight:600;padding:0;margin-bottom:6px">Categoria</legend><div class="catpick">${Object.entries(CATS).map(([k,l])=>`<label><input type="radio" name="cat" value="${k}" ${p.categoria===k?'checked':''}><span>${l}</span></label>`).join('')}</div></fieldset>
+    <div class="field"><label for="pDesc">Descrição (medidas, material, o que vem na caixa)</label><textarea id="pDesc" maxlength="1200">${esc(p.descricao||'')}</textarea></div>
+    <div class="field"><label for="pLink">Link do produto na Shopee (opcional)</label><input id="pLink" type="url" value="${esc(p.link_origem||'')}" placeholder="https://shopee.com.br/…"></div>
+    ${p.id&&!admin?'<p class="hint">Mudar o preço pausa o produto até a Mimovalle atualizar o anúncio.</p>':''}
+    <button class="btn block" type="submit">${p.id?'Salvar alterações':'Enviar para a Mimovalle'}</button>
+   </form>
+   ${admin&&p.id?`<div class="card" style="background:var(--bg2);border:0">
+     <h3>Ligar à loja Mimovalle</h3>
+     <p class="meta">${p.shopify_handle?`Ligado a /products/${esc(p.shopify_handle)}`:'1) Crie o produto na Shopify com a foto e a descrição acima. 2) Cole aqui o link dele.'}</p>
+     ${p.shopify_handle?'':`<a class="btn ghost sm" href="${LOJA_NOVO}" target="_blank" rel="noopener">${svg('ext')}Criar produto na Shopify</a>`}
+     <form class="form" id="fVinc" data-id="${p.id}"><div class="field"><label for="vLink">Link do produto na Mimovalle</label><input id="vLink" placeholder="https://…/products/nome-do-produto" autocomplete="off"></div><button class="btn navy" type="submit">${p.shopify_handle?'Trocar ligação':'Ligar produto'}</button></form>
+     ${p.shopify_product_id?`<button class="btn line" type="button" data-toggle="${p.id}">${p.ativo?'Pausar produto':'Ativar produto'}</button>`:''}
+   </div>`:''}
+  </div></div>`;
+  document.body.style.overflow='hidden';setTimeout(()=>$('#pNome').focus(),60);
+  $('#phFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{sheetFile=await shrink(f);$('#drop').querySelector('img')?$('#drop img').src=URL.createObjectURL(sheetFile):$('#drop').insertAdjacentHTML('afterbegin',`<img src="${URL.createObjectURL(sheetFile)}" alt="Nova foto">`);$('#drop span')&&$('#drop span').remove()}catch(_){toast('Não consegui ler essa imagem. Tente outra foto.')}}}
+function shrink(file){return new Promise((res,rej)=>{const img=new Image();img.onload=()=>{const m=1400,s=Math.min(1,m/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.round(img.width*s);c.height=Math.round(img.height*s);
+  c.getContext('2d').drawImage(img,0,0,c.width,c.height);c.toBlob(b=>b?res(b):rej(),'image/jpeg',.86)};img.onerror=rej;img.src=URL.createObjectURL(file)})}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#sheetRoot').innerHTML)closeSheet()});
+document.addEventListener('click',e=>{if(e.target.matches('[data-closebg]')||e.target.closest('[data-close]'))closeSheet()});
+
+/* ---------- ações ---------- */
+document.addEventListener('click',async e=>{const t=e.target;
+  const ch=t.closest('[data-chip]');if(ch){const k=ch.dataset.chip;F[k]=ch.dataset.v;({p:renderOrders,pr:renderProds,a:renderAOrders,apr:renderAProds})[k]();return}
+  if(t.closest('[data-newprod]')){openProd(null);return}
+  const ep=t.closest('[data-editprod]');if(ep){openProd(prods.find(p=>p.id===ep.dataset.editprod));return}
+  const s=t.closest('[data-ship]');if(s){const f=document.querySelector(`.ship[data-id="${s.dataset.ship}"]`);f.hidden=false;s.parentElement.hidden=true;f.querySelector('input').focus();return}
+  const c=t.closest('[data-cancel]');if(c){const f=c.closest('.ship');f.hidden=true;f.nextElementSibling.hidden=false;return}
+  const ca=t.closest('[data-copyaddr]');if(ca){copy(ca.dataset.copyaddr,'Endereço copiado.');return}
+  const cp=t.closest('[data-copy]');if(cp){copy(cp.dataset.copy,'Chave Pix copiada.');return}
+  if(t.closest('[data-copylink]')){copy(location.origin+location.pathname+'#cadastro','Link de convite copiado. Mande para os vendedores.');return}
+  const px=t.closest('[data-pix]');if(px){px.disabled=true;const {error}=await sb.from('fm_pedidos').update({status:'enviar',pix_pago_em:new Date().toISOString()}).eq('id',px.dataset.pix);
     if(error){px.disabled=false;toast(errMsg(error));return}toast('Pix registrado. O parceiro já pode enviar.');loadAdmin();return}
-  const ap=e.target.closest('[data-status]');if(ap){ap.disabled=true;const {error}=await sb.from('fm_parceiros').update({status:ap.dataset.status}).eq('id',ap.dataset.id);
+  const ap=t.closest('[data-status]');if(ap){ap.disabled=true;const {error}=await sb.from('fm_parceiros').update({status:ap.dataset.status}).eq('id',ap.dataset.id);
     if(error){ap.disabled=false;toast(errMsg(error));return}toast(ap.dataset.status==='ativo'?'Parceiro liberado.':'Parceiro pausado.');loadAdmin();return}
-  const tg=e.target.closest('[data-toggle]');if(tg){tg.disabled=true;const p=prods.find(x=>x.id===tg.dataset.toggle);
-    const {error}=await sb.from('fm_produtos').update({ativo:!p.ativo}).eq('id',p.id);if(error){tg.disabled=false;toast(errMsg(error));return}loadAdmin();return}
+  const tg=t.closest('[data-toggle]');if(tg){tg.disabled=true;const p=prods.find(x=>x.id===tg.dataset.toggle);const {error}=await sb.from('fm_produtos').update({ativo:!p.ativo}).eq('id',p.id);
+    if(error){tg.disabled=false;toast(errMsg(error));return}toast(p.ativo?'Produto pausado.':'Produto ativo.');closeSheet();loadAdmin();return}
 });
 document.addEventListener('submit',async e=>{const f=e.target;
   if(f.matches('.ship')){e.preventDefault();const v=f.querySelector('input').value.trim().toUpperCase();if(v.length<5){toast('Digite o código de rastreio completo.');return}busy(f,true);
-    const {error}=await sb.from('fm_pedidos').update({status:'enviado',rastreio:v}).eq('id',f.dataset.id);busy(f,false);
-    if(error){toast(errMsg(error));return}openShip=null;toast('Envio confirmado. Obrigado pela agilidade!');loadPartner();return}
-  if(f.matches('.editProd')){e.preventDefault();const id=f.dataset.id,preco=num(f.querySelector(`#ep-${id}`).value),est=parseInt(f.querySelector(`#ee-${id}`).value,10);
-    if(!(preco>0)||isNaN(est)||est<0){toast('Confira o preço e o estoque.');return}busy(f,true);
-    const {error}=await sb.from('fm_produtos').update({preco_parceiro:Math.round(preco*100)/100,estoque:est}).eq('id',id);busy(f,false);
-    if(error){toast(errMsg(error));return}toast('Produto atualizado.');isAdmin?loadAdmin():loadPartner();return}
-  if(f.matches('.vinc')){e.preventDefault();busy(f,true);
-    const {data,error}=await sb.functions.invoke('fm-vincular',{body:{produto_id:f.dataset.id,link:f.querySelector('input').value.trim()}});busy(f,false);
+    const {error}=await sb.from('fm_pedidos').update({status:'enviado',rastreio:v}).eq('id',f.dataset.id);busy(f,false);if(error){toast(errMsg(error));return}toast('Envio confirmado. Obrigado pela agilidade!');loadPartner();return}
+  if(f.id==='fProd'){e.preventDefault();const id=f.dataset.id;const nome=$('#pNome').value.trim(),preco=num($('#pPreco').value),est=parseInt($('#pEst').value,10),link=$('#pLink').value.trim();
+    const cat=(f.querySelector('input[name=cat]:checked')||{}).value||null,desc=$('#pDesc').value.trim()||null;
+    if(!(preco>0)||isNaN(est)||est<0){toast('Confira o preço e o estoque (só números).');return}
+    if(!id&&!sheetFile&&!confirmNoPhoto){confirmNoPhoto=true;toast('Produto com foto vende mais. Toque em enviar de novo para seguir sem foto.');return}
+    busy(f,true);
+    const base={nome,preco_parceiro:Math.round(preco*100)/100,estoque:est,link_origem:/^https:\/\//.test(link)?link:null,categoria:cat,descricao:desc};
+    let row=id?prods.find(p=>p.id===id):null,error;
+    if(!id){const r=await sb.from('fm_produtos').insert({...base,parceiro_id:me.id}).select('id').single();error=r.error;row=r.data}
+    else{const r=await sb.from('fm_produtos').update(base).eq('id',id);error=r.error}
+    if(!error&&sheetFile&&row){const owner=id?prods.find(p=>p.id===id).parceiro_id:me.id;const path=`${owner}/${row.id}-${Date.now()}.jpg`;
+      const up=await sb.storage.from('fm-fotos').upload(path,sheetFile,{contentType:'image/jpeg',upsert:false});
+      if(up.error)error=up.error;else{const r2=await sb.from('fm_produtos').update({foto_path:path}).eq('id',row.id);error=r2.error}}
+    busy(f,false);confirmNoPhoto=false;if(error){toast(errMsg(error));return}
+    toast(id?'Produto atualizado.':'Produto enviado. A Mimovalle prepara o anúncio.');closeSheet();isAdmin?loadAdmin():loadPartner();return}
+  if(f.id==='fVinc'){e.preventDefault();busy(f,true);
+    const {data,error}=await sb.functions.invoke('fm-vincular',{body:{produto_id:f.dataset.id,link:$('#vLink').value.trim()}});busy(f,false);
     if(error){let m='Não foi possível ligar o produto.';try{const j=await error.context.json();if(j&&j.erro)m=j.erro}catch(_){}toast(m);return}
-    toast('Ligado a: '+(data&&data.titulo||'produto da Mimovalle'));loadAdmin();}
+    toast('Ligado a: '+((data&&data.titulo)||'produto da Mimovalle'));closeSheet();loadAdmin()}
 });
+let confirmNoPhoto=false;
 
-/* ---------- Admin ---------- */
-async function loadAdmin(){
-  const [o,p,pa]=await Promise.all([sb.from('fm_pedidos').select('*').order('created_at',{ascending:false}),sb.from('fm_produtos').select('*').order('created_at',{ascending:false}),sb.from('fm_parceiros').select('*').order('created_at',{ascending:false})]);
-  if(o.error||p.error||pa.error){toast('Não foi possível carregar. Recarregue a página.');return}
-  orders=o.data;prods=p.data;parceiros=pa.data;renderAPix();renderAOrders();renderAProds();renderAParc();
-}
+/* ---------- ADMIN ---------- */
 const parc=id=>parceiros.find(x=>x.id===id)||{};
-function renderAPix(){const w=orders.filter(o=>o.status==='aguardando_pix');$('#bPix').hidden=!w.length;$('#bPix').textContent=w.length;
-  $('#aPixList').innerHTML=w.length?w.map(o=>{const pa=parc(o.parceiro_id);return `<div class="card"><div class="row"><div><h3>${esc(o.produto_nome)}</h3><div class="meta">${esc(pa.nome_loja)} · Pedido ${esc(o.numero)} · ${o.qtd} un.</div></div><strong>${brl(o.valor)}</strong></div>
+async function loadAdmin(){
+  const [o,p,pa,v]=await Promise.all([sb.from('fm_pedidos').select(PCOLS).order('created_at',{ascending:false}),sb.from('fm_produtos').select('*').order('created_at',{ascending:false}),sb.from('fm_parceiros').select('*').order('created_at',{ascending:false}),sb.rpc('fm_admin_vendas')]);
+  if(o.error||p.error||pa.error){toast('Não foi possível carregar. Recarregue a página.');return}
+  orders=o.data;prods=p.data;parceiros=pa.data;vendas={};(v.data||[]).forEach(x=>vendas[x.id]=x.preco_venda);
+  renderAInicio();renderAPix();renderAOrders();renderAProds();renderAParc();
+  badge('apix',orders.filter(x=>x.status==='aguardando_pix').length);badge('aprods',prods.filter(x=>!x.shopify_product_id).length);badge('aparc',parceiros.filter(x=>x.status==='pendente').length)}
+const venda=o=>vendas[o.id]!=null?Number(vendas[o.id])*o.qtd:null;
+function renderAInicio(){
+  $('#aDate').textContent=new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});
+  const pend=orders.filter(o=>o.status==='aguardando_pix'),late=orders.filter(o=>o.status==='enviar'&&left(o)<=0),newP=parceiros.filter(p=>p.status==='pendente'),newPr=prods.filter(p=>!p.shopify_product_id);
+  const todo=[];if(pend.length)todo.push([`${pend.length} Pix a pagar`,brl(pend.reduce((a,o)=>a+Number(o.valor),0))+' no total','apix','Pagar agora']);
+  if(late.length)todo.push([`${late.length} envio(s) atrasado(s)`,'Cobre o parceiro no WhatsApp','apedidos','Ver pedidos']);
+  if(newP.length)todo.push([`${newP.length} parceiro(s) novo(s)`,'Aguardando sua aprovação','aparc','Analisar']);
+  if(newPr.length)todo.push([`${newPr.length} produto(s) para ligar`,'Crie na Mimovalle e ligue aqui','aprods','Ligar']);
+  $('#aAlert').innerHTML=todo.length?todo.slice(0,2).map(([b,s,v,l])=>`<div class="alert" style="margin-bottom:10px"><span class="ic">${svg('bell')}</span><div><b>${b}</b><span>${s}</span></div><button class="btn" data-go="${v}">${l}</button></div>`).join(''):`<div class="alert calm"><span class="ic">${svg('check')}</span><div><b>Tudo em dia</b><span>Nada pendente agora. Que tal convidar mais parceiros?</span></div><button class="btn" data-copylink>Copiar convite</button></div>`;
+  const val=orders.filter(o=>o.status!=='cancelado');const m0=new Date();m0.setDate(1);m0.setHours(0,0,0,0);const mes=val.filter(o=>new Date(o.created_at)>=m0);
+  const vMes=mes.reduce((a,o)=>a+(venda(o)||0),0),cMes=mes.reduce((a,o)=>a+Number(o.valor),0),hasV=mes.some(o=>venda(o)!=null);
+  $('#aTiles').innerHTML=[['var(--peach)','Vendas no mês',hasV?brl0(vMes):mes.length,hasV?mes.length+' pedido(s)':'pedido(s)'],['var(--mint)','Sua margem no mês',hasV?brl0(vMes-cMes):'—','venda menos custo do parceiro'],['var(--butter)','Pago a parceiros',brl0(val.filter(o=>o.pix_pago_em).reduce((a,o)=>a+Number(o.valor),0)),'total desde o início'],['var(--lilac)','Parceiros ativos',parceiros.filter(p=>p.status==='ativo').length,prods.filter(p=>p.ativo).length+' produto(s) na loja']]
+    .map(([bg,l,v,s])=>`<div class="tile" style="background:${bg}"><small>${l}</small><b>${v}</b><span>${s}</span></div>`).join('');
+  const d=days14(val,'created_at',o=>venda(o)!=null?venda(o):Number(o.valor));drawChart('#aChart',d);$('#aChartSum').textContent=brl(d.reduce((a,x)=>a+x.v,0))+' no período';
+  const rk=parceiros.map(p=>({p,n:val.filter(o=>o.parceiro_id===p.id).length,v:val.filter(o=>o.parceiro_id===p.id).reduce((a,o)=>a+Number(o.valor),0)})).filter(x=>x.n).sort((a,b)=>b.v-a.v).slice(0,6);
+  $('#aRank').innerHTML=rk.length?rk.map((x,i)=>`<div class="ln"><div><b style="font-size:14px">${i+1}º ${esc(x.p.nome_loja)}</b><div class="meta">${x.n} pedido(s)</div></div><strong>${brl(x.v)}</strong></div>`).join(''):'<p class="meta">O ranking aparece quando chegarem as primeiras vendas.</p>'}
+function renderAPix(){const w=orders.filter(o=>o.status==='aguardando_pix');
+  $('#aPixList').innerHTML=w.length?w.map(o=>{const pa=parc(o.parceiro_id),p=prodOf(o),v=venda(o);return `<article class="card order"><div class="ph ${p&&p.categoria?'cat-'+p.categoria:''}">${p?thumb(p):svg('box')}</div><div class="body">
+    <div class="row"><div><h3>${esc(o.produto_nome)}</h3><div class="meta">${esc(pa.nome_loja)} · Pedido ${esc(o.numero)} · ${o.qtd} un. · ${dt(o.created_at)}</div></div><strong style="font-size:18px">${brl(o.valor)}</strong></div>
+    ${v!=null?`<p class="meta">Cliente pagou ${brl(v)} · sua margem <b style="color:var(--ok)">${brl(v-Number(o.valor))}</b></p>`:''}
     <div class="addr"><span class="meta">Chave Pix de ${esc(pa.responsavel)}</span><b style="overflow-wrap:anywhere">${esc(pa.chave_pix)}</b></div>
-    <div class="inline-row"><button class="btn ghost" data-copy="${esc(pa.chave_pix)}" style="flex:1">Copiar chave</button><button class="btn" data-pix="${o.id}" style="flex:1.4">Já fiz o Pix</button></div></div>`}).join(''):'<p class="empty">Nenhum Pix pendente. Quando um cliente pagar um produto de parceiro, ele aparece aqui sozinho.</p>'}
-function renderAOrders(){const list=orders.filter(o=>o.status===afilter);
-  $('#aOrders').innerHTML=list.length?list.map(o=>{const pa=parc(o.parceiro_id);return `<div class="card"><div class="row"><div><h3>${esc(o.produto_nome)}</h3><div class="meta">${esc(pa.nome_loja)} · Pedido ${esc(o.numero)} · ${o.qtd} un.</div></div>${pillFor(o)}</div>
-    ${o.status==='enviar'?`<div class="money"><span>Prazo: <span class="timer">${fmt(left(o))}</span></span><strong>${brl(o.valor)}</strong></div>`:''}
-    ${o.status==='enviado'?`<p class="track">Rastreio: ${esc(o.rastreio)}</p><a class="btn ghost small" href="${LOJA_ADMIN+encodeURIComponent(o.shopify_order_id)}" target="_blank" rel="noopener">Abrir pedido na Shopify para informar o rastreio</a>`:''}
-    ${o.status==='enviar'&&pa.whatsapp?`<a class="btn ghost small" href="https://wa.me/55${digits(pa.whatsapp).replace(/^55/,'')}?text=${encodeURIComponent('Oi! O Pix do pedido '+o.numero+' ('+o.produto_nome+') já foi feito. Pode enviar? O prazo é de 24h.')}" target="_blank" rel="noopener">Avisar parceiro no WhatsApp</a>`:''}</div>`}).join(''):'<p class="empty">Nenhum pedido aqui.</p>'}
-function renderAProds(){const pend=prods.filter(p=>!p.shopify_product_id).length;$('#bProd').hidden=!pend;$('#bProd').textContent=pend;
-  const sorted=prods.slice().sort((a,b)=>(a.shopify_product_id?1:0)-(b.shopify_product_id?1:0));
-  $('#aProds').innerHTML=sorted.length?sorted.map(p=>{const pa=parc(p.parceiro_id);return `<div class="card"><div class="row"><div><h3>${esc(p.nome)}</h3><div class="meta">${esc(pa.nome_loja)} · ${brl(p.preco_parceiro)} · estoque ${p.estoque}</div></div>${prodStatus(p)}</div>
-    ${p.link_origem?`<a class="link" href="${esc(p.link_origem)}" target="_blank" rel="noopener">Ver produto na Shopee</a>`:''}
-    ${p.shopify_handle?`<p class="meta">Ligado a: mimovalle /products/${esc(p.shopify_handle)}</p>`:''}
-    <form class="inline vinc" data-id="${p.id}"><label for="v-${p.id}">${p.shopify_product_id?'Trocar link na Mimovalle':'Link do produto na Mimovalle'}</label><div class="inline-row"><input id="v-${p.id}" placeholder="https://…/products/nome-do-produto" autocomplete="off"><button class="btn dark" type="submit">Ligar</button></div></form>
-    ${p.shopify_product_id?`<button class="btn ghost small" data-toggle="${p.id}">${p.ativo?'Pausar produto':'Ativar produto'}</button>`:''}</div>`}).join(''):'<p class="empty">Os parceiros ainda não cadastraram produtos.</p>'}
-function renderAParc(){const pend=parceiros.filter(p=>p.status==='pendente').length;$('#bParc').hidden=!pend;$('#bParc').textContent=pend;
-  $('#aParc').innerHTML=parceiros.length?parceiros.map(p=>{const pill=p.status==='ativo'?'<span class="pill p-ok">Ativo</span>':p.status==='pendente'?'<span class="pill p-wait">Novo cadastro</span>':'<span class="pill p-off">Pausado</span>';
-    const n=prods.filter(x=>x.parceiro_id===p.id).length,v=orders.filter(x=>x.parceiro_id===p.id&&x.status==='enviado').length;
-    return `<div class="card"><div class="row"><div><h3>${esc(p.nome_loja)}</h3><div class="meta">${esc(p.responsavel)} · ${esc(p.whatsapp)}</div><div class="meta">${n} produto(s) · ${v} envio(s)</div></div>${pill}</div>
-    <div class="inline-row"><a class="btn ghost small" style="flex:1" href="https://wa.me/55${digits(p.whatsapp).replace(/^55/,'')}" target="_blank" rel="noopener">WhatsApp</a>
-    ${p.status!=='ativo'?`<button class="btn small" style="flex:1" data-status="ativo" data-id="${p.id}">Liberar parceiro</button>`:`<button class="btn ghost small" style="flex:1" data-status="pausado" data-id="${p.id}">Pausar</button>`}</div></div>`}).join(''):'<p class="empty">Nenhum parceiro cadastrado ainda. Envie o link deste painel para os vendedores.</p>'}
+    <div class="acts"><button class="btn ghost" data-copy="${esc(pa.chave_pix)}">${svg('copy')}Copiar chave</button><button class="btn" data-pix="${o.id}">${svg('check')}Já fiz o Pix</button></div></div></article>`}).join(''):`<div class="empty">${svg('money')}Nenhum Pix pendente. Quando um cliente pagar um produto de parceiro, ele aparece aqui sozinho.</div>`}
+function renderAOrders(){const n=s=>orders.filter(o=>o.status===s).length;
+  chips('#aFilters',[['enviar','A enviar',n('enviar')],['aguardando_pix','Aguardando Pix',n('aguardando_pix')],['enviado','Enviados',n('enviado')],['cancelado','Cancelados',n('cancelado')]],F.a,'a');
+  const q=F.aq.toLowerCase();const list=orders.filter(o=>o.status===F.a&&matchQ(o,q,parc(o.parceiro_id).nome_loja));
+  $('#aOrders').innerHTML=list.length?list.map(o=>{const pa=parc(o.parceiro_id),p=prodOf(o);return `<article class="card order"><div class="ph ${p&&p.categoria?'cat-'+p.categoria:''}">${p?thumb(p):svg('box')}</div><div class="body">
+    <div class="row"><div><h3>${esc(o.produto_nome)}</h3><div class="meta">${esc(pa.nome_loja)} · Pedido ${esc(o.numero)} · ${o.qtd} un.</div></div>${pillFor(o)}</div>
+    ${o.status==='enviar'?`<div class="money"><span>Prazo do parceiro: <span class="timer">${fmt(left(o))}</span></span><strong>${brl(o.valor)}</strong></div>`:''}
+    ${o.status==='enviado'?`<p class="track">Rastreio ${esc(o.rastreio)} · ${dt(o.enviado_em)}</p>`:''}
+    <div class="acts">${o.status==='enviado'?`<button class="btn ghost sm" data-copy="${esc(o.rastreio)}">${svg('copy')}Copiar rastreio</button><a class="btn navy sm" href="${LOJA_ADMIN+encodeURIComponent(o.shopify_order_id)}" target="_blank" rel="noopener">${svg('ext')}Informar na Shopify</a>`:''}
+    ${o.status==='enviar'&&pa.whatsapp?`<a class="btn ghost sm" href="${wa(pa.whatsapp)}?text=${encodeURIComponent('Oi! O Pix do pedido '+o.numero+' ('+o.produto_nome+') já foi feito. O prazo de envio é de 24h. Obrigado!')}" target="_blank" rel="noopener">${svg('wa')}Avisar parceiro</a>`:''}
+    <a class="btn ghost sm" href="${LOJA_ADMIN+encodeURIComponent(o.shopify_order_id)}" target="_blank" rel="noopener">${svg('ext')}Pedido na Shopify</a></div></div></article>`}).join(''):`<div class="empty">${svg('box')}${q?'Nada encontrado nessa busca.':'Nenhum pedido aqui.'}</div>`}
+function renderAProds(){chips('#aPrFilters',[['pendentes','Para ligar',prods.filter(p=>!p.shopify_product_id).length],['ativos','Ativos',prods.filter(p=>p.ativo).length],['esgotados','Esgotados',prods.filter(p=>p.estoque===0).length],['todos','Todos',prods.length]],F.apr,'apr');
+  const list=prods.filter(p=>prodFilter(F.apr,p));$('#aProds').innerHTML=list.length?list.map(p=>pcard(p,true)).join(''):`<div class="empty" style="grid-column:1/-1">${svg('grid')}Nenhum produto nesse filtro.</div>`}
+function renderAParc(){$('#aParc').innerHTML=parceiros.length?parceiros.map(p=>{const pill=p.status==='ativo'?'<span class="pill p-ok">Ativo</span>':p.status==='pendente'?'<span class="pill p-send">Novo cadastro</span>':'<span class="pill p-off">Pausado</span>';
+    const n=prods.filter(x=>x.parceiro_id===p.id).length,os=orders.filter(x=>x.parceiro_id===p.id&&x.status!=='cancelado'),late=os.filter(o=>o.enviado_em&&new Date(o.enviado_em)-new Date(o.pix_pago_em)>24*H).length;
+    return `<article class="card"><div class="row"><div style="display:flex;gap:12px;align-items:center"><span class="avatar">${esc(p.nome_loja.split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase())}</span><div style="min-width:0"><h3>${esc(p.nome_loja)}</h3><div class="meta">${esc(p.responsavel)} · ${esc(p.whatsapp)} · desde ${new Date(p.created_at).toLocaleDateString('pt-BR')}</div></div></div>${pill}</div>
+    <div class="tiles" style="grid-template-columns:repeat(3,1fr)"><div class="tile" style="background:var(--bg2)"><small>Produtos</small><b>${n}</b></div><div class="tile" style="background:var(--bg2)"><small>Pedidos</small><b>${os.length}</b></div><div class="tile" style="background:var(--bg2)"><small>Envios atrasados</small><b style="color:${late?'var(--late)':'inherit'}">${late}</b></div></div>
+    <div class="acts"><a class="btn ghost sm" href="${wa(p.whatsapp)}" target="_blank" rel="noopener">${svg('wa')}WhatsApp</a>
+    ${p.status!=='ativo'?`<button class="btn sm" data-status="ativo" data-id="${p.id}">${svg('check')}Liberar parceiro</button>`:`<button class="btn line sm" data-status="pausado" data-id="${p.id}">Pausar</button>`}</div></article>`}).join(''):`<div class="empty">${svg('users')}Nenhum parceiro ainda. Copie o link de convite e mande para os vendedores.<button class="btn" data-copylink>Copiar link de convite</button></div>`}
 
-setInterval(()=>{if(!$('#v-pedidos').hidden&&!openShip)renderOrders();if(!$('#v-apedidos').hidden)renderAOrders()},30000);
-let bootedFor=undefined;
-sb.auth.onAuthStateChange((ev,session)=>{
-  if(ev==='PASSWORD_RECOVERY')recovery=true;
-  const uid=session?session.user.id:null;
-  if(ev==='TOKEN_REFRESHED'||(ev==='SIGNED_IN'&&uid===bootedFor&&!recovery))return;
-  bootedFor=uid;setTimeout(boot,0);
-});
+/* ---------- início ---------- */
+window.addEventListener('hashchange',()=>{const h=location.hash.slice(1);if(me&&VIEWS.includes(h)&&h!==current)go(h);else if(!me)landHash()});
+setInterval(()=>{if(current==='pedidos')renderOrders();if(current==='apedidos')renderAOrders();if(current==='inicio')renderInicio()},30000);
+let bootedFor;
+sb.auth.onAuthStateChange((ev,session)=>{if(ev==='PASSWORD_RECOVERY')recovery=true;const uid=session?session.user.id:null;
+  if(ev==='TOKEN_REFRESHED'||(ev==='SIGNED_IN'&&uid===bootedFor&&!recovery))return;bootedFor=uid;setTimeout(boot,0)});
 </script>
 </body>
 </html>
