@@ -341,7 +341,7 @@ input[readonly]{background:var(--bg2);color:var(--soft)}
     <div style="display:flex;flex-direction:column;gap:20px">
       <span class="kick">programa de parceiros</span>
       <h1>Você tem o produto. <em>A gente vende.</em></h1>
-      <p class="lead">Coloque o seu estoque na vitrine da Mimovalle. A gente cuida das fotos, do anúncio e do cliente. Você recebe o pedido já pago e só faz o envio.</p>
+      <p class="lead">Vende no Mercado Livre, Shopee, Amazon, Magalu, TikTok Shop ou na sua loja? Coloque o seu estoque na vitrine da Mimovalle. A gente cuida das fotos, do anúncio e do cliente. Você recebe o pedido já pago e só faz o envio.</p>
       <div class="hero-cta"><a class="btn" href="#cadastro">Quero ser parceiro</a><a class="btn line" href="#entrar">Já sou parceiro</a></div>
       <div class="trust"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>sem mensalidade</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>sem custo com anúncio</span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>teste com 3 produtos</span></div>
     </div>
@@ -359,7 +359,7 @@ input[readonly]{background:var(--bg2);color:var(--soft)}
       <div class="step" style="background:var(--peach)"><span class="n">1</span><h3>Cadastre seus produtos</h3><p>Nome, foto, estoque e o seu preço de parceiro. Leva 2 minutos.</p></div>
       <div class="step" style="background:var(--butter)"><span class="n">2</span><h3>A gente anuncia</h3><p>Fotos, descrição e anúncios na Mimovalle, sem custo para você.</p></div>
       <div class="step" style="background:var(--mint)"><span class="n">3</span><h3>Você recebe o Pix</h3><p>Cliente comprou: a Mimovalle paga você antes de qualquer envio.</p></div>
-      <div class="step" style="background:var(--lilac)"><span class="n">4</span><h3>Envie em até 24h</h3><p>O endereço aparece no painel. Postou, coloca o rastreio e pronto.</p></div>
+      <div class="step" style="background:var(--lilac)"><span class="n">4</span><h3>Envie em até 24h</h3><p>A etiqueta de frete já vem paga pela Mimovalle. É só imprimir, colar na caixa e postar.</p></div>
     </div>
   </section>
 
@@ -367,7 +367,7 @@ input[readonly]{background:var(--bg2);color:var(--soft)}
     <div><b>R$ 0 de mensalidade</b><span>nem taxa de adesão</span></div>
     <div><b>R$ 0 em anúncios</b><span>o marketing é nosso</span></div>
     <div><b>Pix antes do envio</b><span>zero risco de calote</span></div>
-    <div><b>Novos clientes</b><span>fora da Shopee</span></div>
+    <div><b>Novos clientes</b><span>fora do marketplace</span></div>
   </section>
 
   <section class="sec">
@@ -384,7 +384,7 @@ input[readonly]{background:var(--bg2);color:var(--soft)}
     <div class="faq">
       <details><summary>Quanto custa para participar?</summary><p>Nada. Não tem mensalidade, adesão nem taxa. Você define o seu preço de parceiro e recebe esse valor em cada venda.</p></details>
       <details><summary>Quando eu recebo?</summary><p>Antes de enviar. Quando um cliente compra, a Mimovalle faz o Pix para a sua chave e só então o pedido libera no seu painel com o prazo de 24 horas.</p></details>
-      <details><summary>Preciso parar de vender na Shopee?</summary><p>Não. Você continua vendendo normalmente. A Mimovalle é um canal extra para o mesmo estoque.</p></details>
+      <details><summary>Preciso parar de vender onde já vendo?</summary><p>Não. Você continua vendendo normalmente no Mercado Livre, na Shopee, na Amazon, na Magalu, no TikTok Shop ou na sua loja. A Mimovalle é um canal extra para o mesmo estoque.</p></details>
       <details><summary>Como é a embalagem?</summary><p>Neutra, sem panfleto ou propaganda de outra loja, e com o código de rastreio informado no painel.</p></details>
       <details><summary>E se o cliente cancelar?</summary><p>O pedido aparece como cancelado no painel na hora. Pedido cancelado não deve ser enviado.</p></details>
     </div>
@@ -935,7 +935,7 @@ function openProd(p){lastFocus=document.activeElement;const admin=isAdmin;p=p||{
    ${p.id?`<div>${prodStatus(p)}</div>`:''}
    <form class="form" id="fProd" data-id="${p.id||''}">
     <div class="field"><span style="font-size:13px;font-weight:600">Fotos e vídeos do produto</span><div class="gal" id="gal"></div><span class="hint" id="galInfo"></span></div>
-    <div class="iabox"><span class="ic">${svg('spark')}</span><div><b>Deixe a IA escrever o anúncio</b><span>Coloque as fotos e, se quiser, cole na Descrição o texto da Shopee. A IA preenche nome, descrição, categoria e cores. Depois é só conferir.</span></div><button class="btn navy sm" type="button" data-ia>${svg('spark')}Preencher com IA</button></div>
+    <div class="iabox"><span class="ic">${svg('spark')}</span><div><b>Deixe a IA escrever o anúncio</b><span>Coloque as fotos e, se quiser, cole na Descrição o texto do anúncio que você já tem no marketplace. A IA preenche nome, descrição, categoria e cores. Depois é só conferir.</span></div><button class="btn navy sm" type="button" data-ia>${svg('spark')}Preencher com IA</button></div>
     <div class="field"><label for="pNome">Nome do produto</label><input id="pNome" required minlength="2" maxlength="140" value="${esc(p.nome||'')}" placeholder="Ex.: Kit potes herméticos 10 peças"></div>
     <div class="g2"><div class="field"><label for="pPreco">Preço de parceiro (R$)</label><input id="pPreco" required inputmode="decimal" value="${p.preco_parceiro!=null?Number(p.preco_parceiro).toFixed(2).replace('.',','):''}" placeholder="45,00"></div>
     <div class="field"><label for="pEst">Estoque</label><input id="pEst" required inputmode="numeric" value="${p.estoque!=null?p.estoque:''}" placeholder="30"></div></div>
@@ -952,7 +952,7 @@ function openProd(p){lastFocus=document.activeElement;const admin=isAdmin;p=p||{
       <span class="hint">Pese e meça o produto já embalado, do jeito que vai para o correio. Serve para calcular o frete e gerar a etiqueta.</span></fieldset>
     <fieldset style="border:0;padding:0;margin:0;display:flex;flex-direction:column;gap:6px"><legend style="font-size:13px;font-weight:600;padding:0;margin-bottom:6px">Categoria</legend><div class="catpick">${Object.entries(CATS).map(([k,l])=>`<label><input type="radio" name="cat" value="${k}" ${p.categoria===k?'checked':''}><span>${l}</span></label>`).join('')}</div></fieldset>
     <div class="field"><label for="pDesc">Descrição (medidas, material, o que vem na caixa)</label><textarea id="pDesc" maxlength="1200">${esc(p.descricao||'')}</textarea></div>
-    <div class="field"><label for="pLink">Link do produto na Shopee (opcional)</label><input id="pLink" type="url" value="${esc(p.link_origem||'')}" placeholder="https://shopee.com.br/…"></div>
+    <div class="field"><label for="pLink">Link do produto onde você já vende (opcional)</label><input id="pLink" type="url" value="${esc(p.link_origem||'')}" placeholder="Mercado Livre, Shopee, Amazon…"></div>
     ${p.id&&!admin&&p.shopify_product_id?'<p class="hint">Se você mudar o seu preço, a Mimovalle ajusta o preço da loja automaticamente.</p>':''}
     <button class="btn block" type="submit">${p.id?'Salvar alterações':'Enviar para a Mimovalle'}</button>
    </form>
