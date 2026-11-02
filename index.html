@@ -298,6 +298,12 @@ input[readonly]{background:var(--bg2);color:var(--soft)}
 .pushbox .ic svg{width:24px;height:24px}
 .pushbox>div:nth-child(2){flex:1;min-width:190px;display:flex;flex-direction:column;gap:2px}
 .pushbox b{font-size:15px}
+.pushbox.inst .ic{background:var(--peach);color:var(--accent)}
+.pushbox .xi{width:36px;height:36px;border:0;background:transparent;color:var(--soft);display:grid;place-items:center;cursor:pointer;border-radius:10px;margin-left:-6px}.pushbox .xi svg{width:16px;height:16px}
+.ios-steps{display:flex;flex-direction:column;gap:14px;margin:6px 0 0;padding:0;list-style:none;counter-reset:p}
+.ios-steps li{display:flex;gap:12px;align-items:flex-start;font-size:15px;line-height:1.45}
+.ios-steps li:before{counter-increment:p;content:counter(p);width:28px;height:28px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-weight:700;font-size:13px;flex-shrink:0}
+.ios-steps .k{display:inline-flex;align-items:center;gap:4px;background:var(--bg2);border-radius:8px;padding:1px 8px;font-weight:600;white-space:nowrap}.ios-steps .k svg{width:16px;height:16px}
 .pushbox span{font-size:13px;color:var(--soft)}
 .toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:#fff;font-weight:600;font-size:14px;padding:13px 20px;border-radius:999px;z-index:60;max-width:calc(100% - 32px);text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.2)}
 @media (min-width:901px){.toast{bottom:28px}}
@@ -439,7 +445,8 @@ input[readonly]{background:var(--bg2);color:var(--soft)}
     <label class="aceite"><input type="checkbox" id="tTermo" required> <span>Li e aceito o termo de parceria da Fornece Mimo.</span></label>
     <button class="btn block" type="submit">Aceitar e continuar</button>
   </form>
-  <div class="pushbox" data-pushbox hidden></div>
+  <div class="pushbox inst" data-installbox hidden></div>
+<div class="pushbox" data-pushbox hidden></div>
   <button class="btn line" type="button" data-logout>Sair</button>
 </section>
 
@@ -452,7 +459,8 @@ input[readonly]{background:var(--bg2);color:var(--soft)}
     <section class="view" id="v-inicio" hidden>
       <div class="vhead"><div><span class="kick" id="hiDate"></span><h1 id="hiTitle">Olá!</h1></div></div>
       <div id="hiAlert"></div>
-      <div class="pushbox" data-pushbox hidden></div>
+      <div class="pushbox inst" data-installbox hidden></div>
+<div class="pushbox" data-pushbox hidden></div>
       <div class="tiles" id="hiTiles"></div>
       <div class="two">
         <div class="card"><div class="row"><div><h2>recebido nos últimos 14 dias</h2><p class="meta" id="chartSum"></p></div></div><div class="chart" id="chart" role="img" aria-label="Gráfico de valores recebidos por dia"></div></div>
@@ -521,7 +529,8 @@ input[readonly]{background:var(--bg2);color:var(--soft)}
     <section class="view" id="v-ainicio" hidden>
       <div class="vhead"><div><span class="kick" id="aDate"></span><h1>painel da mimovalle</h1></div></div>
       <div id="aAlert"></div>
-      <div class="pushbox" data-pushbox hidden></div>
+      <div class="pushbox inst" data-installbox hidden></div>
+<div class="pushbox" data-pushbox hidden></div>
       <div class="tiles" id="aTiles"></div>
       <div class="two">
         <div class="card"><div><h2>vendas de parceiros, 14 dias</h2><p class="meta" id="aChartSum"></p></div><div class="chart" id="aChart" role="img" aria-label="Gráfico de vendas por dia"></div></div>
@@ -596,7 +605,7 @@ const I={
   clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',check:'<path d="M20 6L9 17l-5-5"/>',copy:'<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/>',
   wa:'<path d="M21 12a9 9 0 0 1-13.5 7.8L3 21l1.3-4.4A9 9 0 1 1 21 12z"/>',ext:'<path d="M14 4h6v6"/><path d="M20 4l-9 9"/><path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/>',
   cam:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>',plus:'<path d="M12 5v14M5 12h14"/>',
-  bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 0 0 4 0"/>',video:'<rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/>',chart:'<path d="M4 20V11M10 20V5M16 20v-8M21 20H3"/>',star:'<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',spark:'<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M6 18l2.5-2.5M15.5 8.5L18 6"/>'
+  bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 0 0 4 0"/>',video:'<rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/>',dl:'<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',share:'<path d="M12 3v12M8 7l4-4 4 4"/><path d="M6 11H5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-1"/>',chart:'<path d="M4 20V11M10 20V5M16 20v-8M21 20H3"/>',star:'<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',spark:'<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M6 18l2.5-2.5M15.5 8.5L18 6"/>'
 };
 const svg=(n,s='')=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" ${s}>${I[n]}</svg>`;
 let tt;function toast(m){const t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(tt);tt=setTimeout(()=>t.hidden=true,3600)}
@@ -1065,11 +1074,11 @@ async function pushStatus(){
   if(Notification.permission==='denied')return 'denied';
   try{const reg=swReg||await navigator.serviceWorker.getRegistration();const sub=reg&&await reg.pushManager.getSubscription();return sub?'on':'off'}catch(_){return 'off'}}
 async function renderPush(){if(!me)return;const st=await pushStatus(),boxes=$$('[data-pushbox]');
-  if(st==='on'||st==='none'){boxes.forEach(b=>b.hidden=true);return}
+  if(st==='on'||st==='none'||st==='ios'){boxes.forEach(b=>b.hidden=true);renderInstall();return}
   const html=st==='ios'?`<span class="ic">${svg('bell')}</span><div><b>Receba os avisos no iPhone</b><span>Toque em Compartilhar e depois em "Adicionar à Tela de Início". Abra pelo ícone e ative os avisos.</span></div>`
     :st==='denied'?`<span class="ic">${svg('bell')}</span><div><b>Avisos bloqueados</b><span>Libere as notificações deste site nas configurações do navegador para saber na hora de cada venda.</span></div>`
     :`<span class="ic">${svg('bell')}</span><div><b>Ative os avisos no celular</b><span>${isAdmin?'Saiba na hora quando cair uma venda de parceiro.':'Saiba na hora quando o Pix sair e for hora de enviar.'}</span></div><button class="btn" type="button" data-pushon>Ativar avisos</button>`;
-  boxes.forEach(b=>{b.innerHTML=html;b.hidden=false})}
+  boxes.forEach(b=>{b.innerHTML=html;b.hidden=false});renderInstall()}
 async function enablePush(btn){btn.disabled=true;
   try{const perm=await Notification.requestPermission();if(perm!=='granted'){toast('Sem permissão os avisos não chegam. Você pode liberar depois.');renderPush();return}
     const reg=swReg||await navigator.serviceWorker.ready;let sub=await reg.pushManager.getSubscription();
@@ -1080,6 +1089,26 @@ async function enablePush(btn){btn.disabled=true;
 async function pushOff(){try{const reg=swReg||await navigator.serviceWorker.getRegistration();const sub=reg&&await reg.pushManager.getSubscription();
   if(sub){await sb.from('fm_push').delete().eq('endpoint',sub.endpoint);await sub.unsubscribe()}}catch(_){}}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-pushon]');if(b)enablePush(b)},true);
+
+/* ---------- instalar o app ---------- */
+let instEvt=null;
+const isAndroid=/android/i.test(navigator.userAgent),isMobile=isIOS||isAndroid||/mobile/i.test(navigator.userAgent);
+const instalado=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+const instFechado=()=>{try{return localStorage.getItem('fm-inst-fechado')==='1'}catch(_){return false}};
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();instEvt=e;renderInstall()});
+window.addEventListener('appinstalled',()=>{instEvt=null;renderInstall();toast('App instalado! Abra pelo ícone Fornece Mimo na sua tela.')});
+function renderInstall(){const boxes=$$('[data-installbox]');
+  const mostra=me&&!instalado()&&!instFechado()&&(instEvt||isMobile);
+  if(!mostra){boxes.forEach(b=>b.hidden=true);return}
+  const html=`<span class="ic">${svg('dl')}</span><div><b>Instale o app Fornece Mimo</b><span>${isIOS?'Fica com ícone na tela do iPhone e recebe os avisos de venda e de Pix.':'Fica com ícone na tela do celular e abre direto, sem procurar o link.'}</span></div><button class="btn" type="button" data-instalar>${isIOS||!instEvt?'Como instalar':'Instalar app'}</button><button class="xi" type="button" data-instfechar aria-label="Fechar">${svg('x')}</button>`;
+  boxes.forEach(b=>{b.innerHTML=html;b.hidden=false})}
+function passosInstalar(){lastFocus=document.activeElement;document.body.style.overflow='hidden';
+  const passos=isIOS?`<li><span>Abra este painel no <b>Safari</b> (o navegador da bússola).</span></li><li><span>Toque em <span class="k">${svg('share')}Compartilhar</span>, embaixo no meio da tela.</span></li><li><span>Role e toque em <span class="k">Adicionar à Tela de Início</span>, depois em <b>Adicionar</b>.</span></li><li><span>Abra pelo ícone <b>Fornece Mimo</b> e toque em <b>Ativar avisos</b>.</span></li>`
+    :`<li><span>Abra este painel no <b>Chrome</b>.</span></li><li><span>Toque nos <span class="k">⋮</span> três pontinhos, no canto de cima.</span></li><li><span>Toque em <span class="k">Instalar app</span> ou <span class="k">Adicionar à tela inicial</span>.</span></li><li><span>Abra pelo ícone <b>Fornece Mimo</b> e toque em <b>Ativar avisos</b>.</span></li>`;
+  $('#sheetRoot').innerHTML=`<div class="sheet-bg" data-closebg><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="shT"><div class="sheet-h"><div><span class="kick">${isIOS?'iphone':'celular'}</span><h2 id="shT">Instalar o app</h2></div><button class="x" type="button" data-close aria-label="Fechar">${svg('x')}</button></div><ol class="ios-steps">${passos}</ol><button class="btn block" type="button" data-close style="margin-top:22px">Entendi</button></div></div>`}
+document.addEventListener('click',async e=>{
+  if(e.target.closest('[data-instalar]')){if(instEvt){const ev=instEvt;instEvt=null;ev.prompt();try{await ev.userChoice}catch(_){}renderInstall()}else passosInstalar();return}
+  if(e.target.closest('[data-instfechar]')){try{localStorage.setItem('fm-inst-fechado','1')}catch(_){}renderInstall()}});
 
 /* ---------- início ---------- */
 window.addEventListener('hashchange',()=>{const h=location.hash.slice(1);if(me&&VIEWS.includes(h)&&h!==current)go(h);else if(!me)landHash()});
