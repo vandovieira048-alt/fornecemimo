@@ -547,6 +547,7 @@ input[readonly]{background:var(--bg2);color:var(--soft)}
       <div id="aAlert"></div>
       <div class="pushbox inst" data-installbox hidden></div>
 <div class="pushbox" data-pushbox hidden></div>
+      <div class="pushbox" id="meBox" hidden></div>
       <div class="tiles" id="aTiles"></div>
       <div class="two">
         <div class="card"><div><h2>vendas de parceiros, 14 dias</h2><p class="meta" id="aChartSum"></p></div><div class="chart" id="aChart" role="img" aria-label="Gráfico de vendas por dia"></div></div>
@@ -1022,7 +1023,7 @@ async function loadAdmin(){
   const [o,p,pa,v,af,cm]=await Promise.all([sb.from('fm_pedidos').select(PCOLS).order('created_at',{ascending:false}),sb.from('fm_produtos').select('*').order('created_at',{ascending:false}),sb.from('fm_parceiros').select('*').order('created_at',{ascending:false}),sb.rpc('fm_admin_vendas'),sb.from('fm_afiliados').select('*').order('created_at',{ascending:false}),sb.from('fm_comissoes').select('*').order('created_at',{ascending:false})]);
   if(o.error||p.error||pa.error){toast('Não foi possível carregar. Recarregue a página.');return}
   orders=o.data;prods=p.data;parceiros=pa.data;afiliados=af.data||[];comissoes=cm.data||[];vendas={};(v.data||[]).forEach(x=>vendas[x.id]=x.preco_venda);
-  renderAInicio();renderAPix();renderAOrders();renderAProds();renderAParc();renderRel();
+  renderAInicio();renderAPix();renderAOrders();renderAProds();renderAParc();renderRel();renderME();
   badge('apix',orders.filter(x=>x.status==='aguardando_pix').length);badge('aprods',prods.filter(x=>!x.shopify_product_id).length);badge('aparc',parceiros.filter(x=>x.status==='pendente').length)}
 const venda=o=>vendas[o.id]!=null?Number(vendas[o.id])*o.qtd:null;
 function renderAInicio(){
@@ -1171,6 +1172,20 @@ document.addEventListener('click',async e=>{if(!infDados)return;const link=LOJA_
   if(e.target.closest('[data-infshare]')){const texto=`Use meu cupom ${infDados.cupom} e ganhe ${Number(infDados.desconto_pct)}% de desconto na Mimovalle!`;
     try{if(navigator.share){await navigator.share({title:'Mimovalle',text:texto,url:link});return}}catch(_){return}copy(texto+' '+link,'Link copiado! Cole no seu story ou no WhatsApp.')}});
 window.addEventListener('hashchange',()=>{if(infToken())renderInf()});
+
+/* ---------- Melhor Envio (admin) ---------- */
+let meStatus=null,meCarregando=false;
+async function meApi(body){const {data,error}=await sb.functions.invoke('fm-melhorenvio',{body});
+  if(error){let m='Não foi possível falar com o Melhor Envio agora.';try{const j=await error.context.json();if(j&&j.erro)m=j.erro}catch(_){}throw new Error(m)}return data}
+async function renderME(forcar){const box=$('#meBox');if(!box||!isAdmin)return;
+  if((!meStatus||forcar)&&!meCarregando){meCarregando=true;try{meStatus=await meApi({acao:'status'})}catch(_){meStatus={conectado:false}}meCarregando=false}
+  if(!meStatus)return;
+  box.innerHTML=meStatus.conectado
+    ?`<span class="ic" style="background:var(--mint);color:var(--ok)">${svg('box')}</span><div><b>Melhor Envio conectado</b><span>${esc(meStatus.nome||'')}${meStatus.saldo!=null?' · saldo '+brl(meStatus.saldo):''}. Frete e etiquetas saem por esta conta.</span></div><a class="btn ghost sm" href="https://app.melhorenvio.com.br/carteira" target="_blank" rel="noopener">Colocar saldo</a>`
+    :`<span class="ic">${svg('box')}</span><div><b>Conecte o Melhor Envio</b><span>Para a Fornece Mimo calcular o frete e gerar as etiquetas dos parceiros.${meStatus.motivo?' ('+esc(meStatus.motivo)+')':''}</span></div><button class="btn" type="button" data-meconectar>Conectar</button>`;
+  box.hidden=false}
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-meconectar]');if(!b)return;b.disabled=true;
+  try{const r=await meApi({acao:'link'});location.href=r.url}catch(err){b.disabled=false;toast(err.message)}});
 
 /* ---------- avisos no celular ---------- */
 const VAPID_PUB='BD1J2SyzV1H7xmY0G5O_NYgTGN0SOvgPTySmgegp0nC_A76XFVSETiIq7-w9sTEjSBDIfUdMN7DyAjNUB1J6FI0';
