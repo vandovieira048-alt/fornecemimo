@@ -248,6 +248,10 @@ footer.foot{text-align:center;color:var(--soft);font-size:13px;padding-block:24p
 @keyframes in{from{transform:translateX(30px);opacity:0}}
 @media (max-width:640px){.sheet-bg{align-items:flex-end}.sheet{height:auto;max-height:92vh;border-radius:24px 24px 0 0;animation:up .22s ease-out}@keyframes up{from{transform:translateY(30px);opacity:0}}}
 input[readonly]{background:var(--bg2);color:var(--soft)}
+.iabox{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:linear-gradient(135deg,var(--lilac),var(--peach));border-radius:16px;padding:14px}
+.iabox .ic{width:40px;height:40px;border-radius:12px;background:#fff;color:var(--accent);display:grid;place-items:center;flex-shrink:0}.iabox .ic svg{width:20px;height:20px}
+.iabox>div{flex:1;min-width:200px;display:flex;flex-direction:column;gap:2px}.iabox b{font-size:14px}.iabox span{font-size:12.5px;color:var(--ink);opacity:.8;line-height:1.4}
+.iabox .btn svg{width:16px;height:16px}
 .varbox{display:flex;flex-direction:column;gap:12px;background:var(--bg2);border-radius:16px;padding:14px}
 .vrow{display:grid;grid-template-columns:1fr 96px 46px;gap:8px;align-items:center}.vrow input{min-width:0}
 .x2{width:46px;height:46px;border-radius:12px;border:1.5px solid var(--line);background:#fff;display:grid;place-items:center;cursor:pointer;color:var(--soft)}.x2 svg{width:16px;height:16px}
@@ -837,6 +841,26 @@ async function addFiles(e){const files=[...e.target.files];e.target.value='';
   renderGal()}
 const OPCS=['Cor','Tamanho','Modelo','Voltagem','Sabor'];
 const varRow=v=>`<div class="vrow"><input class="vn" maxlength="40" placeholder="Ex.: Azul" value="${esc(v.nome||'')}" aria-label="Nome da variação"><input class="ve" inputmode="numeric" placeholder="0" value="${v.estoque!=null?v.estoque:''}" aria-label="Estoque da variação"><button type="button" class="x2" data-rmvar aria-label="Remover variação">${svg('x')}</button></div>`;
+const cap=s=>String(s||'').charAt(0).toUpperCase()+String(s||'').slice(1);
+function paraIA(blob){return new Promise((res,rej)=>{const img=new Image();img.onload=()=>{const m=768,k=Math.min(1,m/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);
+  c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(img.src);res(c.toDataURL('image/jpeg',.8))};img.onerror=rej;img.src=URL.createObjectURL(blob)})}
+async function preencherIA(btn){const imgs=sheetMedia.filter(m=>m.tipo==='imagem').slice(0,4);
+  const texto=[$('#pNome').value.trim(),$('#pDesc').value.trim()].filter(Boolean).join('\n');
+  if(!imgs.length&&texto.length<10){toast('Coloque pelo menos uma foto ou cole a descrição do produto.');return}
+  btn.disabled=true;const tx=btn.innerHTML;btn.innerHTML='Escrevendo o anúncio…';
+  try{const fotos=[];for(const m of imgs)fotos.push(m.file?await paraIA(m.file):pubUrl(m.path));
+    const {data,error}=await sb.functions.invoke('fm-ia',{body:{fotos,texto}});
+    if(error){let msg='A IA não respondeu agora. Tente de novo.';try{const j=await error.context.json();if(j&&j.erro)msg=j.erro}catch(_){}throw new Error(msg)}
+    if(data.nome)$('#pNome').value=data.nome;if(data.descricao)$('#pDesc').value=data.descricao;
+    if(data.categoria){const r=document.querySelector(`#fProd input[name=cat][value="${data.categoria}"]`);if(r)r.checked=true}
+    const c=$('#pTemVar');
+    if(data.variacoes&&data.variacoes.length&&c&&!c.checked&&!c.disabled){c.checked=true;$('#varList').innerHTML=data.variacoes.map(n=>varRow({nome:cap(n)})).join('');
+      const o=document.querySelector(`#fProd input[name=opc][value="${data.opcao||'Cor'}"]`);if(o)o.checked=true;syncVar();
+      toast(`Pronto! Confira o texto e coloque o estoque de cada ${(data.opcao||'cor').toLowerCase()}.`)}
+    else toast('Pronto! Confira o texto e ajuste o que precisar.');
+    $('#pNome').scrollIntoView({behavior:'smooth',block:'center'})}
+  catch(e){toast(e.message)}finally{btn.disabled=false;btn.innerHTML=tx}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-ia]');if(b)preencherIA(b)});
 function syncVar(){const c=$('#pTemVar');if(!c)return;const on=c.checked;$('#varBox').hidden=!on;const est=$('#pEst');est.readOnly=on;
   if(on){if(!$$('#varList .vrow').length){$('#varList').insertAdjacentHTML('beforeend',varRow({})+varRow({}))}
     est.value=$$('#varList .ve').reduce((a,i)=>a+(parseInt(i.value,10)||0),0)}}
@@ -854,6 +878,7 @@ function openProd(p){lastFocus=document.activeElement;const admin=isAdmin;p=p||{
    ${p.id?`<div>${prodStatus(p)}</div>`:''}
    <form class="form" id="fProd" data-id="${p.id||''}">
     <div class="field"><span style="font-size:13px;font-weight:600">Fotos e vídeos do produto</span><div class="gal" id="gal"></div><span class="hint" id="galInfo"></span></div>
+    <div class="iabox"><span class="ic">${svg('spark')}</span><div><b>Deixe a IA escrever o anúncio</b><span>Coloque as fotos e, se quiser, cole na Descrição o texto da Shopee. A IA preenche nome, descrição, categoria e cores. Depois é só conferir.</span></div><button class="btn navy sm" type="button" data-ia>${svg('spark')}Preencher com IA</button></div>
     <div class="field"><label for="pNome">Nome do produto</label><input id="pNome" required minlength="2" maxlength="140" value="${esc(p.nome||'')}" placeholder="Ex.: Kit potes herméticos 10 peças"></div>
     <div class="g2"><div class="field"><label for="pPreco">Preço de parceiro (R$)</label><input id="pPreco" required inputmode="decimal" value="${p.preco_parceiro!=null?Number(p.preco_parceiro).toFixed(2).replace('.',','):''}" placeholder="45,00"></div>
     <div class="field"><label for="pEst">Estoque</label><input id="pEst" required inputmode="numeric" value="${p.estoque!=null?p.estoque:''}" placeholder="30"></div></div>
