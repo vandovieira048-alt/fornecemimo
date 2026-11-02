@@ -853,6 +853,7 @@ $('#aSearch').oninput=e=>{F.aq=e.target.value.trim();renderAOrders()};
 
 /* ---------- gaveta de produto ---------- */
 const num=s=>parseFloat(String(s).trim().replace(/\./g,'').replace(',','.'));
+const TAXA_VENDA=0.07; // 2% da Shopify + cerca de 5% do Mercado Pago no cartão (no Pix é menos)
 const precoLojaJS=v=>{let x=Math.ceil(v)-0.1;if(x<v-0.001)x+=1;return Math.round(x*100)/100};
 // frete grátis embutido no preço: mostra o frete médio, sugere o preço e calcula a margem de verdade
 function montarFrete(p,pref,inpSel,margSel,novo){const box=$('#'+pref+'Frete');let frete=p.frete_medio!=null?Number(p.frete_medio):null;
@@ -865,9 +866,9 @@ function montarFrete(p,pref,inpSel,margSel,novo){const box=$('#'+pref+'Frete');l
     const sg=box.querySelector('[data-sugerir]');if(sg)sg.onclick=()=>{$(inpSel).value=sugerido().toFixed(2).replace('.',',');marg()};
     const rc=box.querySelector('[data-recalc]');if(rc)rc.onclick=calcular;marg()};
   const freteUsado=()=>frete!=null&&box.dataset.fg!=='0'?frete:0;
-  const sugerido=()=>precoLojaJS(Number(p.preco_parceiro)*1.6+freteUsado());
-  const marg=()=>{const v=num($(inpSel).value),c=Number(p.preco_parceiro),f=freteUsado(),m=v-c-f;
-    $(margSel).innerHTML=v>0?`Você recebe ${brl(v)} − parceiro ${brl(c)}${f?' − frete '+brl(f):''} = <b style="color:${m>0?'var(--ok)':'var(--late)'}">${brl(m)} de lucro</b> por unidade (${Math.round(m/v*100)}%)`:''};
+  const sugerido=()=>precoLojaJS((Number(p.preco_parceiro)*1.6+freteUsado())/(1-TAXA_VENDA));
+  const marg=()=>{const v=num($(inpSel).value),c=Number(p.preco_parceiro),f=freteUsado(),t=Math.round(v*TAXA_VENDA*100)/100,m=v-c-f-t;
+    $(margSel).innerHTML=v>0?`Cliente paga ${brl(v)} − parceiro ${brl(c)}${f?' − frete '+brl(f):''} − taxas ${brl(t)} = <b style="color:${m>0?'var(--ok)':'var(--late)'}">${brl(m)} de lucro</b> por unidade (${Math.round(m/v*100)}%)`:''};
   async function calcular(){frete=null;desenha();try{const r=await meApi({acao:'frete_medio',produto_id:p.id});frete=Number(r.media);p.frete_medio=frete;
       if(novo&&box.dataset.fg!=='0')$(inpSel).value=sugerido().toFixed(2).replace('.',',');desenha()}catch(e){desenha(e.message)}}
   box.dataset.fg=fgInicial?'1':'0';$(inpSel).oninput=marg;box.freteUsado=freteUsado;
