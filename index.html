@@ -255,6 +255,8 @@ input[readonly]{background:var(--bg2);color:var(--soft)}
 .infhead{display:flex;flex-direction:column;gap:12px}.infhead h1{margin:0}
 .tiles.t3 b{font-size:16px;white-space:nowrap;overflow:visible;text-overflow:clip}.tiles.t3 .tile{padding:12px 10px}
 .cupom{align-self:stretch;border:2px dashed var(--accent);border-radius:16px;padding:14px;text-align:center;background:var(--peach)}.cupom small{display:block;font-size:12px;color:var(--soft);font-weight:600}.cupom b{font-size:30px;letter-spacing:2px;color:var(--ink)}
+.frbox{display:flex;flex-direction:column;gap:8px;background:#fff;border-radius:14px;padding:12px 14px;border:1.5px solid var(--line)}.frbox b{font-size:15px}
+.caixa{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.caixa input{min-width:0}@media (max-width:420px){.caixa{grid-template-columns:1fr 1fr}}
 .varbox{display:flex;flex-direction:column;gap:12px;background:var(--bg2);border-radius:16px;padding:14px}
 .vrow{display:grid;grid-template-columns:1fr 96px 46px;gap:8px;align-items:center}.vrow input{min-width:0}
 .x2{width:46px;height:46px;border-radius:12px;border:1.5px solid var(--line);background:#fff;display:grid;place-items:center;cursor:pointer;color:var(--soft)}.x2 svg{width:16px;height:16px}
@@ -539,6 +541,16 @@ input[readonly]{background:var(--bg2);color:var(--soft)}
           <button class="btn line" type="button" data-logout>Sair da conta</button>
         </div>
       </div>
+          <form class="card form" id="fEnd">
+        <div><h2>endereço de postagem</h2><p class="meta">De onde saem os seus envios. Vai como remetente na etiqueta, que a Mimovalle paga.</p></div>
+        <div class="g2"><div class="field"><label for="eCep">CEP</label><input id="eCep" inputmode="numeric" maxlength="9" required placeholder="00000-000"></div>
+        <div class="field"><label for="eDoc">CPF ou CNPJ</label><input id="eDoc" inputmode="numeric" maxlength="18" required></div></div>
+        <div class="field"><label for="eRua">Rua</label><input id="eRua" maxlength="120" required></div>
+        <div class="g2"><div class="field"><label for="eNum">Número</label><input id="eNum" maxlength="20" required></div><div class="field"><label for="eComp">Complemento</label><input id="eComp" maxlength="60"></div></div>
+        <div class="field"><label for="eBairro">Bairro</label><input id="eBairro" maxlength="80" required></div>
+        <div class="g2"><div class="field"><label for="eCid">Cidade</label><input id="eCid" maxlength="80" required></div><div class="field"><label for="eUf">UF</label><input id="eUf" maxlength="2" required autocapitalize="characters"></div></div>
+        <button class="btn navy" type="submit">Salvar endereço</button>
+      </form>
     </section>
 
     <!-- admin: início -->
@@ -734,7 +746,7 @@ setInterval(()=>{if(me&&!document.hidden)sched()},45000);
 document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g)go(g.dataset.go)});
 
 /* ---------- utilitários de pedido ---------- */
-const PCOLS='id,parceiro_id,produto_id,shopify_order_id,numero,produto_nome,variante,qtd,valor,cliente,status,pix_pago_em,rastreio,enviado_em,created_at,rastreio_na_shopify';
+const PCOLS='id,parceiro_id,produto_id,shopify_order_id,numero,produto_nome,variante,qtd,valor,cliente,status,pix_pago_em,rastreio,enviado_em,created_at,rastreio_na_shopify,me_order_id,etiqueta_url,frete_valor,frete_servico,me_rastreio';
 const left=o=>new Date(o.pix_pago_em).getTime()+24*H-Date.now();
 const fmt=ms=>{if(ms<=0)return 'prazo vencido';const h=Math.floor(ms/H),m=Math.floor(ms%H/60000);return `${h}h ${String(m).padStart(2,'0')}min`};
 function pillFor(o){if(o.status==='enviado')return `<span class="pill p-ok">${svg('check','width="12" height="12"')}Enviado</span>`;if(o.status==='cancelado')return '<span class="pill p-off">Cancelado</span>';
@@ -781,7 +793,7 @@ function renderInicio(){
   $('#hiTiles').innerHTML=[['var(--peach)','A enviar',send.length,'pedidos com Pix pago'],['var(--mint)','Recebido no mês',brl0(mes.reduce((a,o)=>a+Number(o.valor),0)),mes.length+' venda(s)'],['var(--butter)','Aguardando Pix',orders.filter(o=>o.status==='aguardando_pix').length,'a Mimovalle está pagando'],['var(--lilac)','Produtos ativos',ativos+'/'+prods.length,'na vitrine da Mimovalle']]
     .map(([bg,l,v,s])=>`<div class="tile" style="background:${bg}"><small>${l}</small><b>${v}</b><span>${s}</span></div>`).join('');
   const d=days14(paid,'pix_pago_em','valor');drawChart('#chart',d);$('#chartSum').textContent=brl(d.reduce((a,x)=>a+x.v,0))+' no período';
-  const steps=[['Cadastro aprovado',true],['Cadastrar o primeiro produto',prods.length>0],['Colocar foto nos produtos',prods.length>0&&prods.every(p=>p.foto_path)],['Ter 3 produtos ativos na loja',ativos>=3],['Fazer o primeiro envio',orders.some(o=>o.status==='enviado')]];
+  const steps=[['Cadastro aprovado',true],['Cadastrar o endereço de postagem (em Conta)',!!parceiro.cep],['Cadastrar o primeiro produto',prods.length>0],['Colocar foto nos produtos',prods.length>0&&prods.every(p=>p.foto_path)],['Ter 3 produtos ativos na loja',ativos>=3],['Fazer o primeiro envio',orders.some(o=>o.status==='enviado')]];
   $('#checklist').innerHTML=steps.map(([t,ok])=>`<div class="${ok?'done':''}"><span class="ck">${ok?svg('check','width="14" height="14"'):''}</span>${t}</div>`).join('');
   const low=[];prods.filter(p=>!p.removido).forEach(p=>{const vs=p.variacoes||[];if(vs.length)vs.filter(v=>v.estoque<=3).forEach(v=>low.push([p.nome+' · '+v.nome,v.estoque]));else if(p.estoque<=3)low.push([p.nome,p.estoque])});
   $('#lowStock').hidden=!low.length;
@@ -801,7 +813,7 @@ function renderOrders(){
     else if(o.status==='enviar'){const ms=left(o);const pct=Math.max(0,Math.min(100,ms/(24*H)*100));
       line=`Postar em <span class="timer" style="color:var(${ms<=0?'--late':'--warn'})">${fmt(ms)}</span>`;
       extra=`<div class="bar-time"><i style="width:${pct}%;background:var(${ms<=0?'--late':pct<25?'--late':'--warn'})"></i></div>`;
-      foot=`<form class="form ship" data-id="${o.id}" hidden><div class="field"><label for="tr-${o.id}">Código de rastreio</label><input id="tr-${o.id}" required maxlength="40" placeholder="Ex.: QN123456789BR" autocomplete="off" autocapitalize="characters"></div><div class="acts"><button class="btn ghost" type="button" data-cancel>Cancelar</button><button class="btn" type="submit">Confirmar envio</button></div></form><div class="acts"><button class="btn" data-ship="${o.id}">${svg('box')}Marcar como enviado</button></div>`}
+      foot=`<form class="form ship" data-id="${o.id}" hidden><div class="field"><label for="tr-${o.id}">Código de rastreio</label><input id="tr-${o.id}" required maxlength="40" placeholder="Ex.: QN123456789BR" autocomplete="off" autocapitalize="characters" value="${esc(o.me_rastreio||'')}"></div><div class="acts"><button class="btn ghost" type="button" data-cancel>Cancelar</button><button class="btn" type="submit">Confirmar envio</button></div></form><div class="acts">${o.etiqueta_url?`<a class="btn navy" href="${esc(o.etiqueta_url)}" target="_blank" rel="noopener">${svg('ext')}Imprimir etiqueta</a>`:`<button class="btn navy" data-etiqueta="${o.id}">${svg('dl')}Gerar etiqueta</button>`}<button class="btn" data-ship="${o.id}">${svg('box')}Marcar como enviado</button></div>${o.etiqueta_url?`<p class="hint">Etiqueta ${esc(o.frete_servico||'')} paga pela Mimovalle. Cole na caixa e poste em qualquer agência dos Correios.</p>`:''}`}
     else if(o.status==='enviado'){line='Pix recebido em '+dt(o.pix_pago_em);foot=`<p class="track">${svg('check','width="14" height="14" style="vertical-align:-2px"')} Rastreio ${esc(o.rastreio)} · enviado ${dt(o.enviado_em)}</p>`}
     else line='Pedido cancelado pelo cliente. Não envie.';
     return `<article class="card order"><div class="ph ${p&&p.categoria?'cat-'+p.categoria:''}">${p?thumb(p):svg('box')}</div><div class="body"><div class="row"><div><h3>${esc(o.produto_nome)}</h3>${vtag(o)}<div class="meta">Pedido ${esc(o.numero)} · ${o.qtd} un. · ${dt(o.created_at)}</div></div>${pillFor(o)}</div>
@@ -823,7 +835,16 @@ function renderFin(){
   const by={};paid.forEach(o=>{const d=new Date(o.pix_pago_em);const k=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');(by[k]=by[k]||{v:0,n:0,d}).v+=Number(o.valor);by[k].n++});
   const ks=Object.keys(by).sort().reverse();
   $('#monthList').innerHTML=ks.length?ks.map(k=>`<div class="ln"><div><b style="font-size:14px;text-transform:capitalize">${by[k].d.toLocaleDateString('pt-BR',{month:'long',year:'numeric'})}</b><div class="meta">${by[k].n} venda(s)</div></div><strong>${brl(by[k].v)}</strong></div>`).join(''):'<p class="meta">Sem recebimentos ainda.</p>'}
-function fillConta(){$('#aLoja').value=parceiro.nome_loja;$('#aResp').value=parceiro.responsavel;$('#aWhats').value=parceiro.whatsapp;$('#aPix').value=parceiro.chave_pix;$('#contaTermo').textContent=parceiro.termo_aceito_em?`Termo de parceria versão ${parceiro.termo_versao}, aceito em ${new Date(parceiro.termo_aceito_em).toLocaleDateString('pt-BR')}.`:''}
+const fmtCep=v=>{const d=digits(v).slice(0,8);return d.length>5?d.slice(0,5)+'-'+d.slice(5):d};
+function fillEnd(){const p=parceiro;$('#eCep').value=fmtCep(p.cep||'');$('#eDoc').value=p.documento||'';$('#eRua').value=p.logradouro||'';$('#eNum').value=p.numero||'';$('#eComp').value=p.complemento||'';$('#eBairro').value=p.bairro||'';$('#eCid').value=p.cidade||'';$('#eUf').value=p.uf||''}
+$('#eCep').addEventListener('input',async e=>{e.target.value=fmtCep(e.target.value);const d=digits(e.target.value);if(d.length!==8)return;
+  try{const r=await fetch('https://viacep.com.br/ws/'+d+'/json/');const j=await r.json();if(j.erro){toast('CEP não encontrado.');return}
+    if(j.logradouro)$('#eRua').value=j.logradouro;if(j.bairro)$('#eBairro').value=j.bairro;$('#eCid').value=j.localidade||'';$('#eUf').value=j.uf||'';(j.logradouro?$('#eNum'):$('#eRua')).focus()}catch(_){}});
+$('#fEnd').onsubmit=async e=>{e.preventDefault();const doc=digits($('#eDoc').value),cep=digits($('#eCep').value);
+  if(cep.length!==8){toast('Digite o CEP completo.');return}if(doc.length!==11&&doc.length!==14){toast('O CPF tem 11 números e o CNPJ tem 14.');return}
+  busy(e.target,true);const {data,error}=await sb.from('fm_parceiros').update({cep,documento:doc,logradouro:$('#eRua').value.trim(),numero:$('#eNum').value.trim(),complemento:$('#eComp').value.trim()||null,bairro:$('#eBairro').value.trim(),cidade:$('#eCid').value.trim(),uf:$('#eUf').value.trim().toUpperCase()}).eq('id',me.id).select().single();
+  busy(e.target,false);if(error){toast(errMsg(error));return}parceiro=data;toast('Endereço salvo.');renderInicio()};
+function fillConta(){fillEnd();$('#aLoja').value=parceiro.nome_loja;$('#aResp').value=parceiro.responsavel;$('#aWhats').value=parceiro.whatsapp;$('#aPix').value=parceiro.chave_pix;$('#contaTermo').textContent=parceiro.termo_aceito_em?`Termo de parceria versão ${parceiro.termo_versao}, aceito em ${new Date(parceiro.termo_aceito_em).toLocaleDateString('pt-BR')}.`:''}
 $('#fConta').onsubmit=async e=>{e.preventDefault();busy(e.target,true);
   const {data,error}=await sb.from('fm_parceiros').update({nome_loja:$('#aLoja').value.trim(),responsavel:$('#aResp').value.trim(),whatsapp:$('#aWhats').value.trim(),chave_pix:$('#aPix').value.trim()}).eq('id',me.id).select().single();
   busy(e.target,false);if(error){toast(errMsg(error));return}parceiro=data;setWho(data.nome_loja,'parceiro');toast('Dados salvos.')};
@@ -832,6 +853,26 @@ $('#aSearch').oninput=e=>{F.aq=e.target.value.trim();renderAOrders()};
 
 /* ---------- gaveta de produto ---------- */
 const num=s=>parseFloat(String(s).trim().replace(/\./g,'').replace(',','.'));
+const precoLojaJS=v=>{let x=Math.ceil(v)-0.1;if(x<v-0.001)x+=1;return Math.round(x*100)/100};
+// frete grátis embutido no preço: mostra o frete médio, sugere o preço e calcula a margem de verdade
+function montarFrete(p,pref,inpSel,margSel,novo){const box=$('#'+pref+'Frete');let frete=p.frete_medio!=null?Number(p.frete_medio):null;
+  const fgInicial=novo?true:Number(p.frete_incluso||0)>0;
+  const desenha=(msg)=>{box.innerHTML=frete!=null
+      ?`<label class="aceite" style="font-size:14px"><input type="checkbox" id="${pref}FG" ${box.dataset.fg==='0'?'':'checked'}> <span><b>Frete grátis</b>: o frete médio de <b>${brl(frete)}</b> entra no preço e a Mimovalle paga a etiqueta.</span></label>
+         <div class="acts"><button class="btn ghost sm" type="button" data-sugerir>${svg('spark')}Usar preço sugerido</button><button class="btn ghost sm" type="button" data-recalc>Recalcular frete</button></div>`
+      :`<span class="meta">${msg||'Calculando o frete médio pelo Melhor Envio…'}</span>${msg?'<button class="btn ghost sm" type="button" data-recalc style="align-self:flex-start">Calcular frete</button>':''}`;
+    const fg=$('#'+pref+'FG');if(fg)fg.onchange=()=>{box.dataset.fg=fg.checked?'1':'0';marg()};
+    const sg=box.querySelector('[data-sugerir]');if(sg)sg.onclick=()=>{$(inpSel).value=sugerido().toFixed(2).replace('.',',');marg()};
+    const rc=box.querySelector('[data-recalc]');if(rc)rc.onclick=calcular;marg()};
+  const freteUsado=()=>frete!=null&&box.dataset.fg!=='0'?frete:0;
+  const sugerido=()=>precoLojaJS(Number(p.preco_parceiro)*1.6+freteUsado());
+  const marg=()=>{const v=num($(inpSel).value),c=Number(p.preco_parceiro),f=freteUsado(),m=v-c-f;
+    $(margSel).innerHTML=v>0?`Você recebe ${brl(v)} − parceiro ${brl(c)}${f?' − frete '+brl(f):''} = <b style="color:${m>0?'var(--ok)':'var(--late)'}">${brl(m)} de lucro</b> por unidade (${Math.round(m/v*100)}%)`:''};
+  async function calcular(){frete=null;desenha();try{const r=await meApi({acao:'frete_medio',produto_id:p.id});frete=Number(r.media);p.frete_medio=frete;
+      if(novo&&box.dataset.fg!=='0')$(inpSel).value=sugerido().toFixed(2).replace('.',',');desenha()}catch(e){desenha(e.message)}}
+  box.dataset.fg=fgInicial?'1':'0';$(inpSel).oninput=marg;box.freteUsado=freteUsado;
+  if(frete==null&&p.peso_g&&p.alt_cm&&p.larg_cm&&p.comp_cm)calcular();
+  else{desenha(frete==null?'Sem frete calculado: falta o peso e as medidas da caixa no cadastro do produto.':'');if(novo&&frete!=null)$(inpSel).value=sugerido().toFixed(2).replace('.',',');marg()}}
 const sugerePreco=c=>{const v=Number(c)*1.65;return Math.max(Math.ceil(v)-0.1,Number(c)+5).toFixed(2)};
 async function loja(acao,dados){const {data,error}=await sb.functions.invoke('fm-loja',{body:{acao,...dados}});
   if(error){let m='Não foi possível falar com a loja agora.';try{const j=await error.context.json();if(j&&j.erro)m=j.erro}catch(_){}throw new Error(m)}return data}
@@ -905,6 +946,9 @@ function openProd(p){lastFocus=document.activeElement;const admin=isAdmin;p=p||{
       <button class="btn ghost sm" type="button" data-addvar style="align-self:flex-start">${svg('plus')}Adicionar</button>
       <span class="hint">Cada uma com seu estoque. O estoque total é a soma. Com estoque 0 ela aparece como esgotada na loja.${travaVar?' Para tirar as variações de um produto que já está na loja, fale com a Mimovalle.':''}</span>
     </div>
+    <fieldset style="border:0;padding:0;margin:0;display:flex;flex-direction:column;gap:6px"><legend style="font-size:13px;font-weight:600;padding:0;margin-bottom:6px">Caixa para envio (já embalado)</legend>
+      <div class="caixa"><div class="field"><label for="pPeso">Peso (g)</label><input id="pPeso" inputmode="numeric" value="${p.peso_g||''}" placeholder="300"></div><div class="field"><label for="pAlt">Altura (cm)</label><input id="pAlt" inputmode="decimal" value="${p.alt_cm||''}" placeholder="5"></div><div class="field"><label for="pLarg">Largura (cm)</label><input id="pLarg" inputmode="decimal" value="${p.larg_cm||''}" placeholder="12"></div><div class="field"><label for="pComp">Compr. (cm)</label><input id="pComp" inputmode="decimal" value="${p.comp_cm||''}" placeholder="16"></div></div>
+      <span class="hint">Pese e meça o produto já embalado, do jeito que vai para o correio. Serve para calcular o frete e gerar a etiqueta.</span></fieldset>
     <fieldset style="border:0;padding:0;margin:0;display:flex;flex-direction:column;gap:6px"><legend style="font-size:13px;font-weight:600;padding:0;margin-bottom:6px">Categoria</legend><div class="catpick">${Object.entries(CATS).map(([k,l])=>`<label><input type="radio" name="cat" value="${k}" ${p.categoria===k?'checked':''}><span>${l}</span></label>`).join('')}</div></fieldset>
     <div class="field"><label for="pDesc">Descrição (medidas, material, o que vem na caixa)</label><textarea id="pDesc" maxlength="1200">${esc(p.descricao||'')}</textarea></div>
     <div class="field"><label for="pLink">Link do produto na Shopee (opcional)</label><input id="pLink" type="url" value="${esc(p.link_origem||'')}" placeholder="https://shopee.com.br/…"></div>
@@ -918,6 +962,7 @@ function openProd(p){lastFocus=document.activeElement;const admin=isAdmin;p=p||{
      <div class="field"><label for="pbTit">Título do anúncio</label><input id="pbTit" maxlength="140" value="${esc(p.nome)}"></div>
      <div class="g2"><div class="field"><label for="pbPreco">Preço de venda (R$)</label><input id="pbPreco" inputmode="decimal" required value="${String(sugerePreco(p.preco_parceiro)).replace('.',',')}"></div>
      <div class="field"><label for="pbDe">Preço "de" (opcional)</label><input id="pbDe" inputmode="decimal" placeholder="riscado no anúncio"></div></div>
+     <div class="frbox" id="pbFrete" data-id="${p.id}"></div>
      <p class="meta" id="pbMargem"></p>
      <label style="display:flex;gap:10px;align-items:flex-start;font-weight:500;font-size:14px"><input type="checkbox" id="pbAuto" checked style="width:22px;height:22px;min-height:0;flex-shrink:0;margin-top:1px"> Ajustar o preço sozinho quando o parceiro mudar o dele, mantendo a mesma margem</label>
      <button class="btn" type="submit">${svg('spark')}Publicar na Mimovalle</button>
@@ -929,6 +974,7 @@ function openProd(p){lastFocus=document.activeElement;const admin=isAdmin;p=p||{
      <p class="meta">${p.removido?'<b style="color:var(--late)">O parceiro removeu este produto.</b> ':''}Parceiro cobra ${brl(p.preco_parceiro)}. ${p.preco_parceiro_sync!=null&&Number(p.preco_parceiro_sync)!==Number(p.preco_parceiro)?'<b style="color:var(--warn)">O parceiro mudou o preço. Revise abaixo.</b>':''}</p></div>
      <div class="g2"><div class="field"><label for="prVenda">Preço de venda (R$)</label><input id="prVenda" inputmode="decimal" required value="${Number(p.preco_venda||sugerePreco(p.preco_parceiro)).toFixed(2).replace('.',',')}"></div>
      <div class="field"><label for="prDe">Preço "de" (opcional)</label><input id="prDe" inputmode="decimal" value="${p.preco_de?Number(p.preco_de).toFixed(2).replace('.',','):''}" placeholder="riscado no anúncio"></div></div>
+     <div class="frbox" id="prFrete" data-id="${p.id}"></div>
      <p class="meta" id="prMargem"></p>
      <label style="display:flex;gap:10px;align-items:flex-start;font-weight:500;font-size:14px"><input type="checkbox" id="prAuto" ${p.auto_preco!==false?'checked':''} style="width:22px;height:22px;min-height:0;flex-shrink:0;margin-top:1px"> Ajustar sozinho quando o parceiro mudar o preço, mantendo esta margem</label>
      <div class="acts"><button class="btn navy" type="submit" data-ativar="0">Salvar preço</button>${!p.ativo&&!p.removido?`<button class="btn" type="submit" data-ativar="1">Salvar e ativar na loja</button>`:''}</div>
@@ -937,10 +983,8 @@ function openProd(p){lastFocus=document.activeElement;const admin=isAdmin;p=p||{
    </form>`:''}
   </div></div>`;
   document.body.style.overflow='hidden';setTimeout(()=>$('#pNome').focus(),60);
-  const mg=()=>{const v=num($('#pbPreco').value),c=Number(p.preco_parceiro);$('#pbMargem').innerHTML=v>0?`Sua margem: <b style="color:${v>c?'var(--ok)':'var(--late)'}">${brl(v-c)}</b> por unidade (${c?Math.round((v-c)/v*100):0}% do preço)`:''};
-  if($('#pbPreco')){$('#pbPreco').oninput=mg;mg()}
-  const mg2=()=>{const v=num($('#prVenda').value),c=Number(p.preco_parceiro);$('#prMargem').innerHTML=v>0?`Sua margem: <b style="color:${v>c?'var(--ok)':'var(--late)'}">${brl(v-c)}</b> por unidade (${c?Math.round((v-c)/v*100):0}% do preço)`:''};
-  if($('#prVenda')){$('#prVenda').oninput=mg2;mg2()}
+  if($('#pbPreco'))montarFrete(p,'pb','#pbPreco','#pbMargem',true);
+  if($('#prVenda'))montarFrete(p,'pr','#prVenda','#prMargem',false);
   renderGal();syncVar()}
 document.addEventListener('click',e=>{const r=e.target.closest('[data-rm]');if(r){const m=sheetMedia.splice(+r.dataset.rm,1)[0];if(m&&m.blobUrl)URL.revokeObjectURL(m.blobUrl);renderGal();return}
   const c=e.target.closest('[data-capa]');if(c){const m=sheetMedia.splice(+c.dataset.capa,1)[0];sheetMedia.unshift(m);renderGal()}});
@@ -967,6 +1011,9 @@ document.addEventListener('click',async e=>{const t=e.target;
     if(error){let m='Não foi possível ligar o produto.';try{const j=await error.context.json();if(j&&j.erro)m=j.erro}catch(_){}toast(m);return}
     toast('Ligado a: '+((data&&data.titulo)||'produto da Mimovalle'));notify('produto_ativo',vb.dataset.vinc);closeSheet();loadAdmin();return}
   const rs=t.closest('[data-rastreio]');if(rs){rs.disabled=true;try{await loja('rastreio',{pedido_id:rs.dataset.rastreio});toast('Rastreio enviado à Shopify. O cliente recebeu por e-mail.');loadAdmin()}catch(err){rs.disabled=false;toast(err.message)}return}
+  const et=t.closest('[data-etiqueta]');if(et){et.disabled=true;const tx=et.innerHTML;et.innerHTML='Gerando etiqueta…';
+    try{const r=await meApi({acao:'etiqueta',pedido_id:et.dataset.etiqueta});toast('Etiqueta pronta! Imprima e cole na caixa.');if(r.url)window.open(r.url,'_blank');loadPartner()}
+    catch(err){et.disabled=false;et.innerHTML=tx;toast(err.message)}return}
   const rm=t.closest('[data-remover]');if(rm){if(rm.dataset.ok!=='1'){rm.dataset.ok='1';rm.textContent='Toque de novo para confirmar a remoção';rm.style.borderColor='var(--late)';rm.style.color='var(--late)';return}
     rm.disabled=true;const {error}=await sb.from('fm_produtos').update({removido:true}).eq('id',rm.dataset.remover);if(error){rm.disabled=false;toast(errMsg(error));return}
     toast('Produto removido. Ele já saiu da Mimovalle.');closeSheet();loadPartner();return}
@@ -987,9 +1034,12 @@ document.addEventListener('submit',async e=>{const f=e.target;
       const nm=rows.map(v=>v.nome.toLowerCase());if(new Set(nm).size!==nm.length){toast('Tem variação com o nome repetido.');return}
       variacoes=rows;opcao_nome=(f.querySelector('input[name=opc]:checked')||{}).value||'Cor';estoque=rows.reduce((a,v)=>a+v.estoque,0)}
     if(!(preco>0)||isNaN(estoque)||estoque<0){toast('Confira o preço e o estoque (só números).');return}
+    const cx={peso_g:parseInt($('#pPeso').value,10)||null,alt_cm:num($('#pAlt').value)||null,larg_cm:num($('#pLarg').value)||null,comp_cm:num($('#pComp').value)||null};
+    if(!isAdmin&&(!cx.peso_g||!cx.alt_cm||!cx.larg_cm||!cx.comp_cm)){toast('Preencha o peso e as medidas da caixa para envio.');$('#pPeso').focus();return}
+    if((cx.peso_g&&cx.peso_g>30000)||[cx.alt_cm,cx.larg_cm,cx.comp_cm].some(v=>v&&v>100)){toast('Confira a caixa: até 30 kg e 100 cm por lado.');return}
     if(!id&&!sheetMedia.some(m=>m.tipo==='imagem')&&!confirmNoPhoto){confirmNoPhoto=true;toast('Produto com foto vende mais. Toque em enviar de novo para seguir sem foto.');return}
     busy(f,true);const btn=f.querySelector('button[type=submit]'),btnTx=btn.textContent;
-    const base={nome,preco_parceiro:Math.round(preco*100)/100,estoque,variacoes,opcao_nome,link_origem:/^https:\/\//.test(link)?link:null,categoria:cat,descricao:desc};
+    const base={nome,preco_parceiro:Math.round(preco*100)/100,estoque,variacoes,opcao_nome,...cx,link_origem:/^https:\/\//.test(link)?link:null,categoria:cat,descricao:desc};
     let row=id?prods.find(p=>p.id===id):null,error;
     if(!id){const r=await sb.from('fm_produtos').insert({...base,parceiro_id:me.id}).select('id').single();error=r.error;row=r.data}
     else{const r=await sb.from('fm_produtos').update(base).eq('id',id);error=r.error}
@@ -1003,11 +1053,11 @@ document.addEventListener('submit',async e=>{const f=e.target;
     btn.textContent=btnTx;busy(f,false);confirmNoPhoto=false;if(error){toast(errMsg(error));return}
     if(id&&row&&row.shopify_product_id){if(novas)loja('atualizar_midias',{produto_id:id}).then(r=>r&&r.enviadas&&toast(`${r.enviadas} foto(s)/vídeo(s) enviados para a loja.`)).catch(e=>toast(e.message))}toast(id?'Produto atualizado.':'Produto enviado. A Mimovalle prepara o anúncio.');if(!id&&row)notify('novo_produto',row.id);closeSheet();isAdmin?loadAdmin():loadPartner();return}
   if(f.id==='fPreco'){e.preventDefault();const ativar=e.submitter&&e.submitter.dataset.ativar==='1';const preco=num($('#prVenda').value),de=num($('#prDe').value);busy(f,true);
-    try{await loja('definir_preco',{produto_id:f.dataset.id,preco,preco_de:de>0?de:null,auto_preco:$('#prAuto').checked,ativar});
+    try{await loja('definir_preco',{produto_id:f.dataset.id,preco,preco_de:de>0?de:null,auto_preco:$('#prAuto').checked,ativar,frete:$('#prFrete').freteUsado?$('#prFrete').freteUsado():0});
       toast(ativar?'Preço salvo e produto ativo na loja.':'Preço atualizado na Mimovalle.');if(ativar)notify('produto_ativo',f.dataset.id);closeSheet();loadAdmin()}
     catch(err){toast(err.message)}finally{busy(f,false)}return}
   if(f.id==='fPub'){e.preventDefault();const preco=num($('#pbPreco').value),de=num($('#pbDe').value);busy(f,true);
-    try{const r=await loja('criar_produto',{produto_id:f.dataset.id,titulo:$('#pbTit').value.trim(),preco,preco_de:de>0?de:null,auto_preco:$('#pbAuto').checked});
+    try{const r=await loja('criar_produto',{produto_id:f.dataset.id,titulo:$('#pbTit').value.trim(),preco,preco_de:de>0?de:null,auto_preco:$('#pbAuto').checked,frete:$('#pbFrete').freteUsado?$('#pbFrete').freteUsado():0});
       toast(r.publicado?'Publicado na Mimovalle! O parceiro foi avisado.':'Produto criado. Confira se ele aparece na loja virtual.');closeSheet();loadAdmin()}
     catch(err){toast(err.message)}finally{busy(f,false)}return}
   if(f.id==='fVinc'){e.preventDefault();busy(f,true);
@@ -1053,6 +1103,7 @@ function renderAOrders(){const n=s=>orders.filter(o=>o.status===s).length;
   $('#aOrders').innerHTML=list.length?list.map(o=>{const pa=parc(o.parceiro_id),p=prodOf(o);return `<article class="card order"><div class="ph ${p&&p.categoria?'cat-'+p.categoria:''}">${p?thumb(p):svg('box')}</div><div class="body">
     <div class="row"><div><h3>${esc(o.produto_nome)}</h3>${vtag(o)}<div class="meta">${esc(pa.nome_loja)} · Pedido ${esc(o.numero)} · ${o.qtd} un.</div></div>${pillFor(o)}</div>
     ${o.status==='enviar'?`<div class="money"><span>Prazo do parceiro: <span class="timer">${fmt(left(o))}</span></span><strong>${brl(o.valor)}</strong></div>`:''}
+    ${o.frete_valor!=null?`<p class="meta">${svg('box','width="13" height="13" style="vertical-align:-2px"')} Etiqueta ${esc(o.frete_servico||'')} · ${brl(o.frete_valor)}${o.etiqueta_url?` · <a href="${esc(o.etiqueta_url)}" target="_blank" rel="noopener">ver etiqueta</a>`:''}</p>`:''}
     ${o.status==='enviado'?`<p class="track">Rastreio ${esc(o.rastreio)} · ${dt(o.enviado_em)}</p>`:''}
     ${o.status==='enviado'?(o.rastreio_na_shopify?`<p class="meta">${svg('check','width="13" height="13" style="vertical-align:-2px;color:var(--ok)"')} Rastreio já está na Shopify e o cliente foi avisado.</p>`:`<p class="meta" style="color:var(--warn)">Rastreio ainda não foi para a Shopify.</p>`):''}
     <div class="acts">${o.status==='enviado'&&!o.rastreio_na_shopify?`<button class="btn navy sm" data-rastreio="${o.id}">${svg('ext')}Enviar rastreio à Shopify</button>`:''}${o.status==='enviado'?`<button class="btn ghost sm" data-copy="${esc(o.rastreio)}">${svg('copy')}Copiar rastreio</button>`:''}
@@ -1218,6 +1269,10 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-pushon]');
 /* ---------- sem zoom (pinça e toque duplo, inclusive no iPhone) ---------- */
 ['gesturestart','gesturechange','gestureend'].forEach(ev=>document.addEventListener(ev,e=>e.preventDefault(),{passive:false}));
 document.addEventListener('touchmove',e=>{if(e.touches&&e.touches.length>1)e.preventDefault()},{passive:false});
+
+/* ---------- volta da autorização do Melhor Envio ---------- */
+(()=>{const q=new URLSearchParams(location.search);if(!q.has('me'))return;const ok=q.get('me')==='ok';
+  setTimeout(()=>toast(ok?'Melhor Envio conectado!':(q.get('msg')||'Não foi possível conectar o Melhor Envio.')),1200);history.replaceState(null,'',location.pathname+location.hash)})();
 
 /* ---------- instalar o app ---------- */
 let instEvt=null;
