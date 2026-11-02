@@ -252,6 +252,9 @@ input[readonly]{background:var(--bg2);color:var(--soft)}
 .iabox .ic{width:40px;height:40px;border-radius:12px;background:#fff;color:var(--accent);display:grid;place-items:center;flex-shrink:0}.iabox .ic svg{width:20px;height:20px}
 .iabox>div{flex:1;min-width:200px;display:flex;flex-direction:column;gap:2px}.iabox b{font-size:14px}.iabox span{font-size:12.5px;color:var(--ink);opacity:.8;line-height:1.4}
 .iabox .btn svg{width:16px;height:16px}
+.infhead{display:flex;flex-direction:column;gap:12px}.infhead h1{margin:0}
+.tiles.t3 b{font-size:16px;white-space:nowrap;overflow:visible;text-overflow:clip}.tiles.t3 .tile{padding:12px 10px}
+.cupom{align-self:stretch;border:2px dashed var(--accent);border-radius:16px;padding:14px;text-align:center;background:var(--peach)}.cupom small{display:block;font-size:12px;color:var(--soft);font-weight:600}.cupom b{font-size:30px;letter-spacing:2px;color:var(--ink)}
 .varbox{display:flex;flex-direction:column;gap:12px;background:var(--bg2);border-radius:16px;padding:14px}
 .vrow{display:grid;grid-template-columns:1fr 96px 46px;gap:8px;align-items:center}.vrow input{min-width:0}
 .x2{width:46px;height:46px;border-radius:12px;border:1.5px solid var(--line);background:#fff;display:grid;place-items:center;cursor:pointer;color:var(--soft)}.x2 svg{width:16px;height:16px}
@@ -427,6 +430,14 @@ input[readonly]{background:var(--bg2);color:var(--soft)}
 </main>
 
 <!-- ================= ESTADOS ================= -->
+<section class="state gut" id="v-inf" hidden>
+  <div class="card infhead"><span class="kick">influenciador mimovalle</span><h1 id="infNome"></h1><p class="sub" id="infSub"></p>
+    <div class="cupom"><small>Seu cupom</small><b id="infCupom"></b></div>
+    <div class="acts"><button class="btn" type="button" data-infshare>Compartilhar meu link</button><button class="btn ghost" type="button" data-infcopy>Copiar cupom</button></div></div>
+  <div class="tiles" id="infTiles"></div>
+  <div class="card"><h2>suas vendas</h2><div id="infList"></div></div>
+  <p class="hint" style="text-align:center">Este painel é só seu. Não compartilhe este link, só o link de compra acima.</p>
+</section>
 <section class="state gut" id="v-msg" hidden>
   <div class="card">
     <span class="pill p-wait" id="msgPill"></span>
@@ -576,8 +587,10 @@ input[readonly]{background:var(--bg2);color:var(--soft)}
 
     <!-- admin: parceiros -->
     <section class="view" id="v-aparc" hidden>
-      <div class="vhead"><div><span class="kick">rede</span><h1>parceiros</h1></div><button class="btn ghost sm" type="button" data-copylink>Copiar link de convite</button></div>
+      <div class="vhead"><div><span class="kick">rede</span><h1 id="apTitle">parceiros</h1></div><div id="apAcao"></div></div>
+      <div class="chips" role="group" aria-label="Mostrar" id="apFilters"></div>
       <div class="list" id="aParc"></div>
+      <div class="list" id="aInf" hidden></div>
       <button class="btn line" type="button" data-logout style="align-self:flex-start">Sair da conta</button>
     </section>
   </main>
@@ -590,7 +603,7 @@ input[readonly]{background:var(--bg2);color:var(--soft)}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
 const SB_URL='https://tipodqcudmktthbbmhqv.supabase.co', SB_KEY='sb_publishable_z9-3kH87I0NzVx4SUQlDSA_d8chShmc';
-const LOJA_ADMIN='https://admin.shopify.com/store/mbyhdh-1f/orders/', LOJA_NOVO='https://admin.shopify.com/store/mbyhdh-1f/products/new';
+const LOJA_SITE='https://mbyhdh-1f.myshopify.com',LOJA_ADMIN='https://admin.shopify.com/store/mbyhdh-1f/orders/', LOJA_NOVO='https://admin.shopify.com/store/mbyhdh-1f/products/new';
 const sb=supabase.createClient(SB_URL,SB_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
 const H=3600e3, DAY=864e5;
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
@@ -626,13 +639,13 @@ const errMsg=e=>{const m=(e&&e.message)||'';
 async function copy(v,ok){try{await navigator.clipboard.writeText(v);toast(ok)}catch(_){toast(v)}}
 
 /* ---------- estado ---------- */
-let me=null,isAdmin=false,parceiro=null,orders=[],prods=[],parceiros=[],vendas={},chan=null,recovery=false,current='';
-const F={p:'enviar',pq:'',pr:'todos',a:'enviar',aq:'',apr:'pendentes',rel:'30'};
+let me=null,isAdmin=false,parceiro=null,orders=[],prods=[],parceiros=[],afiliados=[],comissoes=[],vendas={},chan=null,recovery=false,current='';
+const F={p:'enviar',pq:'',pr:'todos',a:'enviar',aq:'',apr:'pendentes',rel:'30',ap:'parc'};
 const VIEWS=['inicio','pedidos','produtos','financeiro','conta','ainicio','apix','apedidos','aprods','aparc','arel'];
 const MENU_P=[['inicio','Início','home'],['pedidos','Pedidos','box'],['produtos','Produtos','grid'],['financeiro','Financeiro','money'],['conta','Conta','user']];
 const MENU_A=[['ainicio','Início','home'],['apix','Pix','money'],['apedidos','Pedidos','box'],['aprods','Produtos','grid'],['aparc','Parceiros','users'],['arel','Relatórios','chart']];
 
-function screen(s){$('#loading').hidden=true;$('#v-land').hidden=s!=='land';$('#v-msg').hidden=s!=='msg';$('#shell').hidden=s!=='app';$('#tabsB').hidden=s!=='app';$('#topLogin').hidden=s!=='land'}
+function screen(s){$('#loading').hidden=true;$('#v-land').hidden=s!=='land';$('#v-msg').hidden=s!=='msg';$('#v-inf').hidden=s!=='inf';$('#shell').hidden=s!=='app';$('#tabsB').hidden=s!=='app';$('#topLogin').hidden=s!=='land'}
 function buildMenu(){const m=isAdmin?MENU_A:MENU_P;
   $('#side').innerHTML=m.map(([v,l,ic])=>`<button class="nav" data-go="${v}">${svg(ic)}<span>${l}</span><span class="badge" data-b="${v}" hidden></span></button>`).join('');
   $('#tabsIn').innerHTML=m.map(([v,l,ic])=>`<button class="tab" data-go="${v}">${svg(ic)}<span>${l}</span><span class="badge" data-b="${v}" hidden></span></button>`).join('')}
@@ -688,6 +701,7 @@ $('#fComplete').onsubmit=async e=>{e.preventDefault();busy(e.target,true);
 
 /* ---------- boot ---------- */
 async function boot(){
+  if(infToken()){renderInf();return}
   const {data:{session}}=await sb.auth.getSession();
   if(chan){sb.removeChannel(chan);chan=null}
   if(recovery){setWho('');screen('land');seg(false);$('#fLogin').hidden=true;$('#fNewPass').hidden=false;$('#authArea').scrollIntoView();return}
@@ -936,7 +950,7 @@ document.addEventListener('click',e=>{if(e.target.matches('[data-closebg]')||e.t
 
 /* ---------- ações ---------- */
 document.addEventListener('click',async e=>{const t=e.target;
-  const ch=t.closest('[data-chip]');if(ch){const k=ch.dataset.chip;F[k]=ch.dataset.v;({p:renderOrders,pr:renderProds,a:renderAOrders,apr:renderAProds,rel:renderRel})[k]();return}
+  const ch=t.closest('[data-chip]');if(ch){const k=ch.dataset.chip;F[k]=ch.dataset.v;({p:renderOrders,pr:renderProds,a:renderAOrders,apr:renderAProds,rel:renderRel,ap:renderAParc})[k]();return}
   if(t.closest('[data-newprod]')){openProd(null);return}
   const ep=t.closest('[data-editprod]');if(ep){openProd(prods.find(p=>p.id===ep.dataset.editprod));return}
   const s=t.closest('[data-ship]');if(s){const f=document.querySelector(`.ship[data-id="${s.dataset.ship}"]`);f.hidden=false;s.parentElement.hidden=true;f.querySelector('input').focus();return}
@@ -1005,9 +1019,9 @@ let confirmNoPhoto=false;
 /* ---------- ADMIN ---------- */
 const parc=id=>parceiros.find(x=>x.id===id)||{};
 async function loadAdmin(){
-  const [o,p,pa,v]=await Promise.all([sb.from('fm_pedidos').select(PCOLS).order('created_at',{ascending:false}),sb.from('fm_produtos').select('*').order('created_at',{ascending:false}),sb.from('fm_parceiros').select('*').order('created_at',{ascending:false}),sb.rpc('fm_admin_vendas')]);
+  const [o,p,pa,v,af,cm]=await Promise.all([sb.from('fm_pedidos').select(PCOLS).order('created_at',{ascending:false}),sb.from('fm_produtos').select('*').order('created_at',{ascending:false}),sb.from('fm_parceiros').select('*').order('created_at',{ascending:false}),sb.rpc('fm_admin_vendas'),sb.from('fm_afiliados').select('*').order('created_at',{ascending:false}),sb.from('fm_comissoes').select('*').order('created_at',{ascending:false})]);
   if(o.error||p.error||pa.error){toast('Não foi possível carregar. Recarregue a página.');return}
-  orders=o.data;prods=p.data;parceiros=pa.data;vendas={};(v.data||[]).forEach(x=>vendas[x.id]=x.preco_venda);
+  orders=o.data;prods=p.data;parceiros=pa.data;afiliados=af.data||[];comissoes=cm.data||[];vendas={};(v.data||[]).forEach(x=>vendas[x.id]=x.preco_venda);
   renderAInicio();renderAPix();renderAOrders();renderAProds();renderAParc();renderRel();
   badge('apix',orders.filter(x=>x.status==='aguardando_pix').length);badge('aprods',prods.filter(x=>!x.shopify_product_id).length);badge('aparc',parceiros.filter(x=>x.status==='pendente').length)}
 const venda=o=>vendas[o.id]!=null?Number(vendas[o.id])*o.qtd:null;
@@ -1045,7 +1059,12 @@ function renderAOrders(){const n=s=>orders.filter(o=>o.status===s).length;
     <a class="btn ghost sm" href="${LOJA_ADMIN+encodeURIComponent(o.shopify_order_id)}" target="_blank" rel="noopener">${svg('ext')}Pedido na Shopify</a></div></div></article>`}).join(''):`<div class="empty">${svg('box')}${q?'Nada encontrado nessa busca.':'Nenhum pedido aqui.'}</div>`}
 function renderAProds(){const n=f=>prods.filter(f).length;chips('#aPrFilters',[['pendentes','Para publicar',n(p=>!p.shopify_product_id&&!p.removido)],['ativos','Ativos',n(p=>p.ativo)],['pausados','Pausados',n(p=>p.shopify_product_id&&!p.ativo&&!p.removido)],['esgotados','Esgotados',n(p=>p.estoque===0&&!p.removido)],['removidos','Removidos',n(p=>p.removido)],['todos','Todos',n(p=>!p.removido)]],F.apr,'apr');
   const list=prods.filter(p=>prodFilter(F.apr,p));$('#aProds').innerHTML=list.length?list.map(p=>pcard(p,true)).join(''):`<div class="empty" style="grid-column:1/-1">${svg('grid')}Nenhum produto nesse filtro.</div>`}
-function renderAParc(){$('#aParc').innerHTML=parceiros.length?parceiros.map(p=>{const pill=p.status==='ativo'?'<span class="pill p-ok">Ativo</span>':p.status==='pendente'?'<span class="pill p-send">Novo cadastro</span>':'<span class="pill p-off">Pausado</span>';
+function renderAParc(){
+  chips('#apFilters',[['parc','Fornecedores',parceiros.length],['inf','Influenciadores',afiliados.length]],F.ap,'ap');
+  const inf=F.ap==='inf';$('#aParc').hidden=inf;$('#aInf').hidden=!inf;$('#apTitle').textContent=inf?'influenciadores':'parceiros';
+  $('#apAcao').innerHTML=inf?`<button class="btn sm" type="button" data-novoinf>${svg('plus')}Novo influenciador</button>`:'<button class="btn ghost sm" type="button" data-copylink>Copiar link de convite</button>';
+  renderAInf();
+  $('#aParc').innerHTML=parceiros.length?parceiros.map(p=>{const pill=p.status==='ativo'?'<span class="pill p-ok">Ativo</span>':p.status==='pendente'?'<span class="pill p-send">Novo cadastro</span>':'<span class="pill p-off">Pausado</span>';
     const n=prods.filter(x=>x.parceiro_id===p.id).length,os=orders.filter(x=>x.parceiro_id===p.id&&x.status!=='cancelado'),nt=nota(os);
     return `<article class="card"><div class="row"><div style="display:flex;gap:12px;align-items:center"><span class="avatar">${esc(p.nome_loja.split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase())}</span><div style="min-width:0"><h3>${esc(p.nome_loja)}</h3><div class="meta">${esc(p.responsavel)} · ${esc(p.whatsapp)} · desde ${new Date(p.created_at).toLocaleDateString('pt-BR')}</div><div class="meta" style="color:${p.termo_aceito_em?'var(--ok)':'var(--late)'}">${p.termo_aceito_em?`Termo v${esc(p.termo_versao)} aceito em ${new Date(p.termo_aceito_em).toLocaleDateString('pt-BR')}`:'Ainda não aceitou o termo'}</div></div></div>${pill}</div>
     <div class="tiles" style="grid-template-columns:repeat(3,1fr)"><div class="tile" style="background:var(--bg2)"><small>Produtos</small><b>${n}</b></div><div class="tile" style="background:var(--bg2)"><small>Pedidos</small><b>${os.length}</b></div><div class="tile" style="background:var(--bg2)"><small>Nota de envio</small><b style="color:${nt?nt.cor:'inherit'}">${nt?nt.pct+'%':'—'}</b><span>${nt?nt.nivel+' · média '+horasTx(nt.med):'sem envios'}</span></div></div>
@@ -1087,6 +1106,71 @@ function baixarCsv(){const {list,canc}=relDados();const all=[...list,...canc].so
   const blob=new Blob(['﻿'+linhas.map(l=>l.map(cel).join(';')).join('\r\n')],{type:'text/csv;charset=utf-8'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`fornece-mimo-vendas-${new Date().toISOString().slice(0,10)}.csv`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
 document.addEventListener('click',e=>{if(e.target.closest('[data-csv]'))baixarCsv()});
+
+/* ---------- influenciadores (admin) ---------- */
+const infLink=a=>location.origin+location.pathname+'#inf='+a.token;
+const compraLink=a=>LOJA_SITE+'/discount/'+encodeURIComponent(a.cupom);
+function renderAInf(){const el=$('#aInf');if(!el)return;
+  el.innerHTML=afiliados.length?afiliados.map(a=>{const cs=comissoes.filter(c=>c.afiliado_id===a.id&&c.status!=='cancelada'),pend=cs.filter(c=>c.status==='pendente');
+    const vendido=cs.reduce((s,c)=>s+Number(c.valor_pedido),0),aPagar=pend.reduce((s,c)=>s+Number(c.comissao),0),pago=cs.filter(c=>c.status==='paga').reduce((s,c)=>s+Number(c.comissao),0);
+    const msgWa=`Oi ${a.nome.split(' ')[0]}! Seu cupom na Mimovalle é ${a.cupom} (${Number(a.desconto_pct)}% de desconto para quem compra). Link para divulgar: ${compraLink(a)}\nSeu painel de vendas e comissão: ${infLink(a)}`;
+    return `<article class="card"><div class="row"><div style="display:flex;gap:12px;align-items:center"><span class="avatar">${esc(a.nome.split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase())}</span><div style="min-width:0"><h3>${esc(a.nome)}</h3><div class="meta">${a.instagram?'@'+esc(a.instagram)+' · ':''}cupom <b>${esc(a.cupom)}</b> · ${Number(a.desconto_pct)}% de desconto · ${Number(a.comissao_pct)}% de comissão</div></div></div>${a.ativo?'<span class="pill p-ok">Ativo</span>':'<span class="pill p-off">Pausado</span>'}</div>
+    <div class="tiles t3" style="grid-template-columns:repeat(3,1fr)"><div class="tile" style="background:var(--bg2)"><small>Vendas</small><b>${cs.length}</b><span>${brl0(vendido)}</span></div><div class="tile" style="background:var(--bg2)"><small>A pagar</small><b style="color:${aPagar?'var(--warn)':'inherit'}">${brl0(aPagar)}</b></div><div class="tile" style="background:var(--bg2)"><small>Já pago</small><b>${brl0(pago)}</b></div></div>
+    ${aPagar&&a.chave_pix?`<div class="addr"><span class="meta">Chave Pix de ${esc(a.nome)}</span><b style="overflow-wrap:anywhere">${esc(a.chave_pix)}</b></div>`:''}
+    <div class="acts">${aPagar?`${a.chave_pix?`<button class="btn ghost sm" data-copy="${esc(a.chave_pix)}">${svg('copy')}Copiar chave</button>`:''}<button class="btn sm" data-pagainf="${a.id}">${svg('check')}Já paguei ${brl(aPagar)}</button>`:''}
+    ${a.whatsapp?`<a class="btn ghost sm" href="${wa(a.whatsapp)}?text=${encodeURIComponent(msgWa)}" target="_blank" rel="noopener">${svg('wa')}Mandar cupom e painel</a>`:''}
+    <button class="btn ghost sm" data-copyinf="${esc(infLink(a))}">${svg('copy')}Link do painel dele</button>
+    <button class="btn line sm" data-infativo="${a.id}" data-v="${a.ativo?'0':'1'}">${a.ativo?'Pausar cupom':'Ativar cupom'}</button></div></article>`}).join('')
+   :`<div class="empty">${svg('users')}Nenhum influenciador ainda. Cadastre o primeiro e ele ganha um cupom de desconto só dele. Cada venda com o cupom vira comissão aqui, sozinha.<button class="btn" data-novoinf>Cadastrar influenciador</button></div>`}
+function abrirNovoInf(){lastFocus=document.activeElement;document.body.style.overflow='hidden';
+  $('#sheetRoot').innerHTML=`<div class="sheet-bg" data-closebg><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="shT"><div class="sheet-h"><div><span class="kick">influenciador</span><h2 id="shT">Novo influenciador</h2></div><button class="x" type="button" data-close aria-label="Fechar">${svg('x')}</button></div>
+   <form class="form" id="fInf">
+    <div class="field"><label for="iNome">Nome</label><input id="iNome" required minlength="2" maxlength="80"></div>
+    <div class="g2"><div class="field"><label for="iInsta">Instagram</label><input id="iInsta" maxlength="60" placeholder="@perfil"></div><div class="field"><label for="iWhats">WhatsApp</label><input id="iWhats" inputmode="tel" maxlength="30" placeholder="(69) 99999-9999"></div></div>
+    <div class="field"><label for="iPix">Chave Pix (para pagar a comissão)</label><input id="iPix" maxlength="120"></div>
+    <div class="field"><label for="iCupom">Cupom</label><input id="iCupom" required maxlength="20" placeholder="Ex.: ANA10" autocapitalize="characters" autocomplete="off"><span class="hint">Só letras e números, sem espaço. É o código que a cliente digita no carrinho.</span></div>
+    <div class="g2"><div class="field"><label for="iDesc">Desconto para a cliente (%)</label><input id="iDesc" inputmode="numeric" value="10" required></div><div class="field"><label for="iCom">Comissão do influenciador (%)</label><input id="iCom" inputmode="numeric" value="10" required></div></div>
+    <p class="meta" id="iConta"></p>
+    <button class="btn block" type="submit">Criar cupom na Mimovalle</button>
+   </form></div></div>`;
+  const conta=()=>{const d=num($('#iDesc').value)||0,c=num($('#iCom').value)||0;$('#iConta').innerHTML=`Exemplo: numa compra de R$ 100,00 a cliente paga <b>${brl(100-d)}</b> e o influenciador ganha <b>${brl((100-d)*c/100)}</b>.`};
+  $('#iDesc').oninput=conta;$('#iCom').oninput=conta;$('#iCupom').oninput=e=>{e.target.value=e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,'')};
+  $('#iNome').oninput=e=>{if(!$('#iCupom').dataset.mexeu){$('#iCupom').value=(e.target.value.split(/\s+/)[0]||'').normalize('NFD').replace(/[^A-Za-z0-9]/g,'').toUpperCase().slice(0,16)+($('#iDesc').value||'')}};
+  $('#iCupom').addEventListener('input',()=>$('#iCupom').dataset.mexeu='1');conta();setTimeout(()=>$('#iNome').focus(),60)}
+async function cupomApi(body){const {data,error}=await sb.functions.invoke('fm-cupom',{body});
+  if(error){let m='Não foi possível falar com a loja agora.';try{const j=await error.context.json();if(j&&j.erro)m=j.erro}catch(_){}throw new Error(m)}return data}
+document.addEventListener('submit',async e=>{if(e.target.id!=='fInf')return;e.preventDefault();const f=e.target;busy(f,true);
+  try{await cupomApi({acao:'criar',nome:$('#iNome').value.trim(),instagram:$('#iInsta').value.trim(),whatsapp:$('#iWhats').value.trim(),chave_pix:$('#iPix').value.trim(),cupom:$('#iCupom').value.trim(),desconto_pct:num($('#iDesc').value),comissao_pct:num($('#iCom').value)});
+    toast('Cupom criado na Mimovalle!');closeSheet();F.ap='inf';await loadAdmin()}catch(err){toast(err.message)}finally{busy(f,false)}});
+document.addEventListener('click',async e=>{const t=e.target;
+  if(t.closest('[data-novoinf]')){abrirNovoInf();return}
+  const cl=t.closest('[data-copyinf]');if(cl){copy(cl.dataset.copyinf,'Link do painel copiado. Mande só para o influenciador.');return}
+  const pg=t.closest('[data-pagainf]');if(pg){if(pg.dataset.ok!=='1'){pg.dataset.ok='1';pg.textContent='Toque de novo para confirmar';return}pg.disabled=true;
+    const {error}=await sb.from('fm_comissoes').update({status:'paga',pago_em:new Date().toISOString()}).eq('afiliado_id',pg.dataset.pagainf).eq('status','pendente');
+    if(error){pg.disabled=false;toast(errMsg(error));return}toast('Comissão marcada como paga.');loadAdmin();return}
+  const at=t.closest('[data-infativo]');if(at){at.disabled=true;try{await cupomApi({acao:'ativo',id:at.dataset.infativo,ativo:at.dataset.v==='1'});toast(at.dataset.v==='1'?'Cupom ativo na loja.':'Cupom pausado na loja.');loadAdmin()}catch(err){at.disabled=false;toast(err.message)}}});
+
+/* ---------- página do influenciador (link secreto, sem login) ---------- */
+function infToken(){const m=/^#inf=([0-9a-f-]{36})$/i.exec(location.hash);return m?m[1]:null}
+let infDados=null;
+async function renderInf(){const tk=infToken();setWho('');
+  const {data,error}=await sb.rpc('fm_afiliado_painel',{p_token:tk});
+  if(error||!data){msg('Link inválido','Esse link de influenciador não existe mais. Peça um novo para a Mimovalle.','Link','p-off',false);return}
+  infDados=data;screen('inf');const vs=data.vendas||[],ok=vs.filter(v=>v.status!=='cancelada');
+  $('#infNome').textContent='olá, '+data.nome.split(' ')[0];
+  $('#infSub').textContent=data.ativo?`Quem compra com o seu cupom ganha ${Number(data.desconto_pct)}% de desconto, e você ganha ${Number(data.comissao_pct)}% de cada compra.`:'Seu cupom está pausado no momento. Fale com a Mimovalle.';
+  $('#infCupom').textContent=data.cupom;
+  const aRec=ok.filter(v=>v.status==='pendente').reduce((s,v)=>s+Number(v.comissao),0),rec=ok.filter(v=>v.status==='paga').reduce((s,v)=>s+Number(v.comissao),0);
+  $('#infTiles').innerHTML=[['var(--peach)','Vendas',ok.length,'com o seu cupom'],['var(--mint)','Vendido',brl0(ok.reduce((s,v)=>s+Number(v.valor),0)),'em compras'],['var(--butter)','A receber',brl0(aRec),'comissão pendente'],['var(--lilac)','Já recebido',brl0(rec),'pago por Pix']]
+    .map(([bg,l,v,s])=>`<div class="tile" style="background:${bg}"><small>${l}</small><b>${v}</b><span>${s}</span></div>`).join('');
+  const st={pendente:'<span class="pill p-wait">A receber</span>',paga:'<span class="pill p-ok">Pago</span>',cancelada:'<span class="pill p-off">Cancelada</span>'};
+  $('#infList').innerHTML=vs.length?vs.map(v=>`<div class="ln"><div><b style="font-size:14px">Compra ${esc(v.numero||'')}</b><div class="meta">${dt(v.data)} · ${brl(v.valor)}</div></div><div style="text-align:right">${st[v.status]||''}<div><strong>${brl(v.comissao)}</strong></div></div></div>`).join('')
+    :'<p class="meta">Suas vendas aparecem aqui assim que alguém comprar com o seu cupom.</p>'}
+document.addEventListener('click',async e=>{if(!infDados)return;const link=LOJA_SITE+'/discount/'+encodeURIComponent(infDados.cupom);
+  if(e.target.closest('[data-infcopy]')){copy(infDados.cupom,'Cupom copiado!');return}
+  if(e.target.closest('[data-infshare]')){const texto=`Use meu cupom ${infDados.cupom} e ganhe ${Number(infDados.desconto_pct)}% de desconto na Mimovalle!`;
+    try{if(navigator.share){await navigator.share({title:'Mimovalle',text:texto,url:link});return}}catch(_){return}copy(texto+' '+link,'Link copiado! Cole no seu story ou no WhatsApp.')}});
+window.addEventListener('hashchange',()=>{if(infToken())renderInf()});
 
 /* ---------- avisos no celular ---------- */
 const VAPID_PUB='BD1J2SyzV1H7xmY0G5O_NYgTGN0SOvgPTySmgegp0nC_A76XFVSETiIq7-w9sTEjSBDIfUdMN7DyAjNUB1J6FI0';
