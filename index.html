@@ -593,6 +593,7 @@ input[readonly]{background:var(--bg2);color:var(--soft)}
       <div class="vhead"><div><span class="kick">números</span><h1>relatórios</h1><p class="sub">Vendas dos produtos de parceiros na Mimovalle.</p></div><button class="btn ghost sm" type="button" data-csv><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Baixar planilha</button></div>
       <div class="chips" role="group" aria-label="Período" id="relFilters"></div>
       <div class="tiles" id="relTiles"></div>
+      <div class="card"><div><h2>loja inteira: parceiros x AliExpress</h2><p class="meta">Quanto sobra de verdade em cada tipo de produto, já tirando custo, frete e taxas.</p></div><div class="tscroll" id="relComp"></div><p class="meta" id="relVeredito"></p></div>
       <div class="card"><div><h2 id="relChartT">vendas por dia</h2><p class="meta" id="relChartSum"></p></div><div class="chart" id="relChart" role="img" aria-label="Gráfico de vendas"></div></div>
       <div class="card"><h2>produtos que mais vendem</h2><div class="tscroll" id="relProds"></div></div>
       <div class="card"><h2>por parceiro</h2><div class="tscroll" id="relParc"></div></div>
@@ -652,7 +653,7 @@ const errMsg=e=>{const m=(e&&e.message)||'';
 async function copy(v,ok){try{await navigator.clipboard.writeText(v);toast(ok)}catch(_){toast(v)}}
 
 /* ---------- estado ---------- */
-let me=null,isAdmin=false,parceiro=null,orders=[],prods=[],parceiros=[],afiliados=[],comissoes=[],vendas={},chan=null,recovery=false,current='';
+let me=null,isAdmin=false,parceiro=null,orders=[],prods=[],parceiros=[],afiliados=[],comissoes=[],vendasLoja=[],vendas={},chan=null,recovery=false,current='';
 const F={p:'enviar',pq:'',pr:'todos',a:'enviar',aq:'',apr:'pendentes',rel:'30',ap:'parc'};
 const VIEWS=['inicio','pedidos','produtos','financeiro','conta','ainicio','apix','apedidos','aprods','aparc','arel'];
 const MENU_P=[['inicio','Início','home'],['pedidos','Pedidos','box'],['produtos','Produtos','grid'],['financeiro','Financeiro','money'],['conta','Conta','user']];
@@ -1071,9 +1072,9 @@ let confirmNoPhoto=false;
 /* ---------- ADMIN ---------- */
 const parc=id=>parceiros.find(x=>x.id===id)||{};
 async function loadAdmin(){
-  const [o,p,pa,v,af,cm]=await Promise.all([sb.from('fm_pedidos').select(PCOLS).order('created_at',{ascending:false}),sb.from('fm_produtos').select('*').order('created_at',{ascending:false}),sb.from('fm_parceiros').select('*').order('created_at',{ascending:false}),sb.rpc('fm_admin_vendas'),sb.from('fm_afiliados').select('*').order('created_at',{ascending:false}),sb.from('fm_comissoes').select('*').order('created_at',{ascending:false})]);
+  const [o,p,pa,v,af,cm,vl]=await Promise.all([sb.from('fm_pedidos').select(PCOLS).order('created_at',{ascending:false}),sb.from('fm_produtos').select('*').order('created_at',{ascending:false}),sb.from('fm_parceiros').select('*').order('created_at',{ascending:false}),sb.rpc('fm_admin_vendas'),sb.from('fm_afiliados').select('*').order('created_at',{ascending:false}),sb.from('fm_comissoes').select('*').order('created_at',{ascending:false}),sb.from('fm_vendas').select('*').order('criado_em',{ascending:false}).limit(5000)]);
   if(o.error||p.error||pa.error){toast('Não foi possível carregar. Recarregue a página.');return}
-  orders=o.data;prods=p.data;parceiros=pa.data;afiliados=af.data||[];comissoes=cm.data||[];vendas={};(v.data||[]).forEach(x=>vendas[x.id]=x.preco_venda);
+  orders=o.data;prods=p.data;parceiros=pa.data;afiliados=af.data||[];comissoes=cm.data||[];vendasLoja=vl.data||[];vendas={};(v.data||[]).forEach(x=>vendas[x.id]=x.preco_venda);
   renderAInicio();renderAPix();renderAOrders();renderAProds();renderAParc();renderRel();renderME();
   badge('apix',orders.filter(x=>x.status==='aguardando_pix').length);badge('aprods',prods.filter(x=>!x.shopify_product_id).length);badge('aparc',parceiros.filter(x=>x.status==='pendente').length)}
 const venda=o=>vendas[o.id]!=null?Number(vendas[o.id])*o.qtd:null;
@@ -1145,6 +1146,27 @@ function renderRel(){if(!isAdmin||!$('#relTiles'))return;
     for(let i=n-1;i>=0;i--){const d=new Date(t0.getTime()-i*DAY);data.push({d,v:list.filter(o=>new Date(o.created_at).toDateString()===d.toDateString()).reduce((a,o)=>a+val(o),0)})}
     $('#relChartT').textContent='vendas por dia';drawChart('#relChart',data)}
   $('#relChartSum').textContent=brl(data.reduce((a,x)=>a+x.v,0))+' no período';
+  // loja inteira: parceiros (painel) x produtos próprios do AliExpress (vendas da Shopify)
+  const vl=vendasLoja.filter(v=>v.status==='pago'&&new Date(v.criado_em)>=ini);
+  const ali=vl.filter(v=>Number(v.receita_propria)>0);
+  const aRec=ali.reduce((a,v)=>a+Number(v.receita_propria)+Number(v.frete_cobrado),0),aCus=ali.reduce((a,v)=>a+Number(v.custo_propria),0),aTax=aRec*TAXA_VENDA,aLuc=aRec-aCus-aTax,semCusto=ali.reduce((a,v)=>a+Number(v.sem_custo||0),0);
+  const freteDe=o=>o.frete_valor!=null?Number(o.frete_valor):Number((prodOf(o)||{}).frete_incluso||0)*o.qtd;
+  const pRec=list.reduce((a,o)=>a+(vd(o)||0),0),pCus=list.reduce((a,o)=>a+Number(o.valor),0),pFre=list.reduce((a,o)=>a+freteDe(o),0),pTax=pRec*TAXA_VENDA,pLuc=pRec-pCus-pFre-pTax,pPed=new Set(list.map(o=>o.shopify_order_id)).size;
+  const linha=(r,c,f,t,l,n)=>({r,c,f,t,l,n,m:r?l/r*100:null,lp:n?l/n:null});
+  const P=linha(pRec,pCus,pFre,pTax,pLuc,pPed),A=linha(aRec,aCus,0,aTax,aLuc,ali.length);
+  const cel=(x,neg)=>`<td class="n"${neg&&x?' style="color:var(--late)"':''}>${neg&&x?'− ':''}${brl(x)}</td>`;
+  $('#relComp').innerHTML=`<table class="relt"><thead><tr><th></th><th class="n">Parceiros</th><th class="n">AliExpress</th></tr></thead><tbody>
+    <tr><td>Pedidos</td><td class="n">${P.n}</td><td class="n">${A.n}</td></tr>
+    <tr><td>Recebido dos clientes</td>${cel(P.r)}${cel(A.r)}</tr>
+    <tr><td>Custo dos produtos</td>${cel(P.c,1)}${cel(A.c,1)}</tr>
+    <tr><td>Frete pago (etiquetas)</td>${cel(P.f,1)}${cel(A.f,1)}</tr>
+    <tr><td>Taxas (Shopify + Mercado Pago)</td>${cel(P.t,1)}${cel(A.t,1)}</tr>
+    <tr><td><b>Seu lucro</b></td><td class="n"><b style="color:${P.l>=0?'var(--ok)':'var(--late)'}">${brl(P.l)}</b></td><td class="n"><b style="color:${A.l>=0?'var(--ok)':'var(--late)'}">${brl(A.l)}</b></td></tr>
+    <tr><td>Margem</td><td class="n">${P.m==null?'—':Math.round(P.m)+'%'}</td><td class="n">${A.m==null?'—':Math.round(A.m)+'%'}</td></tr>
+    <tr><td>Lucro por pedido</td><td class="n">${P.lp==null?'—':brl(P.lp)}</td><td class="n">${A.lp==null?'—':brl(A.lp)}</td></tr></tbody></table>`;
+  $('#relVeredito').innerHTML=!P.n&&!A.n?'A comparação aparece assim que entrarem as primeiras vendas da loja.'
+    :(P.n&&A.n?`<b>${P.lp>=A.lp?'Parceiros':'AliExpress'}</b> deixa mais lucro por pedido neste período (${brl(Math.max(P.lp,A.lp))} contra ${brl(Math.min(P.lp,A.lp))}).`:'Ainda não há vendas dos dois tipos neste período para comparar.')
+     +(semCusto?` <span style="color:var(--warn)">${semCusto} item(ns) do AliExpress sem "custo por item" na Shopify ficaram fora do custo.</span>`:'');
   const byP={};list.forEach(o=>{const k=o.produto_id;const r=byP[k]=byP[k]||{nome:o.produto_nome,parc:parc(o.parceiro_id).nome_loja||'',q:0,f:0,m:0};r.q+=o.qtd;r.f+=vd(o)||0;if(vd(o)!=null)r.m+=vd(o)-Number(o.valor)});
   const tp=Object.values(byP).sort((a,b)=>b.f-a.f||b.q-a.q).slice(0,10);
   $('#relProds').innerHTML=tp.length?`<table class="relt"><thead><tr><th>Produto</th><th class="n">Vendidos</th><th class="n">Faturou</th><th class="n">Margem</th></tr></thead><tbody>${tp.map(r=>`<tr><td><b>${esc(r.nome)}</b><div class="meta">${esc(r.parc)}</div></td><td class="n">${r.q}</td><td class="n">${brl(r.f)}</td><td class="n" style="color:var(--ok)">${brl(r.m)}</td></tr>`).join('')}</tbody></table>`:'<p class="meta">Nenhuma venda no período.</p>';
